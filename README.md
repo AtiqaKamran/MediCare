@@ -1,16 +1,46 @@
-# React + Vite
+# MediCare — Patient Health Assistant
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+MediCare is a web-based patient health assistant designed to help users manage their personal health information, explore symptoms, and access general health guidance through a simple and user-friendly interface.
 
-Currently, two official plugins are available:
+The project is currently under development, with additional features and modules planned for upcoming updates.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Project Overview
 
-## React Compiler
+MediCare aims to make basic health information more accessible by providing a platform where users can maintain their health profiles, explore symptom-related guidance, and keep track of their medical information.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Current Features
 
-## Expanding the ESLint configuration
+* **User Authentication:** Sign up and log in to access the patient portal.
+* **Patient Profile:** Manage personal details and health information.
+* **Symptom Checker:** Select symptoms and explore general health guidance.
+* **Medical History:** Access and review saved health information.
+* **Language Support:** English and Urdu language options.
+* **Theme Customization:** Light and dark mode support.
+* **Responsive Interface:** A clean and accessible design for different screen sizes.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Upcoming Modules
+
+The project is being developed in next modules. Additional features, improvements, and modules will be introduced in future updates as development progresses.
+
+## Technologies Used
+
+* React.js
+* JavaScript
+* Tailwind CSS
+* React Router
+* Lucide React
+* Vite
+* Local Storage
+
+## Important Disclaimer
+
+MediCare is an educational project developed for learning and demonstration purposes. It provides general health information and is not a substitute for professional medical advice, diagnosis, or treatment. Users should consult qualified healthcare professionals for medical concerns.
+
+## Project Status
+
+**In Progress** — Core modules are being developed, and additional functionality will be introduced in upcoming updates.
+
+---
+
+**Developed by Atiqa Kamran**
+BS Computer Science Student | Frontend Web Development
