@@ -39,8 +39,3 @@ MediCare is an educational project developed for learning and demonstration purp
 ## Project Status
 
 **In Progress** — Core modules are being developed, and additional functionality will be introduced in upcoming updates.
-
----
-
-**Developed by Atiqa Kamran**
-BS Computer Science Student | Frontend Web Development
