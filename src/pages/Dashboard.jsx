@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -19,6 +20,7 @@ import {
   Languages,
   X,
   History,
+  FolderHeart,
 } from "lucide-react";
 
 import {
@@ -563,6 +565,42 @@ export default function Dashboard() {
                   className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-slate-400 dark:text-slate-600 cursor-not-allowed"
                 >
                   {t("findDoctors")}
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            </div>
+
+            {/* My Medical Records - Added */}
+            <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-emerald-50 dark:bg-emerald-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+
+              <div className="relative z-10">
+                <div className="flex items-start justify-between">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/30 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
+                    <FolderHeart size={26} />
+                  </div>
+
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/50">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    {isUrdu ? "دستیاب" : "Available"}
+                  </span>
+                </div>
+
+                <h4 className={`text-lg font-bold ${headingText} mt-6`}>
+                  {isUrdu ? "میرے طبی ریکارڈز" : "My Medical Records"}
+                </h4>
+
+                <p className={`text-sm ${mutedText} mt-2 leading-6 max-w-md`}>
+                  {isUrdu
+                    ? "اپنی لیب رپورٹس، نسخے، ایکس رے اور دیگر طبی دستاویزات ایک جگہ منظم کریں۔"
+                    : "Organize your lab reports, prescriptions, X-rays and other medical documents in one place."}
+                </p>
+
+                <button
+                  onClick={() => navigate("/medical-records")}
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-teal-700 dark:text-teal-400 hover:gap-3 transition-all"
+                >
+                  {isUrdu ? "ریکارڈز کھولیں" : "Open Medical Records"}
                   <ChevronRight size={18} />
                 </button>
               </div>

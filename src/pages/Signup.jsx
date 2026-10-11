@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, UserPlus } from "lucide-react";
@@ -6,11 +5,8 @@ import { Eye, EyeOff, UserPlus } from "lucide-react";
 import AuthLayout from "../components/AuthLayout";
 import FormField from "../components/FormField";
 import { useLanguage } from "../context/LanguageContext";
-import {
-  createUser,
-  findUserByEmail,
-  setCurrentUser,
-} from "../utils/storage";
+import { supabase } from "../lib/supabase";
+import { createUser, setCurrentUser } from "../utils/storage";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -26,26 +22,28 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   function handleChange(e) {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-
+    setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
+    setSuccess("");
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
-    if (!form.name.trim()) {
+    const name = form.name.trim();
+    const email = form.email.trim().toLowerCase();
+
+    if (!name) {
       setError(t("pleaseEnterName"));
       return;
     }
 
-    if (!form.email.trim()) {
+    if (!email) {
       setError(t("pleaseEnterEmail"));
       return;
     }
@@ -60,37 +58,54 @@ export default function Signup() {
       return;
     }
 
-    const existingUser = findUserByEmail(form.email);
+    try {
+      const { data, error: signupError } =
+        await supabase.auth.signUp({
+          email,
+          password: form.password,
+          options: {
+            data: { name },
+          },
+        });
 
-    if (existingUser) {
-      setError(t("emailAlreadyExists"));
-      return;
+      if (signupError) throw signupError;
+
+      if (!data.user) {
+        throw new Error("Account could not be created. Please try again.");
+      }
+
+      const newUser = {
+        id: data.user.id,
+        name,
+        email,
+        profileCompleted: false,
+        profile: {
+          age: "",
+          gender: "",
+          conditions: "",
+          allergies: "",
+          lahoreArea: "",
+        },
+        createdAt: new Date().toISOString(),
+        recentActivity: [],
+      };
+
+      // Save non-password profile details locally.
+      createUser(newUser);
+
+      if (data.session) {
+        setCurrentUser(newUser);
+        navigate("/profile");
+      } else {
+        setSuccess(
+          isUrdu
+            ? "Account ban gaya hai. Apni email check karein aur verification ke baad login karein."
+            : "Account created! Check your email for a verification link, then log in."
+        );
+      }
+    } catch (err) {
+      setError(err.message || "Signup failed. Please try again.");
     }
-
-    const newUser = {
-      id: crypto.randomUUID(),
-      name: form.name.trim(),
-      email: form.email.trim().toLowerCase(),
-      password: form.password,
-
-      profileCompleted: false,
-
-      profile: {
-        age: "",
-        gender: "",
-        conditions: "",
-        allergies: "",
-        lahoreArea: "",
-      },
-
-      createdAt: new Date().toISOString(),
-      recentActivity: [],
-    };
-
-    createUser(newUser);
-    setCurrentUser(newUser);
-
-    navigate("/profile");
   }
 
   return (
@@ -127,8 +142,7 @@ export default function Signup() {
             htmlFor="password"
             className="block text-sm font-medium text-slate-700 mb-2"
           >
-            {t("password")}{" "}
-            <span className="text-red-500">*</span>
+            {t("password")} <span className="text-red-500">*</span>
           </label>
 
           <div className="relative">
@@ -140,6 +154,7 @@ export default function Signup() {
               onChange={handleChange}
               placeholder={t("atLeast6Characters")}
               required
+              minLength={6}
               className={`w-full px-4 py-3 ${
                 isUrdu ? "pl-12" : "pr-12"
               } rounded-xl border border-slate-200 bg-white text-slate-900 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100`}
@@ -148,18 +163,12 @@ export default function Signup() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              aria-label={
-                showPassword ? "Hide password" : "Show password"
-              }
+              aria-label={showPassword ? "Hide password" : "Show password"}
               className={`absolute ${
                 isUrdu ? "left-4" : "right-4"
               } top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600`}
             >
-              {showPassword ? (
-                <EyeOff size={19} />
-              ) : (
-                <Eye size={19} />
-              )}
+              {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
             </button>
           </div>
         </div>
@@ -169,8 +178,7 @@ export default function Signup() {
             htmlFor="confirmPassword"
             className="block text-sm font-medium text-slate-700 mb-2"
           >
-            {t("confirmPassword")}{" "}
-            <span className="text-red-500">*</span>
+            {t("confirmPassword")} <span className="text-red-500">*</span>
           </label>
 
           <div className="relative">
@@ -193,9 +201,7 @@ export default function Signup() {
                 setShowConfirmPassword(!showConfirmPassword)
               }
               aria-label={
-                showConfirmPassword
-                  ? "Hide password"
-                  : "Show password"
+                showConfirmPassword ? "Hide password" : "Show password"
               }
               className={`absolute ${
                 isUrdu ? "left-4" : "right-4"
@@ -213,6 +219,12 @@ export default function Signup() {
         {error && (
           <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl p-3">
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="bg-teal-50 border border-teal-100 text-teal-700 text-sm rounded-xl p-3">
+            {success}
           </div>
         )}
 

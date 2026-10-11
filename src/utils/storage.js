@@ -1,7 +1,10 @@
+import { supabase } from "../lib/supabase";
+
 const USERS_KEY = "medicare_users";
 const CURRENT_USER_KEY = "medicare_current_user";
 
-// Get all registered users
+// USERS / LOCAL PROFILE
+
 export function getUsers() {
   try {
     return JSON.parse(localStorage.getItem(USERS_KEY)) || [];
@@ -10,12 +13,10 @@ export function getUsers() {
   }
 }
 
-// Save all users
 export function saveUsers(users) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
 
-// Get currently logged-in user
 export function getCurrentUser() {
   try {
     return JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
@@ -24,103 +25,162 @@ export function getCurrentUser() {
   }
 }
 
-// Set currently logged-in user
 export function setCurrentUser(user) {
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+  if (!user) {
+    localStorage.removeItem(CURRENT_USER_KEY);
+    return;
+  }
+
+  const { password, ...safeUser } = user;
+  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(safeUser));
 }
 
-// Logout
-export function logoutUser() {
+export async function logoutUser() {
+  const { error } = await supabase.auth.signOut();
+
+  if (error) throw error;
+
   localStorage.removeItem(CURRENT_USER_KEY);
 }
 
-// Add a new user
 export function createUser(user) {
   const users = getUsers();
 
-  users.push(user);
+  const existingUser = users.find(
+    (item) =>
+      item.id === user.id ||
+      item.email?.toLowerCase() === user.email?.toLowerCase()
+  );
+
+  if (existingUser) {
+    const updatedUser = { ...existingUser, ...user };
+    const updatedUsers = users.map((item) =>
+      item.id === updatedUser.id ? updatedUser : item
+    );
+
+    saveUsers(updatedUsers);
+    return updatedUser;
+  }
+
+  const { password, ...safeUser } = user;
+  users.push(safeUser);
   saveUsers(users);
 
-  return user;
+  return safeUser;
 }
 
-// Update existing user
 export function updateUser(updatedUser) {
   const users = getUsers();
+  const { password, ...safeUser } = updatedUser;
 
   const updatedUsers = users.map((user) =>
-    user.id === updatedUser.id ? updatedUser : user
+    user.id === safeUser.id ? { ...user, ...safeUser } : user
   );
 
   saveUsers(updatedUsers);
-  setCurrentUser(updatedUser);
+  setCurrentUser(safeUser);
 
-  return updatedUser;
+  return safeUser;
 }
 
-// Find user by email
 export function findUserByEmail(email) {
-  const users = getUsers();
+  if (!email) return null;
 
-  return users.find(
-    (user) => user.email.toLowerCase() === email.toLowerCase()
+  const normalizedEmail = email.trim().toLowerCase();
+
+  return (
+    getUsers().find(
+      (user) => user.email?.toLowerCase() === normalizedEmail
+    ) || null
   );
 }
-// =========================================
-// PATIENT MEDICAL HISTORY
-// =========================================
 
-const HISTORY_KEY = "medicare_patient_history";
+export function findUserById(userId) {
+  if (!userId) return null;
 
-// Get history for a specific patient
-export function getPatientHistory(userId) {
-  try {
-    const history = JSON.parse(
-      localStorage.getItem(HISTORY_KEY)
-    ) || [];
-
-    return history.filter(
-      (record) => record.userId === userId
-    );
-  } catch {
-    return [];
-  }
+  return getUsers().find((user) => user.id === userId) || null;
 }
 
-// Save a new symptom check
-export function savePatientHistory(record) {
-  const history = JSON.parse(
-    localStorage.getItem(HISTORY_KEY)
-  ) || [];
+// SUPABASE MEDICAL HISTORY
 
-  const newRecord = {
+async function getAuthenticatedUserId() {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error) throw error;
+  if (!user) throw new Error("Please log in to access medical history.");
+
+  return user.id;
+}
+
+export async function getPatientHistory() {
+  const userId = await getAuthenticatedUserId();
+
+  const { data, error } = await supabase
+    .from("patient_history")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
+  return (data || []).map((record) => ({
     ...record,
-    id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
-  };
-
-  history.push(newRecord);
-
-  localStorage.setItem(
-    HISTORY_KEY,
-    JSON.stringify(history)
-  );
-
-  return newRecord;
+    createdAt: record.created_at,
+    conditionDetails: record.condition_details,
+    selfCare: record.self_care,
+    safetyNotes: record.safety_notes,
+  }));
 }
 
-// Delete a history record
-export function deletePatientHistory(recordId) {
-  const history = JSON.parse(
-    localStorage.getItem(HISTORY_KEY)
-  ) || [];
+export async function savePatientHistory(record) {
+  if (!record) {
+    throw new Error("Medical history record is required.");
+  }
 
-  const updatedHistory = history.filter(
-    (record) => record.id !== recordId
-  );
+  const userId = await getAuthenticatedUserId();
 
-  localStorage.setItem(
-    HISTORY_KEY,
-    JSON.stringify(updatedHistory)
-  );
+  const { data, error } = await supabase
+    .from("patient_history")
+    .insert({
+      user_id: userId,
+      symptoms: record.symptoms ?? [],
+      duration: record.duration ?? "",
+      severity: record.severity ?? "",
+      guidance: record.guidance ?? null,
+      recommendations: record.recommendations ?? null,
+      condition_details: record.conditionDetails ?? [],
+      self_care: record.selfCare ?? [],
+      safety_notes: record.safetyNotes ?? [],
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return {
+    ...data,
+    createdAt: data.created_at,
+    conditionDetails: data.condition_details,
+    selfCare: data.self_care,
+    safetyNotes: data.safety_notes,
+  };
+}
+
+export async function deletePatientHistory(recordId) {
+  if (!recordId) {
+    throw new Error("Medical history record ID is required.");
+  }
+
+  const userId = await getAuthenticatedUserId();
+
+  const { error } = await supabase
+    .from("patient_history")
+    .delete()
+    .eq("id", recordId)
+    .eq("user_id", userId);
+
+  if (error) throw error;
 }

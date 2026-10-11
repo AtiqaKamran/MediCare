@@ -1,4 +1,3 @@
-
 import { HeartPulse } from "lucide-react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
@@ -8,6 +7,9 @@ import PatientProfile from "./pages/PatientProfile";
 import Dashboard from "./pages/Dashboard";
 import SymptomChecker from "./pages/SymptomChecker";
 import History from "./pages/History";
+import MedicalRecords from "./pages/MedicalRecords";
+
+import SupabaseTest from "./SupabaseTest";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import { getCurrentUser } from "./utils/storage";
@@ -57,7 +59,6 @@ function LanguageSelection() {
           className="w-full h-[57px] bg-white rounded-[9px] flex flex-col items-center justify-center gap-1 hover:bg-slate-50 active:scale-[0.99] transition"
         >
           <span className="text-teal-700 text-xs">◎</span>
-
           <span className="text-[10px] text-slate-600 font-normal">
             Continue in English
           </span>
@@ -70,7 +71,6 @@ function LanguageSelection() {
           dir="rtl"
         >
           <span className="text-teal-700 text-xs">◎</span>
-
           <span className="text-[10px] text-slate-600 font-normal">
             اردو میں جاری رکھیں
           </span>
@@ -88,18 +88,16 @@ function LanguageSelection() {
 function AppRoutes() {
   const { language } = useLanguage();
 
-  // Show language selection if no language is saved
+  // Show language selection if no language is selected
   if (!language) {
     return <LanguageSelection />;
   }
 
-  // Check whether a user is already logged in
   const isLoggedIn = Boolean(getCurrentUser());
 
   return (
     <Routes>
-
-      {/* Home Route */}
+      {/* Home */}
       <Route
         path="/"
         element={
@@ -110,7 +108,7 @@ function AppRoutes() {
         }
       />
 
-      {/* Login Route */}
+      {/* Login */}
       <Route
         path="/login"
         element={
@@ -122,7 +120,7 @@ function AppRoutes() {
         }
       />
 
-      {/* Signup Route */}
+      {/* Signup */}
       <Route
         path="/signup"
         element={
@@ -174,6 +172,22 @@ function AppRoutes() {
         }
       />
 
+      {/* My Medical Records */}
+      <Route
+        path="/medical-records"
+        element={
+          <ProtectedRoute>
+            <MedicalRecords />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Temporary Supabase Test */}
+      <Route
+        path="/supabase-test"
+        element={<SupabaseTest />}
+      />
+
       {/* Unknown Routes */}
       <Route
         path="*"
@@ -184,7 +198,6 @@ function AppRoutes() {
           />
         }
       />
-
     </Routes>
   );
 }

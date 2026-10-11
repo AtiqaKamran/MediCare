@@ -35,15 +35,14 @@ import {
 
 import { useTheme } from "../context/ThemeContext";
 
-// --------------------------------------------------
 // SYMPTOM CATEGORIES
-// --------------------------------------------------
 
 const symptomCategories = [
   {
     name: "General",
     symptoms: [
       "Fever",
+      "Flue",
       "Chills",
       "Fatigue",
       "Weakness",
@@ -1185,9 +1184,7 @@ const getConditionDetails = (symptoms) => {
   return details;
 };
 
-// --------------------------------------------------
 // PATIENT SAFETY NOTES
-// --------------------------------------------------
 
 const getPatientSafetyNotes = (user) => {
   const notes = [];
@@ -1203,9 +1200,7 @@ const getPatientSafetyNotes = (user) => {
     ];
   }
 
-  // ----------------------------------------------
   // HELPER: SAFELY READ PROFILE INFORMATION
-  // ----------------------------------------------
 
   const getValue = (...values) =>
     values.find(
@@ -1662,9 +1657,10 @@ const Symptoms = () => {
     return;
   }
 
+const handleSave = async () => {
   try {
-    savePatientHistory({
-      userId: user.id || user.email,
+    await savePatientHistory({
+      userId: user.id,
       symptoms: selectedSymptoms,
       duration,
       severity,
@@ -1679,9 +1675,11 @@ const Symptoms = () => {
 
     alert("Your health information has been saved successfully!");
   } catch (error) {
-    console.error(error);
-    alert("Unable to save your information. Please try again.");
+    console.error("Error saving medical history:", error);
+    alert(error.message || "Unable to save your information. Please try again.");
   }
+};
+
 };
 
   // ----------------------------------------------

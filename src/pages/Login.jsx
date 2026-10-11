@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, LogIn } from "lucide-react";
@@ -6,8 +5,10 @@ import { Eye, EyeOff, LogIn } from "lucide-react";
 import AuthLayout from "../components/AuthLayout";
 import FormField from "../components/FormField";
 import { useLanguage } from "../context/LanguageContext";
+import { supabase } from "../lib/supabase";
 import {
-  findUserByEmail,
+  findUserById,
+  createUser,
   setCurrentUser,
 } from "../utils/storage";
 
@@ -22,46 +23,65 @@ export default function Login() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-
+    setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
-    const user = findUserByEmail(form.email);
+    try {
+      const { data, error: loginError } =
+        await supabase.auth.signInWithPassword({
+          email: form.email.trim().toLowerCase(),
+          password: form.password,
+        });
 
-    if (!user) {
-      setError(t("noAccountFound"));
-      return;
-    }
+      if (loginError) throw loginError;
 
-    if (user.password !== form.password) {
-      setError(t("incorrectPassword"));
-      return;
-    }
+      const authUser = data.user;
 
-    setCurrentUser(user);
+      let user = findUserById(authUser.id);
 
-    if (user.profileCompleted) {
-      navigate("/dashboard");
-    } else {
-      navigate("/profile");
+      if (!user) {
+        user = {
+          id: authUser.id,
+          name: authUser.user_metadata?.name || "",
+          email: authUser.email || form.email.trim().toLowerCase(),
+          profileCompleted: false,
+          profile: {
+            age: "",
+            gender: "",
+            conditions: "",
+            allergies: "",
+            lahoreArea: "",
+          },
+          createdAt: new Date().toISOString(),
+          recentActivity: [],
+        };
+
+        createUser(user);
+      }
+
+      setCurrentUser(user);
+
+      navigate(user.profileCompleted ? "/dashboard" : "/profile");
+    } catch (err) {
+      setError(
+        err.message || "Login failed. Please check your email and password."
+      );
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <AuthLayout
-      title={t("welcomeBack")}
-      subtitle={t("loginSubtitle")}
-    >
+    <AuthLayout title={t("welcomeBack")} subtitle={t("loginSubtitle")}>
       <form
         onSubmit={handleSubmit}
         className="space-y-5"
@@ -82,8 +102,7 @@ export default function Login() {
             htmlFor="password"
             className="block text-sm font-medium text-slate-700 mb-2"
           >
-            {t("password")}{" "}
-            <span className="text-red-500">*</span>
+            {t("password")} <span className="text-red-500">*</span>
           </label>
 
           <div className="relative">
@@ -103,18 +122,12 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              aria-label={
-                showPassword ? "Hide password" : "Show password"
-              }
+              aria-label={showPassword ? "Hide password" : "Show password"}
               className={`absolute ${
                 isUrdu ? "left-4" : "right-4"
               } top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600`}
             >
-              {showPassword ? (
-                <EyeOff size={19} />
-              ) : (
-                <Eye size={19} />
-              )}
+              {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
             </button>
           </div>
         </div>
@@ -127,10 +140,11 @@ export default function Login() {
 
         <button
           type="submit"
-          className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3.5 rounded-xl transition flex items-center justify-center gap-2"
+          disabled={loading}
+          className="w-full bg-teal-600 hover:bg-teal-700 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl transition flex items-center justify-center gap-2"
         >
           <LogIn size={19} />
-          {t("login")}
+          {loading ? "Signing in..." : t("login")}
         </button>
 
         <p className="text-center text-sm text-slate-500">
