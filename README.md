@@ -1,4 +1,4 @@
-# MediCare — Patient Health Assistant
+# MediCare - Patient Health Assistant
 
 MediCare is a web-based patient health assistant designed to help users manage their personal health information, explore symptoms, and access general health guidance through a simple and user-friendly interface.
 
@@ -30,14 +30,14 @@ MediCare is actively being developed. The following areas may be expanded in fut
 
 ## Technologies Used
 
-- **React.js** — User interface development.
-- **JavaScript** — Application logic.
-- **Tailwind CSS** — Styling and responsive design.
-- **React Router** — Client-side navigation.
-- **Lucide React** — Icons.
-- **Vite** — Development server and build tool.
-- **Supabase** — Authentication and database services.
-- **Local Storage** — Local application data and profile caching.
+- **React.js** -  User interface development.
+- **JavaScript** - Application logic.
+- **Tailwind CSS** -  Styling and responsive design.
+- **React Router** - Client-side navigation.
+- **Lucide React** - Icons.
+- **Vite** - Development server and build tool.
+- **Supabase** -  Authentication and database services.
+- **Local Storage** - Local application data and profile caching.
 
 ## Important Disclaimer
 
@@ -45,6 +45,6 @@ MediCare is an educational project developed for learning and demonstration purp
 
 ## Project Status
 
-**In Progress** — Core modules are being developed, with additional features, improvements, and functionality planned for future updates.
+**In Progress** - Core modules are being developed, with additional features, improvements, and functionality planned for future updates.
 
 
