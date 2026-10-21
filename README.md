@@ -54,7 +54,7 @@ MediCare/
 
 *Note: The structure above highlights the main files. Your actual project may contain additional files and folders.*
 
-## 🚀 Getting Started
+## Getting Started
 
 Follow these steps to run MediCare on your local machine.
 
