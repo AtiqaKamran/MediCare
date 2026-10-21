@@ -1,6 +1,7 @@
 import { HeartPulse } from "lucide-react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
+import Welcome from "./pages/Welcome";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PatientProfile from "./pages/PatientProfile";
@@ -8,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import SymptomChecker from "./pages/SymptomChecker";
 import History from "./pages/History";
 import MedicalRecords from "./pages/MedicalRecords";
+import DoctorFinder from "./pages/DoctorFinder";
 
 import SupabaseTest from "./SupabaseTest";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -20,9 +22,7 @@ import {
   useLanguage,
 } from "./context/LanguageContext";
 
-/* =========================================
-   Language Selection Screen
-========================================= */
+/* Language Selection Screen */
 
 function LanguageSelection() {
   const { setLanguage } = useLanguage();
@@ -33,8 +33,6 @@ function LanguageSelection() {
       dir="ltr"
     >
       <div className="w-full max-w-[600px] mx-auto bg-[#0F766E] rounded-[10px] px-3 pt-3 pb-3 text-center">
-
-        {/* Logo */}
         <div className="flex justify-center mb-3">
           <HeartPulse
             size={27}
@@ -43,17 +41,14 @@ function LanguageSelection() {
           />
         </div>
 
-        {/* Heading */}
         <h1 className="text-[20px] font-semibold text-white leading-7">
           Welcome to MediCare
         </h1>
 
-        {/* Subtitle */}
         <p className="text-[13px] text-teal-50 mt-2 mb-3">
           Please select your preferred language
         </p>
 
-        {/* English Button */}
         <button
           onClick={() => setLanguage("en")}
           className="w-full h-[57px] bg-white rounded-[9px] flex flex-col items-center justify-center gap-1 hover:bg-slate-50 active:scale-[0.99] transition"
@@ -64,7 +59,6 @@ function LanguageSelection() {
           </span>
         </button>
 
-        {/* Urdu Button */}
         <button
           onClick={() => setLanguage("ur")}
           className="w-full h-[57px] bg-white rounded-[9px] flex flex-col items-center justify-center gap-1 mt-2 hover:bg-slate-50 active:scale-[0.99] transition"
@@ -75,20 +69,17 @@ function LanguageSelection() {
             اردو میں جاری رکھیں
           </span>
         </button>
-
       </div>
     </div>
   );
 }
 
-/* =========================================
-   Application Routes
-========================================= */
+/*  MediCare Routes*/
 
 function AppRoutes() {
   const { language } = useLanguage();
 
-  // Show language selection if no language is selected
+  // Step 1: Select a language first
   if (!language) {
     return <LanguageSelection />;
   }
@@ -97,14 +88,15 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* Home */}
+      {/* Welcome page */}
       <Route
         path="/"
         element={
-          <Navigate
-            to={isLoggedIn ? "/dashboard" : "/login"}
-            replace
-          />
+          isLoggedIn ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <Welcome />
+          )
         }
       />
 
@@ -182,6 +174,16 @@ function AppRoutes() {
         }
       />
 
+      {/* Doctor Finder */}
+      <Route
+        path="/doctors"
+        element={
+          <ProtectedRoute>
+            <DoctorFinder />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Temporary Supabase Test */}
       <Route
         path="/supabase-test"
@@ -193,7 +195,7 @@ function AppRoutes() {
         path="*"
         element={
           <Navigate
-            to={isLoggedIn ? "/dashboard" : "/login"}
+            to={isLoggedIn ? "/dashboard" : "/"}
             replace
           />
         }
@@ -202,9 +204,7 @@ function AppRoutes() {
   );
 }
 
-/* =========================================
-   Main App
-========================================= */
+/* Main App */
 
 export default function App() {
   return (

@@ -46,34 +46,78 @@ export default function Login() {
 
       const authUser = data.user;
 
-      let user = findUserById(authUser.id);
+      // Fetch the patient's saved profile from Supabase.
+      const { data: savedProfile, error: profileError } =
+        await supabase
+          .from("patient_profiles")
+          .select("*")
+          .eq("user_id", authUser.id)
+          .maybeSingle();
 
-      if (!user) {
-        user = {
-          id: authUser.id,
-          name: authUser.user_metadata?.name || "",
-          email: authUser.email || form.email.trim().toLowerCase(),
-          profileCompleted: false,
-          profile: {
-            age: "",
-            gender: "",
-            conditions: "",
-            allergies: "",
-            lahoreArea: "",
-          },
-          createdAt: new Date().toISOString(),
-          recentActivity: [],
-        };
+      if (profileError) throw profileError;
 
-        createUser(user);
-      }
+      const localUser = findUserById(authUser.id);
 
+      const user = {
+        ...(localUser || {}),
+        id: authUser.id,
+        name:
+          savedProfile?.full_name ||
+          authUser.user_metadata?.name ||
+          localUser?.name ||
+          "",
+        fullName:
+          savedProfile?.full_name ||
+          localUser?.fullName ||
+          authUser.user_metadata?.name ||
+          "",
+        email: authUser.email || form.email.trim().toLowerCase(),
+
+        profileCompleted: Boolean(savedProfile),
+
+        profile: {
+          ...(localUser?.profile || {}),
+          fullName:
+            savedProfile?.full_name ||
+            localUser?.profile?.fullName ||
+            "",
+          age: savedProfile?.age ?? localUser?.profile?.age ?? "",
+          gender: savedProfile?.gender ?? localUser?.profile?.gender ?? "",
+          conditions:
+            savedProfile?.conditions ??
+            localUser?.profile?.conditions ??
+            "",
+          allergies:
+            savedProfile?.allergies ??
+            localUser?.profile?.allergies ??
+            "",
+          medicineAllergies:
+            savedProfile?.medicine_allergies ??
+            localUser?.profile?.medicineAllergies ??
+            [],
+          foodAllergies:
+            savedProfile?.food_allergies ??
+            localUser?.profile?.foodAllergies ??
+            [],
+          lahoreArea:
+            savedProfile?.lahore_area ??
+            localUser?.profile?.lahoreArea ??
+            "",
+        },
+
+        createdAt:
+          localUser?.createdAt || new Date().toISOString(),
+        recentActivity: localUser?.recentActivity || [],
+      };
+
+      createUser(user);
       setCurrentUser(user);
 
-      navigate(user.profileCompleted ? "/dashboard" : "/profile");
+      navigate(savedProfile ? "/dashboard" : "/profile");
     } catch (err) {
       setError(
-        err.message || "Login failed. Please check your email and password."
+        err.message ||
+          "Login failed. Please check your email and password."
       );
     } finally {
       setLoading(false);
@@ -144,7 +188,7 @@ export default function Login() {
           className="w-full bg-teal-600 hover:bg-teal-700 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl transition flex items-center justify-center gap-2"
         >
           <LogIn size={19} />
-          {loading ? "Signing in..." : t("login")}
+          {loading ? t("signingIn") : t("login")}
         </button>
 
         <p className="text-center text-sm text-slate-500">

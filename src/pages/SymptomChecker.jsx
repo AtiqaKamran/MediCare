@@ -1,5 +1,6 @@
 import { getCurrentUser, savePatientHistory } from "../utils/storage";
 import React, { useEffect, useMemo, useState } from "react";
+import { useLanguage } from "../context/LanguageContext";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -284,9 +285,7 @@ const symptomCategories = [
   },
 ];
 
-// --------------------------------------------------
 // SYMPTOM DURATION OPTIONS
-// --------------------------------------------------
 
 const durationOptions = [
   {
@@ -311,9 +310,7 @@ const durationOptions = [
   },
 ];
 
-// --------------------------------------------------
 // SYMPTOM SEVERITY OPTIONS
-// --------------------------------------------------
 
 const severityOptions = [
   {
@@ -335,9 +332,7 @@ const severityOptions = [
     color: "red",
   },
 ];
-// --------------------------------------------------
 // SYMPTOM GUIDANCE
-// --------------------------------------------------
 
 const getGuidance = (symptoms, severity, duration) => {
   const symptomList = symptoms.map((item) => item.toLowerCase());
@@ -430,9 +425,7 @@ const getGuidance = (symptoms, severity, duration) => {
   };
 };
 
-// --------------------------------------------------
 // CONDITION-SPECIFIC INFORMATION
-// --------------------------------------------------
 
 const getConditionDetails = (symptoms) => {
   const symptomList = symptoms.map((item) => item.toLowerCase());
@@ -444,9 +437,7 @@ const getConditionDetails = (symptoms) => {
 
   const details = [];
 
-  // ----------------------------------------------
   // COLD & FLU-LIKE SYMPTOMS
-  // ----------------------------------------------
 
   if (
     hasSymptom(
@@ -514,9 +505,7 @@ const getConditionDetails = (symptoms) => {
     });
   }
 
-  // ----------------------------------------------
   // SORE THROAT
-  // ----------------------------------------------
 
   if (
     hasSymptom(
@@ -569,10 +558,6 @@ const getConditionDetails = (symptoms) => {
         "Seek urgent care if you cannot swallow saliva, have difficulty breathing, or experience rapidly increasing throat swelling.",
     });
   }
-
-  // ----------------------------------------------
-  // HEARTBURN, REFLUX & INDIGESTION
-  // ----------------------------------------------
 
   if (
     hasSymptom(
@@ -722,9 +707,8 @@ const getConditionDetails = (symptoms) => {
     });
   }
 
-  // ----------------------------------------------
+
   // HEADACHE & MIGRAINE
-  // ----------------------------------------------
 
   if (
     hasSymptom(
@@ -877,10 +861,7 @@ const getConditionDetails = (symptoms) => {
     });
   }
 
-  // ----------------------------------------------
   // MUSCLE & JOINT PAIN
-  // ----------------------------------------------
-
   if (
     hasSymptom(
       "muscle cramps",
@@ -964,10 +945,7 @@ const getConditionDetails = (symptoms) => {
         "Seek urgent assessment for severe pain after an injury, inability to bear weight, a hot or markedly swollen joint, new weakness, or numbness with loss of bladder or bowel control.",
     });
   }
-
-  // ----------------------------------------------
   // CONSTIPATION
-  // ----------------------------------------------
 
   if (
     hasSymptom(
@@ -1022,9 +1000,7 @@ const getConditionDetails = (symptoms) => {
     });
   }
 
-  // ----------------------------------------------
   // STRESS & SLEEP DIFFICULTIES
-  // ----------------------------------------------
 
   if (
     hasSymptom(
@@ -1095,9 +1071,7 @@ const getConditionDetails = (symptoms) => {
     });
   }
 
-  // ----------------------------------------------
   // URINARY SYMPTOMS
-  // ----------------------------------------------
 
   if (
     hasSymptom(
@@ -1143,9 +1117,7 @@ const getConditionDetails = (symptoms) => {
     });
   }
 
-  // ----------------------------------------------
   // GENERAL FALLBACK
-  // ----------------------------------------------
 
   if (details.length === 0) {
     details.push({
@@ -1262,9 +1234,7 @@ const getPatientSafetyNotes = (user) => {
   const normalizedAllergies = allergyText.toLowerCase();
   const normalizedConditions = conditionText.toLowerCase();
 
-  // ----------------------------------------------
   // AGE-RELATED PRECAUTIONS
-  // ----------------------------------------------
 
   if (Number.isFinite(age) && age > 0) {
     if (age < 18) {
@@ -1284,9 +1254,7 @@ const getPatientSafetyNotes = (user) => {
     }
   }
 
-  // ----------------------------------------------
   // ALLERGY PRECAUTIONS
-  // ----------------------------------------------
 
   if (
     normalizedAllergies &&
@@ -1307,10 +1275,7 @@ const getPatientSafetyNotes = (user) => {
         "Even if no allergies are recorded in your profile, check medicine ingredients and stop using a product if you experience a suspected allergic reaction. Seek emergency help for breathing difficulty or swelling of the throat or tongue.",
     });
   }
-
-  // ----------------------------------------------
   // EXISTING MEDICAL CONDITIONS
-  // ----------------------------------------------
 
   if (normalizedConditions) {
     const conditionWarnings = [];
@@ -1397,9 +1362,7 @@ const getPatientSafetyNotes = (user) => {
     });
   }
 
-  // ----------------------------------------------
   // CURRENT MEDICATIONS
-  // ----------------------------------------------
 
   if (
     medicationText &&
@@ -1414,33 +1377,341 @@ const getPatientSafetyNotes = (user) => {
     });
   }
 
-  // ----------------------------------------------
   // GENERAL SAFETY REMINDER
-  // ----------------------------------------------
 
   notes.push({
     type: "info",
     title: "Important Safety Reminder",
     message:
       "This tool provides general educational information only. It does not diagnose conditions, prescribe treatment, or confirm that a medicine is safe for you. Always follow the product label and seek professional advice when uncertain.",
-  });
+ });
 
   return notes;
 };
 
-// --------------------------------------------------
 // MAIN SYMPTOMS CHECKER COMPONENT
-// --------------------------------------------------
 
 const Symptoms = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
   const isDark = theme === "dark";
+  const { language, t, isUrdu } = useLanguage();
 
-  // ----------------------------------------------
+const urduLabels = {
+  // Page headings
+  "Dashboard": "ڈیش بورڈ",
+  "Patient Portal": "مریض کا پورٹل",
+  "Health Assistant": "صحت کا معاون",
+  "Educational tool": "تعلیمی ٹول",
+  "Important Health Notice": "صحت سے متعلق اہم اطلاع",
+  "Select Your Symptoms": "اپنی علامات منتخب کریں",
+  "Choose up to 10 symptoms that best describe how you feel.":
+    "زیادہ سے زیادہ 10 ایسی علامات منتخب کریں جو آپ کی کیفیت بیان کرتی ہوں۔",
+  "Selected Symptoms": "منتخب کردہ علامات",
+  "Clear all": "سب ہٹا دیں",
+  "Tell Us More": "مزید معلومات دیں",
+  "These details help organize the general information shown in your results.":
+    "یہ معلومات آپ کے نتائج میں عمومی معلومات ترتیب دینے میں مدد کرتی ہیں۔",
+  "How long have you experienced these symptoms?":
+    "آپ کو یہ علامات کب سے ہیں؟",
+  "Select Duration": "دورانیہ منتخب کریں",
+  "Duration": "دورانیہ",
+  "Severity": "شدت",
+  "Symptoms You Reported": "آپ کی بتائی گئی علامات",
+  "Health Information": "صحت سے متعلق معلومات",
+  "Possible Causes": "ممکنہ وجوہات",
+  "General Self-Care": "گھر پر عمومی دیکھ بھال",
+  "Medicine Information": "ادویات سے متعلق معلومات",
+  "Educational only": "صرف تعلیمی مقصد کے لیے",
+  "Purpose": "استعمال",
+  "Common Forms": "عام دستیاب اقسام",
+  "Possible Side Effects": "ممکنہ مضر اثرات",
+  "Important Precaution": "اہم احتیاط",
+  "When to Seek Medical Care": "ڈاکٹر سے کب رجوع کریں",
+  "Your Personal Safety Review": "آپ کی ذاتی صحت اور حفاظت کا جائزہ",
+  "Medical Disclaimer": "طبی وضاحت",
+  "Find a Suitable Doctor": "مناسب ڈاکٹر تلاش کریں",
+  "View Medical History": "طبی تاریخ دیکھیں",
+  "Save This Information": "یہ معلومات محفوظ کریں",
+  "No symptoms found": "کوئی علامات نہیں ملیں",
+  "Try a different search term.": "کوئی دوسرا لفظ تلاش کریں۔",
+  "matching symptom": "مطابقت رکھنے والی علامت",
+  "matching symptoms": "مطابقت رکھنے والی علامات",
+  "found": "مل گئیں",
+  "selected": "منتخب",
+  "Please select at least one symptom to continue.":
+    "آگے بڑھنے کے لیے کم از کم ایک علامت منتخب کریں۔",
+  "Please select how long you have been experiencing these symptoms.":
+    "براہ کرم بتائیں کہ آپ کو یہ علامات کب سے ہیں۔",
+  "Please select the severity of your symptoms.":
+    "براہ کرم اپنی علامات کی شدت منتخب کریں۔",
+  "You can select a maximum of 10 symptoms.":
+    "آپ زیادہ سے زیادہ 10 علامات منتخب کر سکتے ہیں۔",
+  "Clear search": "تلاش صاف کریں",
+
+  // Duration options
+  "Less than 24 hours": "24 گھنٹے سے کم",
+  "less than 24 hours": "24 گھنٹے سے کم",
+  "1–3 days": "1 سے 3 دن",
+  "4–7 days": "4 سے 7 دن",
+  "1–2 weeks": "1 سے 2 ہفتے",
+  "More than 2 weeks": "2 ہفتوں سے زیادہ",
+  "more than 2 weeks": "2 ہفتوں سے زیادہ",
+
+  // Severity options
+  "Mild": "ہلکی",
+  "mild": "ہلکی",
+  "Moderate": "درمیانی",
+  "moderate": "درمیانی",
+  "Severe": "شدید",
+  "severe": "شدید",
+  "Noticeable but does not significantly affect daily activities.":
+    "محسوس ہوتی ہے لیکن روزمرہ کے کاموں کو زیادہ متاثر نہیں کرتی۔",
+  "Causes discomfort and affects some daily activities.":
+    "تکلیف پیدا کرتی ہے اور روزمرہ کے کچھ کاموں کو متاثر کرتی ہے۔",
+  "Significantly affects daily activities or causes intense discomfort.":
+    "روزمرہ کے کاموں کو بہت زیادہ متاثر کرتی ہے یا شدید تکلیف پیدا کرتی ہے۔",
+
+  // Symptom categories
+  "General": "عمومی",
+  "Head": "سر",
+  "Eyes": "آنکھیں",
+  "Ears": "کان",
+  "Nose": "ناک",
+  "Mouth & Throat": "منہ اور گلا",
+  "Neck": "گردن",
+  "Chest & Breathing": "سینہ اور سانس",
+  "Back": "کمر",
+  "Arms": "بازو",
+  "Hands": "ہاتھ",
+  "Abdomen": "پیٹ",
+  "Digestive System": "نظامِ ہاضمہ",
+  "Urinary": "پیشاب کا نظام",
+  "Pelvic & Reproductive": "شرونی اور تولیدی نظام",
+  "Legs": "ٹانگیں",
+  "Feet": "پاؤں",
+  "Skin": "جلد",
+  "Mental Health & Sleep": "ذہنی صحت اور نیند",
+  "Other": "دیگر",
+
+  // Symptoms
+  "Fever": "بخار",
+  "Flue": "فلو",
+  "Chills": "سردی لگنا",
+  "Fatigue": "تھکاوٹ",
+  "Weakness": "کمزوری",
+  "Body aches": "جسم میں درد",
+  "Loss of appetite": "بھوک میں کمی",
+  "Unexplained weight loss": "بغیر وجہ وزن کم ہونا",
+  "Night sweats": "رات کو پسینہ آنا",
+  "Dizziness": "چکر آنا",
+  "Dehydration": "جسم میں پانی کی کمی",
+  "Headache": "سر درد",
+  "Migraine": "آدھے سر کا درد",
+  "Pressure in head": "سر میں دباؤ",
+  "Lightheadedness": "سر ہلکا محسوس ہونا",
+  "Fainting": "بے ہوش ہونا",
+  "Confusion": "ذہنی الجھن",
+  "Memory problems": "یادداشت کے مسائل",
+  "Eye pain": "آنکھ میں درد",
+  "Red eyes": "آنکھوں میں سرخی",
+  "Blurred vision": "دھندلا نظر آنا",
+  "Dry eyes": "آنکھوں میں خشکی",
+  "Watery eyes": "آنکھوں سے پانی آنا",
+  "Itchy eyes": "آنکھوں میں خارش",
+  "Sensitivity to light": "روشنی سے حساسیت",
+  "Eye swelling": "آنکھ میں سوجن",
+  "Earache": "کان میں درد",
+  "Ringing in ears": "کانوں میں گھنٹی بجنا",
+  "Reduced hearing": "سننے کی صلاحیت میں کمی",
+  "Ear discharge": "کان سے رطوبت آنا",
+  "Ear pressure": "کان میں دباؤ",
+  "Dizziness with ear symptoms": "کان کی علامات کے ساتھ چکر آنا",
+  "Runny nose": "ناک بہنا",
+  "Blocked nose": "ناک بند ہونا",
+  "Sneezing": "چھینکیں آنا",
+  "Nosebleed": "ناک سے خون آنا",
+  "Loss of smell": "سونگھنے کی حس ختم ہونا",
+  "Sinus pressure": "سائنَس میں دباؤ",
+  "Nasal congestion": "ناک میں بندش",
+  "Sore throat": "گلے میں درد",
+  "Difficulty swallowing": "نگلنے میں دشواری",
+  "Dry mouth": "منہ خشک ہونا",
+  "Mouth ulcers": "منہ میں چھالے",
+  "Toothache": "دانت میں درد",
+  "Bad breath": "منہ سے بدبو آنا",
+  "Hoarse voice": "آواز بیٹھ جانا",
+  "Swollen tonsils": "ٹانسلز میں سوجن",
+  "Neck pain": "گردن میں درد",
+  "Neck stiffness": "گردن میں اکڑاؤ",
+  "Swollen glands": "غدود میں سوجن",
+  "Limited neck movement": "گردن کی حرکت محدود ہونا",
+  "Chest pain": "سینے میں درد",
+  "Shortness of breath": "سانس لینے میں دشواری",
+  "Cough": "کھانسی",
+  "Dry cough": "خشک کھانسی",
+  "Cough with mucus": "بلغم والی کھانسی",
+  "Wheezing": "سانس لیتے وقت سیٹی کی آواز",
+  "Fast heartbeat": "دل کی دھڑکن تیز ہونا",
+  "Palpitations": "دل کی دھڑکن بے ترتیب محسوس ہونا",
+  "Chest tightness": "سینے میں جکڑن",
+  "Lower back pain": "کمر کے نچلے حصے میں درد",
+  "Upper back pain": "کمر کے اوپری حصے میں درد",
+  "Middle back pain": "کمر کے درمیانی حصے میں درد",
+  "Back stiffness": "کمر میں اکڑاؤ",
+  "Pain radiating to legs": "ٹانگوں تک پھیلنے والا درد",
+  "Arm pain": "بازو میں درد",
+  "Shoulder pain": "کندھے میں درد",
+  "Elbow pain": "کہنی میں درد",
+  "Arm weakness": "بازو میں کمزوری",
+  "Arm numbness": "بازو سن ہونا",
+  "Tingling in arms": "بازوؤں میں جھنجھناہٹ",
+  "Hand pain": "ہاتھ میں درد",
+  "Wrist pain": "کلائی میں درد",
+  "Finger pain": "انگلی میں درد",
+  "Hand swelling": "ہاتھ میں سوجن",
+  "Hand numbness": "ہاتھ سن ہونا",
+  "Tingling in fingers": "انگلیوں میں جھنجھناہٹ",
+  "Reduced grip strength": "چیز پکڑنے کی طاقت میں کمی",
+  "Abdominal pain": "پیٹ میں درد",
+  "Stomach cramps": "پیٹ میں مروڑ",
+  "Bloating": "پیٹ پھولنا",
+  "Gas": "گیس",
+  "Heartburn": "سینے میں جلن",
+  "Acid reflux": "معدے کا تیزاب واپس آنا",
+  "Abdominal swelling": "پیٹ میں سوجن",
+  "Pain after eating": "کھانے کے بعد درد",
+  "Nausea": "متلی",
+  "Vomiting": "قے",
+  "Diarrhea": "اسہال",
+  "Constipation": "قبض",
+  "Indigestion": "بدہضمی",
+  "Blood in stool": "پاخانے میں خون",
+  "Black stool": "کالا پاخانہ",
+  "Difficulty passing stool": "پاخانہ کرنے میں دشواری",
+  "Painful urination": "پیشاب میں درد",
+  "Frequent urination": "بار بار پیشاب آنا",
+  "Blood in urine": "پیشاب میں خون",
+  "Cloudy urine": "دھندلا پیشاب",
+  "Difficulty urinating": "پیشاب کرنے میں دشواری",
+  "Urgent need to urinate": "فوراً پیشاب آنے کی حاجت",
+  "Lower abdominal discomfort": "پیٹ کے نچلے حصے میں تکلیف",
+  "Pelvic pain": "شرونی میں درد",
+  "Menstrual cramps": "ماہواری میں مروڑ",
+  "Irregular periods": "ماہواری کی بے قاعدگی",
+  "Heavy menstrual bleeding": "ماہواری میں زیادہ خون آنا",
+  "Unusual discharge": "غیر معمولی رطوبت",
+  "Pain during menstruation": "ماہواری کے دوران درد",
+  "Leg pain": "ٹانگ میں درد",
+  "Knee pain": "گھٹنے میں درد",
+  "Ankle pain": "ٹخنے میں درد",
+  "Leg swelling": "ٹانگ میں سوجن",
+  "Muscle cramps": "پٹھوں میں کھنچاؤ",
+  "Leg weakness": "ٹانگوں میں کمزوری",
+  "Numbness in legs": "ٹانگیں سن ہونا",
+  "Tingling in legs": "ٹانگوں میں جھنجھناہٹ",
+  "Foot pain": "پاؤں میں درد",
+  "Heel pain": "ایڑی میں درد",
+  "Sole pain": "تلوے میں درد",
+  "Toe pain": "پاؤں کی انگلی میں درد",
+  "Foot swelling": "پاؤں میں سوجن",
+  "Burning feet": "پاؤں میں جلن",
+  "Numbness in feet": "پاؤں سن ہونا",
+  "Rash": "جلد پر دانے",
+  "Itching": "خارش",
+  "Dry skin": "خشک جلد",
+  "Redness": "سرخی",
+  "Hives": "جلد پر ابھرے ہوئے خارش والے دانے",
+  "Skin swelling": "جلد میں سوجن",
+  "Acne": "مہاسے",
+  "Blisters": "چھالے",
+  "Skin discoloration": "جلد کی رنگت میں تبدیلی",
+  "Unusual bruising": "غیر معمولی نیل پڑنا",
+  "Anxiety": "بے چینی",
+  "Stress": "ذہنی دباؤ",
+  "Low mood": "اداسی",
+  "Difficulty sleeping": "نیند آنے میں دشواری",
+  "Excessive sleepiness": "ضرورت سے زیادہ نیند آنا",
+  "Irritability": "چڑچڑاپن",
+  "Difficulty concentrating": "توجہ مرکوز کرنے میں دشواری",
+  "Restlessness": "بے قراری",
+  "Unusual symptoms": "غیر معمولی علامات",
+  "General discomfort": "عمومی تکلیف",
+
+  "How severe are your symptoms?": "آپ کی علامات کتنی شدید ہیں؟",
+"Preparing Results...": "نتائج تیار کیے جا رہے ہیں...",
+"Reset": "دوبارہ ترتیب دیں",
+"Your Health Overview": "آپ کی صحت کا جائزہ",
+"General information based on the symptoms you selected.": "آپ کی منتخب کردہ علامات کی بنیاد پر عمومی معلومات۔",
+"Start New Check": "نئی جانچ شروع کریں",
+"Urgent": "فوری توجہ ضروری",
+"Caution": "احتیاط",
+"Monitor": "نگرانی کریں",
+"General": "عمومی",
+"Recommended next step:": "اگلا تجویز کردہ قدم:",
+"General information about symptom groups related to your selection.": "آپ کی منتخب کردہ علامات سے متعلق عمومی معلومات۔",
+"Important considerations based on the information in your health profile.": "آپ کی صحت کی پروفائل میں موجود معلومات کی بنیاد پر اہم باتیں۔",
+"MediCare is an educational health information tool. The information displayed is not a diagnosis, prescription, or substitute for professional medical advice. Medicine suitability depends on your medical history, allergies, age, current medicines, and other factors. Always consult a qualified healthcare professional or pharmacist before starting, stopping, or changing medication.": "MediCare صحت سے متعلق معلومات فراہم کرنے والا ایک تعلیمی ٹول ہے۔ یہاں دی گئی معلومات تشخیص، نسخہ یا پیشہ ورانہ طبی مشورے کا متبادل نہیں ہیں۔ دوا کی موزونیت آپ کی طبی تاریخ، الرجی، عمر، موجودہ ادویات اور دیگر عوامل پر منحصر ہوتی ہے۔ کوئی دوا شروع کرنے، بند کرنے یا تبدیل کرنے سے پہلے مستند ڈاکٹر یا فارماسسٹ سے مشورہ کریں۔",
+"General health education only. Not a substitute for professional medical care.": "یہ معلومات صرف صحت سے متعلق آگاہی کے لیے ہیں اور پیشہ ورانہ طبی علاج کا متبادل نہیں ہیں۔",
+"Fever": "بخار",
+"Headache": "سر درد",
+"Cough": "کھانسی",
+"mild": "ہلکی",
+"moderate": "درمیانی",
+"severe": "شدید",
+
+"selectYourSymptoms": "اپنی علامات منتخب کریں",
+"searchSymptoms": "علامات تلاش کریں",
+"Choose up to 10 symptoms that best describe how you feel.": "زیادہ سے زیادہ 10 ایسی علامات منتخب کریں جو آپ کی کیفیت کو بہتر طور پر بیان کرتی ہوں۔",
+
+"This tool is for educational purposes only. It cannot diagnose a medical condition, replace a doctor, or prescribe medication. If you believe you are experiencing an emergency, seek medical care immediately instead of using this checker.": "یہ ٹول صرف تعلیمی مقصد کے لیے ہے۔ یہ کسی بیماری کی تشخیص، ڈاکٹر کا متبادل یا دوا تجویز نہیں کر سکتا۔ اگر آپ کو ہنگامی صورتحال محسوس ہو تو اس ٹول کو استعمال کرنے کے بجائے فوراً طبی مدد حاصل کریں۔",
+
+"These details help organize the general information shown in your results.": "یہ تفصیلات آپ کے نتائج میں عمومی معلومات کو ترتیب دینے میں مدد دیتی ہیں۔",
+"How long have you experienced these symptoms?": "آپ کو یہ علامات کب سے ہیں؟",
+
+"Monitor Your Symptoms": "اپنی علامات کی نگرانی کریں",
+"Your symptoms are causing noticeable discomfort. Monitor changes in their intensity and frequency.": "آپ کی علامات نمایاں تکلیف پیدا کر رہی ہیں۔ ان کی شدت اور بار بار ہونے میں تبدیلیوں پر نظر رکھیں۔",
+"Rest, maintain adequate hydration, and consider consulting a healthcare professional if symptoms persist or worsen.": "آرام کریں، مناسب مقدار میں پانی پئیں، اور اگر علامات برقرار رہیں یا بڑھ جائیں تو کسی مستند طبی ماہر سے مشورہ کریں۔",
+
+"General Symptom Information": "علامات سے متعلق عمومی معلومات",
+"Your selected symptoms may have different causes. This checker can provide general information but cannot identify a specific condition or replace a medical examination.": "آپ کی منتخب کردہ علامات کی مختلف وجوہات ہو سکتی ہیں۔ یہ ٹول عمومی معلومات فراہم کرتا ہے، لیکن کسی مخصوص بیماری کی تشخیص یا طبی معائنے کا متبادل نہیں ہے۔",
+
+"Temporary irritation or discomfort": "عارضی جلن یا تکلیف",
+"Lifestyle-related factors": "طرزِ زندگی سے متعلق عوامل",
+"Minor illness": "معمولی بیماری",
+"Other underlying conditions": "دیگر ممکنہ بنیادی طبی مسائل",
+
+"Rest and monitor your symptoms.": "آرام کریں اور اپنی علامات پر نظر رکھیں۔",
+"Maintain adequate hydration.": "مناسب مقدار میں پانی پئیں۔",
+"Avoid activities that worsen your discomfort.": "ایسی سرگرمیوں سے گریز کریں جو آپ کی تکلیف بڑھاتی ہیں۔",
+"Record when symptoms occur and what makes them better or worse.": "نوٹ کریں کہ علامات کب ظاہر ہوتی ہیں اور کن چیزوں سے بہتر یا بدتر ہوتی ہیں۔",
+
+"No Specific Medicine Recommended": "کسی مخصوص دوا کی سفارش نہیں کی گئی",
+"Professional guidance": "ماہر کی رہنمائی",
+"The appropriate treatment depends on the cause of your symptoms.": "مناسب علاج آپ کی علامات کی وجہ پر منحصر ہے۔",
+"Not applicable.": "لاگو نہیں ہوتا۔",
+"Ask a healthcare professional or pharmacist before taking medicine for unexplained symptoms.": "غیر واضح علامات کے لیے دوا لینے سے پہلے ڈاکٹر یا فارماسسٹ سے مشورہ کریں۔",
+"Consult a healthcare professional if symptoms persist, worsen, or interfere with daily activities.": "اگر علامات برقرار رہیں، بڑھ جائیں یا روزمرہ کے کام متاثر کریں تو کسی مستند طبی ماہر سے مشورہ کریں۔",
+
+"Recorded Allergies": "درج شدہ الرجیز",
+"Your profile lists the following allergies: None known. Always check the active ingredients of medicines and tell your pharmacist or clinician about these allergies before taking any new medicine.": "آپ کی پروفائل میں کوئی معلوم الرجی درج نہیں ہے۔ کوئی نئی دوا لینے سے پہلے اس کے اجزاء چیک کریں اور ڈاکٹر یا فارماسسٹ کو اپنی الرجی کے بارے میں بتائیں۔",
+
+"Important Safety Reminder": "حفاظت سے متعلق اہم یاد دہانی",
+"This tool provides general educational information only. It does not diagnose conditions, prescribe treatment, or confirm that a medicine is safe for you. Always follow the product label and seek professional advice when uncertain.": "یہ ٹول صرف عمومی تعلیمی معلومات فراہم کرتا ہے۔ یہ بیماری کی تشخیص، علاج تجویز یا کسی دوا کی حفاظت کی ضمانت نہیں دیتا۔ دوا کے لیبل پر دی گئی ہدایات پر عمل کریں اور شک کی صورت میں ماہر سے مشورہ کریں۔",
+
+"MediCare is an educational health information tool. The information displayed is not a diagnosis, prescription, or substitute for professional medical advice. Medicine suitability depends on your medical history, allergies, age, current medicines, and other factors. Always consult a qualified healthcare professional or pharmacist before starting, stopping, or changing medication.": "MediCare صحت سے متعلق معلومات فراہم کرنے والا ایک تعلیمی ٹول ہے۔ یہاں دی گئی معلومات تشخیص، نسخے یا پیشہ ورانہ طبی مشورے کا متبادل نہیں ہیں۔ دوا کی موزونیت آپ کی طبی تاریخ، الرجی، عمر، موجودہ ادویات اور دیگر عوامل پر منحصر ہے۔ کوئی دوا شروع کرنے، بند کرنے یا تبدیل کرنے سے پہلے مستند ڈاکٹر یا فارماسسٹ سے مشورہ کریں۔",
+"Choose up to 10 symptoms that best describe how you feel.": "زیادہ سے زیادہ 10 ایسی علامات منتخب کریں جو آپ کی کیفیت کو بہتر طور پر بیان کرتی ہوں۔",
+"These details help organize the general information shown in your results.": "یہ تفصیلات آپ کے نتائج میں عمومی معلومات کو ترتیب دینے میں مدد دیتی ہیں۔",
+
+"How long have you experienced these symptoms?": "آپ کو یہ علامات کب سے ہیں؟",
+};
+
+const tr = (text) =>
+  isUrdu ? (urduLabels[text] || text) : text;
+
+
   // COMPONENT STATE
-  // ----------------------------------------------
 
   const [user, setUser] = useState(null);
 
@@ -1465,9 +1736,7 @@ const Symptoms = () => {
   const [showAllSymptoms, setShowAllSymptoms] =
     useState(false);
 
-  // ----------------------------------------------
   // LOAD CURRENT USER
-  // ----------------------------------------------
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -1477,14 +1746,10 @@ const Symptoms = () => {
       return;
     }
 
-
-    
     setUser(currentUser);
   }, [navigate]);
 
-  // ----------------------------------------------
   // THEME CLASSES
-  // ----------------------------------------------
 
   const pageBg = isDark
     ? "bg-slate-950 text-slate-100"
@@ -1511,9 +1776,7 @@ const Symptoms = () => {
     ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
     : "bg-white border-slate-200 text-slate-800 placeholder:text-slate-400";
 
-  // ----------------------------------------------
   // FILTER SYMPTOMS
-  // ----------------------------------------------
 
   const filteredSymptoms = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -1541,9 +1804,7 @@ const Symptoms = () => {
     }));
   }, [searchQuery, selectedCategory]);
 
-  // ----------------------------------------------
-  // SELECT / REMOVE SYMPTOMS
-  // ----------------------------------------------
+  // SELECT / REMOVE SYMPTOMS-
 
   const toggleSymptom = (symptom) => {
     setFormError("");
@@ -1570,9 +1831,7 @@ const Symptoms = () => {
     );
   };
 
-  // ----------------------------------------------
   // RESET FORM
-  // ----------------------------------------------
 
   const resetChecker = () => {
     setSelectedCategory("General");
@@ -1590,9 +1849,7 @@ const Symptoms = () => {
     });
   };
 
-  // ----------------------------------------------
   // GENERATE RESULTS
-  // ----------------------------------------------
 
   const handleGenerateResults = () => {
     if (selectedSymptoms.length === 0) {
@@ -1635,9 +1892,7 @@ const Symptoms = () => {
     }, 500);
   };
 
-  // ----------------------------------------------
   // RESULTS DATA
-  // ----------------------------------------------
 
   const guidance = showResults
     ? getGuidance(selectedSymptoms, severity, duration)
@@ -1651,16 +1906,19 @@ const Symptoms = () => {
     ? getPatientSafetyNotes(user)
     : [];
 
-    const handleSaveInformation = () => {
+    const handleSaveInformation = async () => {
   if (!user) {
     alert("Please log in to save your health information.");
     return;
   }
 
-const handleSave = async () => {
+  if (!showResults || !guidance) {
+    alert("Please check your symptoms first.");
+    return;
+  }
+
   try {
     await savePatientHistory({
-      userId: user.id,
       symptoms: selectedSymptoms,
       duration,
       severity,
@@ -1676,16 +1934,14 @@ const handleSave = async () => {
     alert("Your health information has been saved successfully!");
   } catch (error) {
     console.error("Error saving medical history:", error);
-    alert(error.message || "Unable to save your information. Please try again.");
+    alert(
+      error.message ||
+        "Unable to save your information. Please try again."
+    );
   }
 };
 
-};
-
-  // ----------------------------------------------
   // GUIDANCE COLORS
-  // ----------------------------------------------
-
   const getGuidanceStyle = (level) => {
     const styles = {
       urgent: {
@@ -1741,10 +1997,6 @@ const handleSave = async () => {
     return styles[level] || styles.mild;
   };
 
-  // ----------------------------------------------
-  // SAFETY NOTE COLORS
-  // ----------------------------------------------
-
   const getSafetyStyle = (type) => {
     if (type === "danger") {
       return {
@@ -1790,18 +2042,13 @@ const handleSave = async () => {
     };
   };
 
-  // ----------------------------------------------
   // MAIN UI
-  // ----------------------------------------------
 
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${pageBg}`}
     >
-            {/* ---------------------------------------- */}
-      {/* TOP NAVIGATION */}
-      {/* ---------------------------------------- */}
-
+          
       <header
         className={`sticky top-0 z-40 border-b backdrop-blur ${
           isDark
@@ -1820,7 +2067,7 @@ const handleSave = async () => {
             }`}
           >
             <ArrowLeft size={17} />
-            <span>Dashboard</span>
+            <span>{tr("Dashboard")}</span>
           </button>
 
           <div className="flex items-center gap-3">
@@ -1833,43 +2080,39 @@ const handleSave = async () => {
                 {patientName}
               </p>
               <p className={`text-xs ${mutedText}`}>
-                Patient Portal
+                <p>{tr("Patient Portal")}</p>
               </p>
             </div>
           </div>
         </div>
       </header>
-      {/* ---------------------------------------- */}
-      {/* PAGE CONTENT */}
-      {/* ---------------------------------------- */}
 
+  {/* PAGE CONTENT */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* PAGE INTRODUCTION */}
 
         <section className="mb-8">
           <div className="mb-4 flex items-center gap-2">
             <span className="rounded-full bg-teal-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-teal-500">
-              Health Assistant
+              {tr("Health Assistant")}
             </span>
 
             <span
               className={`text-xs ${mutedText}`}
             >
-              Educational tool
+              {tr("Educational tool")}
             </span>
           </div>
-
+            
           <h1 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
-            Symptoms Checker
-          </h1>
+            {t("symptomCheckerTitle")}
+            </h1>
 
-          <p
-            className={`max-w-2xl text-sm leading-7 sm:text-base ${mutedText}`}
-          >
-            Select the symptoms you are experiencing to explore
-            general health information, self-care suggestions,
-            and medicine safety considerations.
-          </p>
+         <p
+        className={`max-w-2xl text-sm leading-7 sm:text-base ${mutedText}`}
+        >
+        {t("symptomCheckerDescription")}
+        </p>
+
         </section>
 
         {/* IMPORTANT MEDICAL DISCLAIMER */}
@@ -1894,7 +2137,7 @@ const handleSave = async () => {
                   : "text-amber-800"
               }`}
             >
-              Important Health Notice
+              <h2>{tr("Important Health Notice")}</h2>
             </h2>
 
             <p
@@ -1904,18 +2147,12 @@ const handleSave = async () => {
                   : "text-amber-900"
               }`}
             >
-              This tool is for educational purposes only. It
-              cannot diagnose a medical condition, replace a
-              doctor, or prescribe medication. If you believe
-              you are experiencing an emergency, seek medical
-              care immediately instead of using this checker.
+              {tr("This tool is for educational purposes only. It cannot diagnose a medical condition, replace a doctor, or prescribe medication. If you believe you are experiencing an emergency, seek medical care immediately instead of using this checker.")}
             </p>
           </div>
         </div>
 
-        {/* -------------------------------------- */}
         {/* SYMPTOM SELECTION CARD */}
-        {/* -------------------------------------- */}
 
         <section
           className={`mb-8 rounded-3xl border p-5 shadow-sm sm:p-7 ${cardBg}`}
@@ -1928,13 +2165,12 @@ const handleSave = async () => {
                 </div>
 
                 <h2 className="text-xl font-bold">
-                  Select Your Symptoms
+                {t("selectYourSymptoms")}
                 </h2>
               </div>
 
               <p className={`text-sm ${mutedText}`}>
-                Choose up to 10 symptoms that best describe
-                how you feel.
+                {tr("Choose up to 10 symptoms that best describe how you feel.")}
               </p>
             </div>
 
@@ -1957,7 +2193,7 @@ const handleSave = async () => {
               onChange={(event) =>
                 setSearchQuery(event.target.value)
               }
-              placeholder="Search symptoms..."
+              placeholder={t("searchSymptoms")}
               className={`w-full rounded-2xl border py-3.5 pl-12 pr-12 text-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 ${inputBg}`}
             />
 
@@ -1992,7 +2228,7 @@ const handleSave = async () => {
                       : "border-slate-200 bg-white text-slate-600 hover:border-teal-500 hover:text-teal-600"
                   }`}
                 >
-                  {category.name}
+                  {tr(category.name)}
                 </button>
               ))}
             </div>
@@ -2047,14 +2283,14 @@ const handleSave = async () => {
                             : ""
                         }`}
                       >
-                        {item.name}
+                        {tr(item.name)}
                       </span>
 
                       {searchQuery && (
                         <span
                           className={`mt-1 block text-xs ${mutedText}`}
                         >
-                          {item.category}
+                         {tr(item.category)}
                         </span>
                       )}
                     </span>
@@ -2105,7 +2341,7 @@ const handleSave = async () => {
             <div className="mt-7 border-t border-slate-200/20 pt-6">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <h3 className="text-sm font-semibold">
-                  Selected Symptoms
+                  <h3>{tr("Selected Symptoms")}</h3>
                 </h3>
 
                 <button
@@ -2113,7 +2349,7 @@ const handleSave = async () => {
                   onClick={() => setSelectedSymptoms([])}
                   className="text-xs font-medium text-red-500 hover:text-red-600"
                 >
-                  Clear all
+                  {tr("Clear all")}
                 </button>
               </div>
 
@@ -2123,7 +2359,7 @@ const handleSave = async () => {
                     key={symptom}
                     className="inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-500/10 px-3 py-2 text-sm font-medium text-teal-500"
                   >
-                    {symptom}
+                    {tr(symptom)}
 
                     <button
                       type="button"
@@ -2142,21 +2378,18 @@ const handleSave = async () => {
           )}
         </section>
 
-        {/* -------------------------------------- */}
         {/* DURATION & SEVERITY */}
-        {/* -------------------------------------- */}
 
         <section
           className={`mb-8 rounded-3xl border p-5 shadow-sm sm:p-7 ${cardBg}`}
         >
           <div className="mb-6">
             <h2 className="mb-2 text-xl font-bold">
-              Tell Us More
+              <h2>{tr("Tell Us More")}</h2>
             </h2>
 
             <p className={`text-sm ${mutedText}`}>
-              These details help organize the general
-              information shown in your results.
+             {tr("These details help organize the general information shown in your results.")}
             </p>
           </div>
 
@@ -2168,7 +2401,7 @@ const handleSave = async () => {
               className="mb-3 flex items-center gap-2 text-sm font-semibold"
             >
               <Clock size={17} className="text-teal-500" />
-              How long have you experienced these symptoms?
+              {tr("How long have you experienced these symptoms?")}
             </label>
 
             <select
@@ -2180,7 +2413,7 @@ const handleSave = async () => {
               className={`w-full rounded-xl border px-4 py-3.5 text-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 ${inputBg}`}
             >
               <option value="">
-                Select duration
+                    {tr("Select Duration")}
               </option>
 
               {durationOptions.map((option) => (
@@ -2188,7 +2421,7 @@ const handleSave = async () => {
                   key={option.value}
                   value={option.value}
                 >
-                  {option.label}
+                  {tr(option.label)}
                 </option>
               ))}
             </select>
@@ -2199,7 +2432,7 @@ const handleSave = async () => {
           <div>
             <label className="mb-3 flex items-center gap-2 text-sm font-semibold">
               <Activity size={17} className="text-teal-500" />
-              How severe are your symptoms?
+              {tr("How severe are your symptoms?")}
             </label>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -2245,7 +2478,7 @@ const handleSave = async () => {
                         <span
                           className={`h-2.5 w-2.5 rounded-full ${dotColors[option.color]}`}
                         />
-                        {option.label}
+                        {tr(option.label)}
                       </span>
 
                       {isSelected && (
@@ -2259,7 +2492,7 @@ const handleSave = async () => {
                     <p
                       className={`text-xs leading-5 ${mutedText}`}
                     >
-                      {option.description}
+                      {tr(option.description)}
                     </p>
                   </button>
                 );
@@ -2295,12 +2528,12 @@ const handleSave = async () => {
                     size={18}
                     className="animate-spin"
                   />
-                  Preparing Results...
+                  {tr("Preparing Results...")}
                 </>
               ) : (
                 <>
                   <Activity size={18} />
-                  Check My Symptoms
+                  {t("checkMySymptoms")}
                   <ArrowRight size={18} />
                 </>
               )}
@@ -2316,7 +2549,7 @@ const handleSave = async () => {
               }`}
             >
               <RotateCcw size={17} />
-              Reset
+              {tr("Reset")}
             </button>
           </div>
         </section>
@@ -2338,13 +2571,12 @@ const handleSave = async () => {
                   </div>
 
                   <h2 className="text-2xl font-bold">
-                    Your Health Overview
+                    {tr("Your Health Overview")}
                   </h2>
                 </div>
 
                 <p className={`text-sm ${mutedText}`}>
-                  General information based on the symptoms
-                  you selected.
+                  {tr("General information based on the symptoms you selected.")}
                 </p>
               </div>
 
@@ -2358,7 +2590,7 @@ const handleSave = async () => {
                 }`}
               >
                 <RotateCcw size={16} />
-                Start New Check
+                {tr("Start New Check")}
               </button>
             </div>
 
@@ -2374,7 +2606,7 @@ const handleSave = async () => {
                 />
 
                 <h3 className="font-bold">
-                  Symptoms You Reported
+                  {tr("Symptoms You Reported")}
                 </h3>
               </div>
 
@@ -2384,7 +2616,7 @@ const handleSave = async () => {
                     key={symptom}
                     className="rounded-full border border-teal-500/30 bg-teal-500/10 px-3 py-2 text-sm font-medium text-teal-500"
                   >
-                    {symptom}
+                    {tr(symptom)}
                   </span>
                 ))}
               </div>
@@ -2401,11 +2633,11 @@ const handleSave = async () => {
                     className={`mb-1 flex items-center gap-2 text-xs ${mutedText}`}
                   >
                     <Clock size={15} />
-                    Duration
+                       {tr("Duration")}
                   </div>
 
                   <p className="text-sm font-semibold">
-                    {duration}
+                      {tr(duration)}
                   </p>
                 </div>
 
@@ -2420,11 +2652,11 @@ const handleSave = async () => {
                     className={`mb-1 flex items-center gap-2 text-xs ${mutedText}`}
                   >
                     <Activity size={15} />
-                    Severity
+                    {tr("Severity")}
                   </div>
 
                   <p className="text-sm font-semibold capitalize">
-                    {severity}
+                      {tr(severity)}
                   </p>
                 </div>
               </div>
@@ -2466,35 +2698,36 @@ const handleSave = async () => {
                         <h3
                           className={`text-lg font-bold ${style.title}`}
                         >
-                          {guidance.title}
+                          {tr(guidance.title)}
                         </h3>
 
                         <span
                           className={`rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold capitalize ${style.text}`}
                         >
                           {guidance.level === "urgent"
-                            ? "Urgent"
+                            ? tr("Urgent")
                             : guidance.level === "caution"
-                            ? "Caution"
+                            ? tr("Caution")
                             : guidance.level === "moderate"
-                            ? "Monitor"
-                            : "General"}
+                            ? tr("Monitor")
+                             : tr("General")}
                         </span>
                       </div>
 
                       <p
                         className={`mb-3 text-sm leading-7 ${style.text}`}
                       >
-                        {guidance.message}
+                        {tr(guidance.message)}
                       </p>
 
                       <div
                         className={`rounded-xl bg-white/10 p-4 text-sm leading-6 ${style.text}`}
                       >
                         <strong>
-                          Recommended next step:
+                          {tr("Recommended next step:")}
                         </strong>{" "}
-                        {guidance.recommendation}
+                        {tr(guidance.recommendation)}
+
                       </div>
                     </div>
                   </div>
@@ -2507,12 +2740,11 @@ const handleSave = async () => {
             <div>
               <div className="mb-5">
                 <h3 className="mb-2 text-xl font-bold">
-                  Health Information
+                  {tr("Health Information")}
                 </h3>
 
                 <p className={`text-sm ${mutedText}`}>
-                  General information about symptom groups
-                  related to your selection.
+                 {tr("General information about symptom groups related to your selection.")}
                 </p>
               </div>
 
@@ -2532,14 +2764,14 @@ const handleSave = async () => {
                           </div>
 
                           <h4 className="text-lg font-bold">
-                            {condition.title}
+                            {tr(condition.title)}
                           </h4>
                         </div>
 
                         <p
                           className={`text-sm leading-7 ${mutedText}`}
                         >
-                          {condition.description}
+                         {tr(condition.description)}
                         </p>
                       </div>
 
@@ -2552,7 +2784,7 @@ const handleSave = async () => {
                               size={17}
                               className="text-blue-500"
                             />
-                            Possible Causes
+                            {tr("Possible Causes")}
                           </h5>
 
                           <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -2571,7 +2803,7 @@ const handleSave = async () => {
                                     className="mt-0.5 shrink-0 text-teal-500"
                                   />
 
-                                  <span>{cause}</span>
+                                  <span>{tr(cause)}</span>
                                 </li>
                               )
                             )}
@@ -2586,7 +2818,7 @@ const handleSave = async () => {
                               size={17}
                               className="text-emerald-500"
                             />
-                            General Self-Care
+                            {tr("General Self-Care")}
                           </h5>
 
                           <div
@@ -2608,7 +2840,7 @@ const handleSave = async () => {
                                       className="mt-0.5 shrink-0 text-emerald-500"
                                     />
 
-                                    <span>{tip}</span>
+                                    <span>{tr(tip)}</span>
                                   </li>
                                 )
                               )}
@@ -2625,11 +2857,11 @@ const handleSave = async () => {
                                 size={18}
                                 className="text-teal-500"
                               />
-                              Medicine Information
+                              {tr("Medicine Information")}
                             </h5>
 
                             <span className="rounded-full bg-teal-500/10 px-3 py-1 text-xs font-medium text-teal-500">
-                              Educational only
+                              {tr("Educational only")}
                             </span>
                           </div>
 
@@ -2654,11 +2886,11 @@ const handleSave = async () => {
 
                                       <div className="min-w-0">
                                         <h6 className="font-bold leading-6">
-                                          {medicine.name}
+                                          {tr(medicine.name)}
                                         </h6>
 
                                         <span className="mt-1 inline-block rounded-full bg-teal-500/10 px-2.5 py-1 text-xs font-medium text-teal-500">
-                                          {medicine.category}
+                                          {tr(medicine.category)}
                                         </span>
                                       </div>
                                     </div>
@@ -2670,11 +2902,11 @@ const handleSave = async () => {
                                     <p
                                       className={`mb-1 text-xs font-bold uppercase tracking-wide ${mutedText}`}
                                     >
-                                      Purpose
+                                      {tr("Purpose")}
                                     </p>
 
                                     <p className="text-sm leading-6">
-                                      {medicine.purpose}
+                                     {tr(medicine.purpose)}
                                     </p>
                                   </div>
 
@@ -2684,11 +2916,11 @@ const handleSave = async () => {
                                     <p
                                       className={`mb-1 text-xs font-bold uppercase tracking-wide ${mutedText}`}
                                     >
-                                      Common Forms
+                                      {tr("Common Forms")}
                                     </p>
 
                                     <p className="text-sm leading-6">
-                                      {medicine.forms}
+                                      {tr(medicine.forms)}
                                     </p>
                                   </div>
 
@@ -2709,7 +2941,7 @@ const handleSave = async () => {
                                       }`}
                                     >
                                       <AlertCircle size={15} />
-                                      Possible Side Effects
+                                      {tr("Possible Side Effects")}
                                     </p>
 
                                     <p
@@ -2719,7 +2951,7 @@ const handleSave = async () => {
                                           : "text-amber-900"
                                       }`}
                                     >
-                                      {medicine.sideEffects}
+                                      {tr(medicine.sideEffects)}
                                     </p>
                                   </div>
 
@@ -2740,7 +2972,7 @@ const handleSave = async () => {
                                       }`}
                                     >
                                       <ShieldAlert size={15} />
-                                      Important Precaution
+                                      {tr("Important Precaution")}
                                     </p>
 
                                     <p
@@ -2750,7 +2982,7 @@ const handleSave = async () => {
                                           : "text-red-800"
                                       }`}
                                     >
-                                      {medicine.caution}
+                                      {tr(medicine.caution)}
                                     </p>
                                   </div>
                                 </div>
@@ -2776,7 +3008,7 @@ const handleSave = async () => {
                             }`}
                           >
                             <AlertTriangle size={17} />
-                            When to Seek Medical Care
+                            {tr("When to Seek Medical Care")}
                           </h5>
 
                           <p
@@ -2786,7 +3018,7 @@ const handleSave = async () => {
                                 : "text-red-800"
                             }`}
                           >
-                            {condition.seekCare}
+                            {tr(condition.seekCare)}
                           </p>
                         </div>
                       </div>
@@ -2801,12 +3033,11 @@ const handleSave = async () => {
             <section>
               <div className="mb-5">
                 <h3 className="mb-2 text-xl font-bold">
-                  Your Personal Safety Review
+                  {tr("Your Personal Safety Review")}
                 </h3>
 
                 <p className={`text-sm ${mutedText}`}>
-                  Important considerations based on the
-                  information in your health profile.
+                  {tr("Important considerations based on the information in your health profile.")}
                 </p>
               </div>
 
@@ -2840,13 +3071,13 @@ const handleSave = async () => {
                         <h4
                           className={`mb-1 text-sm font-bold ${style.title}`}
                         >
-                          {note.title}
+                          {tr(note.title)}
                         </h4>
 
                         <p
                           className={`text-sm leading-6 ${style.text}`}
                         >
-                          {note.message}
+                          {tr(note.message)}
                         </p>
                       </div>
                     </div>
@@ -2870,22 +3101,19 @@ const handleSave = async () => {
                 </div>
 
                 <h3 className="font-bold">
-                  Medical Disclaimer
+                  {tr("Medical Disclaimer")}
                 </h3>
               </div>
 
               <p
                 className={`text-sm leading-7 ${mutedText}`}
               >
-                MediCare is an educational health information
-                tool. The information displayed is not a
-                diagnosis, prescription, or substitute for
-                professional medical advice. Medicine
-                suitability depends on your medical history,
-                allergies, age, current medicines, and other
-                factors. Always consult a qualified healthcare
-                professional or pharmacist before starting,
-                stopping, or changing medication.
+                {tr("MediCare is an educational health information tool. The information displayed is not a diagnosis, prescription, or substitute for")}
+                {tr("professional medical advice. Medicine")}
+                {tr("suitability depends on your medical history, allergies, age, current medicines, and other")}
+                {tr("factors. Always consult a qualified healthcare")}
+                {tr("professional or pharmacist before starting, stopping, or changing medication.")}
+                
               </p>
             </div>
 
@@ -2901,7 +3129,7 @@ const handleSave = async () => {
     className="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-600 px-5 py-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-teal-700 hover:shadow-md active:scale-[0.98]"
   >
     <Stethoscope size={18} />
-    <span>Find a Suitable Doctor</span>
+    <span>{tr("Find a Suitable Doctor")}</span>
   </button>
 
   {/* View Medical History */}
@@ -2915,7 +3143,7 @@ const handleSave = async () => {
   }`}
 >
   <ClipboardList size={18} />
-  <span>View Medical History</span>
+  <span>{tr("View Medical History")}</span>
 </button>
 
   {/* Save This Information */}
@@ -2925,7 +3153,7 @@ const handleSave = async () => {
     className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-emerald-700 hover:shadow-md active:scale-[0.98]"
   >
     <Save size={18} />
-    <span>Save This Information</span>
+    <span>{tr("Save This Information")}</span>
   </button>
 
 </div>
@@ -2933,36 +3161,15 @@ const handleSave = async () => {
 )}
 </main>
 
-
-      {/* FOOTER */}
-
-      <footer
-        className={`mt-12 border-t ${
-          isDark
-            ? "border-slate-800 bg-slate-900/50"
-            : "border-slate-200 bg-white"
-        }`}
-      >
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-center sm:flex-row sm:px-6 sm:text-left lg:px-8">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-600 text-white">
-              <Heart size={16} />
-            </div>
-
-            <span className="text-sm font-bold">
-              MediCare
-            </span>
-          </div>
-
-          <p className={`text-xs leading-5 ${mutedText}`}>
-            General health education only. Not a substitute
-            for professional medical care.
-          </p>
-
-          <span className={`text-xs ${mutedText}`}>
-            © {new Date().getFullYear()} MediCare
-          </span>
-        </div>
+  {/* Footer */}
+      <footer className="py-7 text-center">
+        <p className="text-xs text-slate-400 dark:text-slate-600 mb-2">
+          © {new Date().getFullYear()} MediCare. {tr("All rights reserved.")}
+        </p>
+        
+        <p className={`text-xs leading-5 ${mutedText}`}>
+          {tr("General health education only. Not a substitute for professional medical care.")}
+        </p>
       </footer>
     </div>
   );

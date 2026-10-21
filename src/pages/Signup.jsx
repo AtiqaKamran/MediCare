@@ -97,11 +97,7 @@ export default function Signup() {
         setCurrentUser(newUser);
         navigate("/profile");
       } else {
-        setSuccess(
-          isUrdu
-            ? "Account ban gaya hai. Apni email check karein aur verification ke baad login karein."
-            : "Account created! Check your email for a verification link, then log in."
-        );
+        setSuccess(t("accountCreatedCheckEmail"));
       }
     } catch (err) {
       setError(err.message || "Signup failed. Please try again.");

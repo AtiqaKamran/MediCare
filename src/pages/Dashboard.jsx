@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -47,20 +46,18 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(getCurrentUser());
   const [showSettings, setShowSettings] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const { darkMode, toggleTheme } = useTheme();
   const { language, setLanguage, t, isUrdu } = useLanguage();
 
-  useEffect(() => {
-    const currentUser = getCurrentUser();
+ useEffect(() => {
+  const currentUser = getCurrentUser();
 
-    if (!currentUser) {
-      navigate("/login");
-      return;
-    }
-
-    setUser(currentUser);
-  }, [navigate]);
+  if (!currentUser) {
+    navigate("/login", { replace: true });
+  }
+}, [navigate]);
 
   if (!user) return null;
 
@@ -74,10 +71,12 @@ export default function Dashboard() {
     greeting = t("goodAfternoon");
   } else if (hour >= 17 && hour < 21) {
     greeting = t("goodEvening");
+  } else {
+    greeting = t("goodNight");
   }
 
   const profile = user.profile || {};
-  const fullName = profile.fullName || user.fullName || "Patient";
+  const fullName = profile.fullName || user.fullName || t("patient");
   const firstName = fullName.trim().split(/\s+/)[0];
 
   const locationText = profile.lahoreArea
@@ -88,9 +87,31 @@ export default function Dashboard() {
     ? user.recentActivity.slice(0, 3)
     : [];
 
-  function handleLogout() {
-    logoutUser();
-    navigate("/login");
+  async function handleLogout() {
+  if (isLoggingOut) return;
+
+  setIsLoggingOut(true);
+
+  try {
+    await logoutUser();
+    setUser(null);
+    navigate("/login", { replace: true });
+  } catch (error) {
+    console.error("Logout error:", error);
+    setIsLoggingOut(false);
+  }
+}
+
+  function translateGender(value) {
+    if (!value) return t("notAdded");
+
+    const gender = String(value).toLowerCase().trim();
+
+    if (gender === "female") return t("female");
+    if (gender === "male") return t("male");
+    if (gender === "other") return t("other");
+
+    return String(value);
   }
 
   const cardClass =
@@ -121,7 +142,6 @@ export default function Dashboard() {
                 <h1 className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
                   MediCare
                 </h1>
-
                 <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 tracking-wide">
                   {t("patientPortal")}
                 </p>
@@ -152,9 +172,8 @@ export default function Dashboard() {
               </button>
 
               <button
-                disabled
-                title={t("comingSoon")}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-300 dark:text-slate-600 cursor-not-allowed"
+                onClick={() => navigate("/doctors")}
+                className="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 transition"
               >
                 {t("doctors")}
               </button>
@@ -175,15 +194,16 @@ export default function Dashboard() {
                   aria-label={t("settings")}
                   aria-expanded={showSettings}
                 >
-                  {showSettings ? (
-                    <X size={19} />
-                  ) : (
-                    <Settings size={19} />
-                  )}
+                  {showSettings ? <X size={19} /> : <Settings size={19} />}
                 </button>
 
                 {showSettings && (
-                  <div className="absolute right-0 top-12 w-[280px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl p-4 z-50">
+                  <div
+                    dir={isUrdu ? "rtl" : "ltr"}
+                    className={`absolute ${
+                      isUrdu ? "left-0" : "right-0"
+                    } top-12 w-[280px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl p-4 z-50`}
+                  >
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <h3 className="font-bold text-slate-900 dark:text-white">
@@ -193,7 +213,6 @@ export default function Dashboard() {
                           {t("customizeExperience")}
                         </p>
                       </div>
-
                       <Settings
                         size={18}
                         className="text-teal-600 dark:text-teal-400"
@@ -214,7 +233,6 @@ export default function Dashboard() {
                             className="text-teal-600 dark:text-teal-400"
                           />
                         )}
-
                         <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                           {t("appearance")}
                         </span>
@@ -235,7 +253,6 @@ export default function Dashboard() {
                             <Sun size={18} />
                             {t("lightMode")}
                           </span>
-
                           {!darkMode && (
                             <span className="text-teal-600 dark:text-teal-400 text-sm font-bold">
                               ✓
@@ -257,7 +274,6 @@ export default function Dashboard() {
                             <Moon size={18} />
                             {t("darkMode")}
                           </span>
-
                           {darkMode && (
                             <span className="text-teal-600 dark:text-teal-400 text-sm font-bold">
                               ✓
@@ -274,7 +290,6 @@ export default function Dashboard() {
                           size={18}
                           className="text-teal-600 dark:text-teal-400"
                         />
-
                         <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                           {t("language")}
                         </span>
@@ -283,6 +298,7 @@ export default function Dashboard() {
                       <div className="space-y-2">
                         <button
                           onClick={() => setLanguage("en")}
+                          dir="ltr"
                           className={`w-full flex items-center justify-between p-3 rounded-xl border transition ${
                             language === "en"
                               ? "border-teal-500 bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300"
@@ -290,9 +306,8 @@ export default function Dashboard() {
                           }`}
                         >
                           <span className="text-sm font-medium">
-                            English
+                            {t("english")}
                           </span>
-
                           {language === "en" && (
                             <span className="text-teal-600 dark:text-teal-400 text-sm font-bold">
                               ✓
@@ -310,9 +325,8 @@ export default function Dashboard() {
                           }`}
                         >
                           <span className="text-sm font-medium">
-                            اردو
+                            {t("urdu")}
                           </span>
-
                           {language === "ur" && (
                             <span className="text-teal-600 dark:text-teal-400 text-sm font-bold">
                               ✓
@@ -336,19 +350,13 @@ export default function Dashboard() {
                             size={18}
                             className="text-teal-600 dark:text-teal-400"
                           />
-                          {isUrdu ? "طبی تاریخ" : "Medical History"}
+                          {t("medicalHistory")}
                         </span>
-
-                        <ChevronRight
-                          size={18}
-                          className="text-slate-400"
-                        />
+                        <ChevronRight size={18} className="text-slate-400" />
                       </button>
 
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 px-3">
-                        {isUrdu
-                          ? "اپنی سابقہ علامات کی جانچ اور سفارشات دیکھیں۔"
-                          : "View your previous symptom checks and recommendations."}
+                        {t("medicalHistoryDescription")}
                       </p>
                     </div>
                   </div>
@@ -360,7 +368,6 @@ export default function Dashboard() {
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-100 to-emerald-100 dark:from-teal-900/60 dark:to-emerald-900/40 text-teal-700 dark:text-teal-300 flex items-center justify-center border border-teal-100 dark:border-teal-800">
                   <UserRound size={18} />
                 </div>
-
                 <div className="hidden sm:block max-w-[130px]">
                   <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
                     {fullName}
@@ -374,7 +381,8 @@ export default function Dashboard() {
               {/* Sign Out */}
               <button
                 onClick={handleLogout}
-                className="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-300 hover:border-red-200 dark:hover:border-red-900 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 flex items-center justify-center transition"
+                disabled={isLoggingOut}
+                className="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-300 hover:border-red-200 dark:hover:border-red-900 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 flex items-center justify-center transition disabled:opacity-50"
                 title={t("logout")}
                 aria-label={t("logout")}
               >
@@ -403,15 +411,12 @@ export default function Dashboard() {
             <p className="text-teal-100 text-sm font-medium mb-2">
               {t("patientDashboard")}
             </p>
-
             <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-bold tracking-tight text-white leading-tight">
               {greeting}, {firstName}!
             </h2>
-
             <p className="text-teal-50/90 mt-4 leading-7 max-w-xl text-sm sm:text-base">
               {t("dashboardWelcome")}
             </p>
-
             <button
               onClick={() => navigate("/profile")}
               className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white text-teal-800 px-5 py-3 text-sm font-semibold shadow-lg shadow-teal-950/10 hover:bg-teal-50 hover:-translate-y-0.5 transition"
@@ -433,7 +438,6 @@ export default function Dashboard() {
                 {t("profile")}
               </span>
             </div>
-
             <p className={`text-sm ${mutedText}`}>{t("age")}</p>
             <p className={`text-2xl font-bold ${headingText} mt-1`}>
               {formatValue(profile.age, t("notAdded"))}
@@ -449,10 +453,9 @@ export default function Dashboard() {
                 {t("profile")}
               </span>
             </div>
-
             <p className={`text-sm ${mutedText}`}>{t("gender")}</p>
             <p className={`text-xl font-bold ${headingText} mt-1`}>
-              {formatValue(profile.gender)}
+              {translateGender(profile.gender)}
             </p>
           </div>
 
@@ -465,7 +468,6 @@ export default function Dashboard() {
                 {t("location")}
               </span>
             </div>
-
             <p className={`text-sm ${mutedText}`}>{t("area")}</p>
             <p className={`text-base sm:text-lg font-bold ${headingText} mt-1 break-words`}>
               {locationText}
@@ -481,7 +483,6 @@ export default function Dashboard() {
                 {t("health")}
               </span>
             </div>
-
             <p className={`text-sm ${mutedText}`}>{t("allergies")}</p>
             <p className={`text-base font-bold ${headingText} mt-1 break-words`}>
               {formatValue(profile.allergies, t("noAllergies"))}
@@ -506,27 +507,18 @@ export default function Dashboard() {
             {/* Symptom Checker */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
               <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-teal-50 dark:bg-teal-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
-
               <div className="relative z-10">
                 <div className="flex items-start justify-between">
                   <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-50 to-emerald-100 dark:from-teal-900/50 dark:to-emerald-900/30 text-teal-700 dark:text-teal-300 flex items-center justify-center">
                     <ClipboardCheck size={26} />
                   </div>
-
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/50">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    {t("availableNow")}
-                  </span>
                 </div>
-
                 <h4 className={`text-lg font-bold ${headingText} mt-6`}>
                   {t("checkSymptoms")}
                 </h4>
-
                 <p className={`text-sm ${mutedText} mt-2 leading-6 max-w-md`}>
                   {t("symptomDescription")}
                 </p>
-
                 <button
                   onClick={() => navigate("/symptoms")}
                   className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-teal-700 dark:text-teal-400 hover:gap-3 transition-all"
@@ -540,29 +532,21 @@ export default function Dashboard() {
             {/* Doctor Finder */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
               <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-blue-50 dark:bg-blue-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
-
               <div className="relative z-10">
                 <div className="flex items-start justify-between">
                   <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 flex items-center justify-center">
                     <Stethoscope size={26} />
                   </div>
-
-                  <span className="text-[11px] font-bold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                    {t("comingSoon")}
-                  </span>
                 </div>
-
                 <h4 className={`text-lg font-bold ${headingText} mt-6`}>
                   {t("findDoctor")}
                 </h4>
-
                 <p className={`text-sm ${mutedText} mt-2 leading-6 max-w-md`}>
                   {t("doctorDescription")}
                 </p>
-
                 <button
-                  disabled
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-slate-400 dark:text-slate-600 cursor-not-allowed"
+                  onClick={() => navigate("/doctors")}
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-blue-700 dark:text-blue-400 hover:gap-3 transition-all"
                 >
                   {t("findDoctors")}
                   <ChevronRight size={18} />
@@ -570,37 +554,26 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* My Medical Records - Added */}
+            {/* My Medical Records */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
               <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-emerald-50 dark:bg-emerald-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
-
               <div className="relative z-10">
                 <div className="flex items-start justify-between">
                   <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/30 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
                     <FolderHeart size={26} />
                   </div>
-
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/50">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    {isUrdu ? "دستیاب" : "Available"}
-                  </span>
                 </div>
-
                 <h4 className={`text-lg font-bold ${headingText} mt-6`}>
-                  {isUrdu ? "میرے طبی ریکارڈز" : "My Medical Records"}
+                  {t("myMedicalRecords")}
                 </h4>
-
                 <p className={`text-sm ${mutedText} mt-2 leading-6 max-w-md`}>
-                  {isUrdu
-                    ? "اپنی لیب رپورٹس، نسخے، ایکس رے اور دیگر طبی دستاویزات ایک جگہ منظم کریں۔"
-                    : "Organize your lab reports, prescriptions, X-rays and other medical documents in one place."}
+                  {t("medicalRecordsDescription")}
                 </p>
-
                 <button
                   onClick={() => navigate("/medical-records")}
                   className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-teal-700 dark:text-teal-400 hover:gap-3 transition-all"
                 >
-                  {isUrdu ? "ریکارڈز کھولیں" : "Open Medical Records"}
+                  {t("openMedicalRecords")}
                   <ChevronRight size={18} />
                 </button>
               </div>
@@ -622,12 +595,10 @@ export default function Dashboard() {
                     {t("healthInformation")}
                   </h3>
                 </div>
-
                 <p className={`text-sm ${mutedText} mt-2`}>
                   {t("savedHealthDetails")}
                 </p>
               </div>
-
               <button
                 onClick={() => navigate("/profile")}
                 className="text-sm font-semibold text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 transition"
@@ -641,7 +612,6 @@ export default function Dashboard() {
                 <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                   {t("existingConditions")}
                 </p>
-
                 <p className="text-sm font-medium text-slate-700 dark:text-slate-200 mt-3 leading-6">
                   {formatValue(profile.conditions, t("noneProvided"))}
                 </p>
@@ -651,7 +621,6 @@ export default function Dashboard() {
                 <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                   {t("allergies")}
                 </p>
-
                 <p className="text-sm font-medium text-slate-700 dark:text-slate-200 mt-3 leading-6">
                   {formatValue(profile.allergies, t("noAllergies"))}
                 </p>
@@ -661,9 +630,8 @@ export default function Dashboard() {
                 <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                   {t("lahoreArea")}
                 </p>
-
                 <p className="text-sm font-medium text-slate-700 dark:text-slate-200 mt-3">
-                  {formatValue(profile.lahoreArea)}
+                  {formatValue(profile.lahoreArea, t("notAdded"))}
                 </p>
               </div>
             </div>
@@ -675,7 +643,6 @@ export default function Dashboard() {
               <div className="w-11 h-11 rounded-xl bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 flex items-center justify-center">
                 <CalendarDays size={20} />
               </div>
-
               <div>
                 <h3 className={`font-bold ${headingText}`}>
                   {t("recentActivity")}
@@ -695,25 +662,18 @@ export default function Dashboard() {
                   >
                     <div className="flex flex-col items-center">
                       <div className="w-2.5 h-2.5 rounded-full bg-teal-500 ring-4 ring-teal-50 dark:ring-teal-900/30 mt-1.5 shrink-0" />
-
                       {index !== activities.length - 1 && (
                         <div className="w-px flex-1 min-h-5 bg-slate-200 dark:bg-slate-700 mt-2" />
                       )}
                     </div>
-
                     <div className="pb-1 min-w-0">
                       <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 break-words">
                         {activity.title || t("profileUpdated")}
                       </p>
-
                       <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
                         {activity.date &&
-                        !Number.isNaN(
-                          new Date(activity.date).getTime()
-                        )
-                          ? new Date(
-                              activity.date
-                            ).toLocaleDateString(
+                        !Number.isNaN(new Date(activity.date).getTime())
+                          ? new Date(activity.date).toLocaleDateString(
                               isUrdu ? "ur-PK" : "en-US"
                             )
                           : t("recently")}
@@ -725,12 +685,8 @@ export default function Dashboard() {
             ) : (
               <div className="py-5 text-center">
                 <div className="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3">
-                  <CalendarDays
-                    size={20}
-                    className="text-slate-400"
-                  />
+                  <CalendarDays size={20} className="text-slate-400" />
                 </div>
-
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   {t("noRecentActivity")}
                 </p>
@@ -745,12 +701,10 @@ export default function Dashboard() {
             <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0">
               <ShieldCheck size={21} />
             </div>
-
             <div>
               <h4 className="font-bold text-amber-900 dark:text-amber-300">
                 {t("healthNotice")}
               </h4>
-
               <p className="text-sm text-amber-800/80 dark:text-amber-200/70 mt-1.5 leading-6">
                 {t("healthDisclaimer")}
               </p>

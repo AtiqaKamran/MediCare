@@ -8,298 +8,695 @@ import {
 } from "react";
 
 const LANGUAGE_STORAGE_KEY = "medicare-language";
-
-const SUPPORTED_LANGUAGES = {
-  ENGLISH: "en",
-  URDU: "ur",
-};
-
-const DEFAULT_LANGUAGE = SUPPORTED_LANGUAGES.ENGLISH;
+const DEFAULT_LANGUAGE = "en";
+const SUPPORTED_LANGUAGES = ["en", "ur"];
 
 const translations = {
   en: {
-    // Language Selection
-    welcome: "Welcome to MediCare",
-    chooseLanguage: "Please select your preferred language",
-    english: "English",
-    urdu: "اردو",
-    continue: "Continue",
-    changeLanguage: "Change Language",
+      // Authentication
+welcomeBack: "Welcome Back",
+loginSubtitle: "Sign in to access your health dashboard",
+createYourAccount: "Create Your Account",
+signupSubtitle: "Create an account to manage your health",
+emailAddress: "Email Address",
+password: "Password",
+confirmPassword: "Confirm Password",
+forgotPassword: "Forgot Password?",
+enterPassword: "Enter your password",
+atLeast6Characters: "At least 6 characters",
+reEnterPassword: "Re-enter your password",
+dontHaveAccount: "Don't have an account?",
+noAccount: "Don't have an account?",
+alreadyHaveAccount: "Already have an account?",
+createAccount: "Create Account",
+login: "Login",
+signingIn: "Signing in...",
+pleaseEnterName: "Please enter your full name.",
+pleaseEnterEmail: "Please enter your email address.",
+passwordMinLength: "Password must be at least 6 characters.",
+passwordsDoNotMatch: "Passwords do not match.",
+accountCreatedCheckEmail: "Account created! Check your email for a verification link, then log in.",
+loginSuccessful: "Login successful",
+logoutSuccessful: "Logged out successfully",
+invalidEmail: "Please enter a valid email address",
+passwordRequired: "Password is required",
+requiredField: "This field is required",
+
+    // General
+    appName: "MediCare",
+    loading: "Loading...",
+    save: "Save",
+    cancel: "Cancel",
+    edit: "Edit",
+    update: "Update",
+    delete: "Delete",
+    back: "Back",
+    next: "Next",
+    submit: "Submit",
+    search: "Search",
+    filter: "Filter",
+    refresh: "Refresh",
+    close: "Close",
+    yes: "Yes",
+    no: "No",
+    none: "None",
+    notAdded: "Not added",
+    notProvided: "Not provided",
+    noData: "No data available",
+    error: "Something went wrong",
+    success: "Success",
+    welcome: "Welcome",
+    hello: "Hello",
+    patient: "Patient",
+    patientPortal: "Patient Portal",
+    personalHealthSpace: "Your Personal Health Space",
+    findDoctor: "Find a Doctor",
+    doctorDescription: "Find doctors and clinics near you.",
+    lahoreArea: "Area in Lahore",
+    recently: "Recently",
+    footer: "MediCare. All rights reserved.",
+    noAllergies: "No known allergies",
+    noneKnown: "None known",
+    noneProvided: "None provided",
+    remove: "Remove",
+    toggleTheme: "Toggle theme",
+    switchToLight: "Switch to light mode",
+    switchToDark: "Switch to dark mode",
+    enterFullName: "Enter your full name",
+    pleaseEnterFullName: "Please enter your full name.",
+    pleaseEnterAge: "Please enter your age.",
+    pleaseSelectGender: "Please select your gender.",
+    noKnownMedicineAllergies: "No known medicine allergies",
+    noKnownFoodAllergies: "No known food allergies",
+    searchMedicine: "Search medicines...",
+    searchFood: "Search foods...",
+    noMedicineFound: "No medicines found.",
+    noFoodFound: "No foods found.",
+    conditionsPlaceholder: "Describe any existing health conditions...",
+    profileSubtitle:
+      "Manage your personal information and health details.",
+    healthInfo: "Health Information",
+    healthInfoSubtitle:
+      "Add your existing health conditions and allergies.",
+    existingHealthConditions: "Existing Health Conditions",
+    medicineAllergies: "Medicine Allergies",
+    foodAllergies: "Food Allergies",
+    optionalLocation: "Add your area to help find nearby doctors.",
+    selectArea: "Select area",
+    signOut: "Sign Out",
+    myHealthRecords: "My Health Records",
+    medicalRecordsDescription:
+      "Organize your lab reports, prescriptions, X-rays and other medical documents in one place.",
 
     // Navigation
     dashboard: "Dashboard",
+    home: "Home",
+    profile: "Profile",
+    patientProfile: "Patient Profile",
     myHealth: "My Health",
-    symptoms: "Symptoms",
-    doctors: "Doctors",
-    logout: "Sign out",
-
-    // Login
-    welcomeBack: "Welcome back",
-    loginSubtitle: "Login to access your MediCare patient portal.",
-    emailAddress: "Email Address",
-    password: "Password",
-    enterPassword: "Enter your password",
+    healthProfile: "Health Profile",
+    symptomChecker: "Symptom Checker",
+    doctorFinder: "Doctor Finder",
+    medicalHistory: "Medical History",
+    settings: "Settings",
+    logout: "Logout",
     login: "Login",
-    noAccount: "Don't have an account?",
-    createAccount: "Create Account",
-    noAccountFound: "No account was found with this email.",
-    incorrectPassword: "Incorrect password.",
-
-    // Signup
-    createYourAccount: "Create your account",
-    signupSubtitle: "Create your MediCare account to get started.",
-    fullName: "Full Name",
-    enterFullName: "Enter your full name",
-    confirmPassword: "Confirm Password",
-    atLeast6Characters: "At least 6 characters",
-    reEnterPassword: "Re-enter your password",
-    alreadyHaveAccount: "Already have an account?",
-    pleaseEnterName: "Please enter your name.",
-    pleaseEnterEmail: "Please enter your email.",
-    passwordMinLength: "Password must contain at least 6 characters.",
-    passwordsDoNotMatch: "Passwords do not match.",
-    emailAlreadyExists: "An account with this email already exists.",
+    signup: "Sign Up",
 
     // Dashboard
     patientDashboard: "Patient Dashboard",
     goodMorning: "Good morning",
     goodAfternoon: "Good afternoon",
     goodEvening: "Good evening",
-    hello: "Hello",
+    goodNight: "Good night",
+    dashboardWelcome: "Welcome to your health dashboard",
+    viewHealthProfile: "View Health Profile",
     quickActions: "Quick Actions",
-    checkSymptoms: "Check Your Symptoms",
-    findDoctor: "Find a Doctor",
-    healthInformation: "My Health Information",
+    healthcareTools: "Healthcare Tools",
+    checkSymptoms: "Check Symptoms",
+    symptomDescription: "Check your symptoms and get guidance.",
+    startSymptomCheck: "Start Symptom Check",
+    findDoctors: "Find Doctors",
+    doctorFinderDescription:
+      "Find doctors and clinics near your location.",
+    findDoctorsButton: "Search Doctors",
+    viewMedicalHistory: "View Medical History",
+    medicalHistoryDescription:
+      "Review your previous symptom checks and recommendations.",
+    openRecords: "Open Records",
+    openMedicalRecords: "Open Medical Records",
+    myMedicalRecords: "My Medical Records",
+    healthInformation: "Health Information",
+    savedHealthDetails: "Your saved health details",
     recentActivity: "Recent Activity",
-    edit: "Edit Profile",
-    settings: "Settings",
-    customizeExperience: "Customize your experience",
+    latestUpdates: "Your latest updates",
+    healthNotice: "Health Notice",
+    healthDisclaimer:
+      "This information is for guidance only and is not a substitute for professional medical advice.",
+    patientProfileCompleted: "Patient profile completed",
+    profileCompleted: "Profile completed",
+    noRecentActivity: "No recent activity yet.",
+    healthcareDashboard: "Healthcare Dashboard",
+
+    // Greetings and dates
+    today: "Today",
+    yesterday: "Yesterday",
+    date: "Date",
+    time: "Time",
+    completed: "Completed",
+    pending: "Pending",
+
+    // Patient profile
+    personalInformation: "Personal Information",
+    personalDetails: "Personal Details",
+    fullName: "Full Name",
+    name: "Name",
+    age: "Age",
+    gender: "Gender",
+    male: "Male",
+    female: "Female",
+    other: "Other",
+    location: "Location",
+    area: "Area",
+    city: "City",
+    email: "Email",
+    phone: "Phone Number",
+    dateOfBirth: "Date of Birth",
+    patientInformation: "Patient Information",
+    healthProfileDetails: "Your health profile details",
+    updateProfile: "Update Profile",
+    saveProfile: "Save Profile",
+    profileUpdated: "Profile updated successfully",
+    profileSaved: "Profile saved successfully",
+    enterName: "Enter your name",
+    enterAge: "Enter your age",
+    selectGender: "Select gender",
+    enterLocation: "Enter your location",
+    enterCity: "Enter your city",
+    profileRequired: "Please complete your profile",
+    profileNotCompleted: "Your profile is incomplete",
+
+    // Health information
+    health: "Health",
+    healthDetails: "Health Details",
+    healthInformationTitle: "Health Information",
+    existingConditions: "Existing Conditions",
+    medicalConditions: "Medical Conditions",
+    allergies: "Allergies",
+    medications: "Medications",
+    currentMedications: "Current Medications",
+    addCondition: "Add Condition",
+    addAllergy: "Add Allergy",
+    addMedication: "Add Medication",
+    enterCondition: "Enter existing conditions",
+    enterAllergy: "Enter allergies",
+    enterMedication: "Enter medications",
+    healthHistory: "Health History",
+    healthInformationSaved:
+      "Your health information has been saved.",
+    editHealthInformation: "Edit Health Information",
+    saveHealthInformation: "Save Health Information",
+
+    // My Health page
+    myMedicalHistory: "My Medical History",
+    healthRecords: "Health Records",
+    previousSymptomChecks: "Previous Symptom Checks",
+    previousRecommendations: "Previous Recommendations",
+    savedHealthRecords: "Your saved health records",
+    noHealthRecords: "No health records found.",
+    noMedicalHistory: "No medical history available.",
+    symptomCheckHistory: "Symptom Check History",
+    recommendations: "Recommendations",
+    details: "Details",
+    viewDetails: "View Details",
+    recordDate: "Record Date",
+    healthSummary: "Health Summary",
+
+    // Symptom checker
+    symptoms: "Symptoms",
+    symptomCheckerTitle: "Symptom Checker",
+    describeSymptoms: "Describe Your Symptoms",
+    symptomDescriptionLabel: "Symptom Description",
+    enterSymptoms: "Enter the symptoms you are experiencing",
+    selectSymptoms: "Select your symptoms",
+    duration: "Duration",
+    symptomDuration: "How long have you had these symptoms?",
+    severity: "Severity",
+    mild: "Mild",
+    moderate: "Moderate",
+    severe: "Severe",
+    additionalInformation: "Additional Information",
+    additionalNotes: "Additional Notes",
+    enterAdditionalNotes: "Enter any additional information",
+    analyzeSymptoms: "Analyze Symptoms",
+    checkMySymptoms: "Check My Symptoms",
+    startAnalysis: "Start Analysis",
+    analyzingSymptoms: "Analyzing symptoms...",
+    symptomResults: "Symptom Check Results",
+    possibleCauses: "Possible Causes",
+    suggestedActions: "Suggested Actions",
+    selfCareGuidance: "Self-Care Guidance",
+    recommendedCare: "Recommended Care",
+    medicineInformation: "Medicine Information",
+    precautions: "Precautions",
+    whenToSeeDoctor: "When to See a Doctor",
+    emergencyWarning: "Emergency Warning",
+    symptomCheckerDescription:
+  "Select the symptoms you are experiencing to explore general health information, self-care suggestions, and medicine safety considerations.",
+    symptomCheckerDisclaimer:
+      "This tool provides general guidance only and does not provide a medical diagnosis.",
+    symptomCheckSaved: "Your symptom check has been saved.",
+    noSymptomsEntered: "Please enter your symptoms.",
+    selectDuration: "Select symptom duration",
+    selectSeverity: "Select severity",
+    symptomCheckFailed:
+      "Unable to complete symptom check. Please try again.",
+
+    // Doctor Finder
+    doctorFinderTitle: "Doctor Finder",
+    findDoctorsNearYou: "Find doctors and clinics near you.",
+    searchDoctors: "Search Doctors",
+    searchByName: "Search by doctor name",
+    searchByLocation: "Search by location",
+    searchBySpecialty: "Search by specialty",
+    allSpecialties: "All Specialties",
+    allLocations: "All Locations",
+    specialty: "Specialty",
+    specialization: "Specialization",
+    doctor: "Doctor",
+    doctors: "Doctors",
+    clinic: "Clinic",
+    hospital: "Hospital",
+    address: "Address",
+    rating: "Rating",
+    experience: "Experience",
+    yearsExperience: "years of experience",
+    contact: "Contact",
+    viewDoctor: "View Doctor",
+    viewMore: "View More",
+    noDoctorsFound: "No doctors found.",
+    noDoctorsAvailable: "No doctors available right now.",
+    tryDifferentSearch: "Try a different search or filter.",
+    doctorDetails: "Doctor Details",
+    generalPhysician: "General Physician",
+    cardiologist: "Cardiologist",
+    dermatologist: "Dermatologist",
+    dentist: "Dentist",
+    pediatrician: "Pediatrician",
+    gynecologist: "Gynecologist",
+    neurologist: "Neurologist",
+    psychiatrist: "Psychiatrist",
+    orthopedic: "Orthopedic Specialist",
+    ophthalmologist: "Eye Specialist",
+    entSpecialist: "ENT Specialist",
+    unavailable: "Unavailable",
+    unableToLoadDoctors:
+      "Unable to load doctors. Please try again.",
+    externalLink: "More Information",
+
+    // Settings
+    customizeExperience: "Customize Experience",
     appearance: "Appearance",
     lightMode: "Light Mode",
     darkMode: "Dark Mode",
     language: "Language",
-    patientPortal: "PATIENT PORTAL",
-    patient: "Patient",
-    personalHealthSpace: "Your personal health space",
-    dashboardWelcome:
-      "Welcome to your MediCare portal. Manage your health information and access your healthcare tools from one convenient place.",
-    viewHealthProfile: "View My Health Profile",
-    profile: "Profile",
-    health: "Health",
-    area: "Area",
-    notAdded: "Not added",
-    notProvided: "Not provided",
-    availableNow: "Available Now",
+    selectLanguage: "Select Language",
+    English: "English",
+    Urdu: "Urdu",
+    english: "English",
+    urdu: "Urdu",
+    preferences: "Preferences",
+    accountSettings: "Account Settings",
+    settingsSaved: "Settings saved successfully",
+
+    // Authentication
+    welcomeBack: "Welcome Back",
+    createAccount: "Create Account",
+    password: "Password",
+    confirmPassword: "Confirm Password",
+    forgotPassword: "Forgot Password?",
+    enterPassword: "Enter your password",
+    dontHaveAccount: "Don't have an account?",
+    alreadyHaveAccount: "Already have an account?",
+    loginSuccessful: "Login successful",
+    logoutSuccessful: "Logged out successfully",
+    invalidEmail: "Please enter a valid email address",
+    passwordRequired: "Password is required",
+    requiredField: "This field is required",
+
+    // Errors and status
+    somethingWentWrong: "Something went wrong. Please try again.",
+    networkError: "Network error. Please check your connection.",
+    dataLoadError: "Unable to load data.",
+    dataSaveError: "Unable to save data.",
+    tryAgain: "Try Again",
+    noResults: "No results found.",
     comingSoon: "Coming Soon",
-    symptomDescription:
-      "Select your symptoms, duration, and severity to receive general health guidance and self-care information.",
-    startSymptomCheck: "Start Symptom Check",
-    doctorDescription:
-      "Explore doctors by specialty, location, ratings, experience, and profile information.",
-    findDoctors: "Find Doctors",
-    healthcareTools: "Your healthcare tools, all in one place.",
-    savedHealthDetails: "Your saved personal health details.",
-    existingConditions: "Existing Health Conditions",
-    lahoreArea: "Lahore Area",
-    latestUpdates: "Your latest updates",
-    profileUpdated: "Profile updated",
-    recently: "Recently",
-    noRecentActivity: "No recent activity yet.",
-    healthNotice: "Health Information Notice",
-    healthDisclaimer:
-      "MediCare provides general health information and does not replace professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional for medical concerns.",
-    footer: "MediCare Patient Portal",
-
-    // Patient Information
-    age: "Age",
-    gender: "Gender",
-    location: "Location",
-    allergies: "Allergies",
-    noAllergies: "None known",
-    noneProvided: "None provided",
-
-    // Patient Profile
-    patientProfile: "Patient Profile",
-    profileSubtitle:
-      "Keep your personal and health information updated so MediCare can provide a more personalized experience.",
-    personalInformation: "Personal Information",
-    personalDetails: "Your basic personal details.",
-    email: "Email",
-    enterEmail: "Enter your email",
-    enterAge: "Enter your age",
-    selectGender: "Select gender",
-    female: "Female",
-    male: "Male",
-    other: "Other",
-    healthInfo: "Health Information",
-    healthInfoSubtitle: "Add existing conditions and known allergies.",
-    medicineAllergies: "Medicine Allergies",
-    foodAllergies: "Food Allergies",
-    searchMedicine: "Search medicine allergy...",
-    searchFood: "Search food allergy...",
-    noMedicineFound: "No medicine found.",
-    noFoodFound: "No food found.",
-    noKnownMedicineAllergies: "No known medicine allergies",
-    noKnownFoodAllergies: "No known food allergies",
-    existingHealthConditions: "Existing Health Conditions",
-    conditionsPlaceholder:
-      "Example: Asthma, diabetes, high blood pressure...",
-    optionalLocation: "Optional — select your area within Lahore.",
-    selectArea: "Select Lahore area (optional)",
-    saveProfile: "Save Profile",
-    signOut: "Sign out",
-    toggleTheme: "Toggle theme",
-    switchToLight: "Switch to light mode",
-    switchToDark: "Switch to dark mode",
-    pleaseEnterFullName: "Please enter your full name.",
-    pleaseEnterAge: "Please enter your age.",
-    pleaseSelectGender: "Please select your gender.",
-    profileSaved: "Profile saved successfully!",
-    profileUpdated: "Profile updated successfully!",
-    remove: "Remove",
   },
 
   ur: {
-    // Language Selection
-    welcome: "میڈی کیئر میں خوش آمدید",
-    chooseLanguage: "براہ کرم اپنی پسندیدہ زبان منتخب کریں",
-    english: "English",
-    urdu: "اردو",
-    continue: "جاری رکھیں",
-    changeLanguage: "زبان تبدیل کریں",
+
+    // Authentication
+welcomeBack: "واپس خوش آمدید",
+loginSubtitle: "اپنے صحت کے ڈیش بورڈ میں داخل ہونے کے لیے لاگ اِن کریں",
+createYourAccount: "اپنا اکاؤنٹ بنائیں",
+signupSubtitle: "اپنی صحت کا انتظام کرنے کے لیے اکاؤنٹ بنائیں",
+emailAddress: "ای میل ایڈریس",
+password: "پاس ورڈ",
+confirmPassword: "پاس ورڈ کی تصدیق کریں",
+forgotPassword: "پاس ورڈ بھول گئے؟",
+enterPassword: "اپنا پاس ورڈ درج کریں",
+atLeast6Characters: "کم از کم 6 حروف درج کریں",
+reEnterPassword: "اپنا پاس ورڈ دوبارہ درج کریں",
+dontHaveAccount: "کیا آپ کا اکاؤنٹ نہیں ہے؟",
+noAccount: "کیا آپ کا اکاؤنٹ نہیں ہے؟",
+alreadyHaveAccount: "کیا آپ کا پہلے سے اکاؤنٹ ہے؟",
+createAccount: "اکاؤنٹ بنائیں",
+login: "لاگ اِن",
+signingIn: "لاگ اِن ہو رہا ہے...",
+pleaseEnterName: "براہِ کرم اپنا پورا نام درج کریں۔",
+pleaseEnterEmail: "براہِ کرم اپنا ای میل ایڈریس درج کریں۔",
+passwordMinLength: "پاس ورڈ کم از کم 6 حروف کا ہونا چاہیے۔",
+passwordsDoNotMatch: "دونوں پاس ورڈ ایک جیسے نہیں ہیں۔",
+accountCreatedCheckEmail:
+  "اکاؤنٹ بن گیا ہے! تصدیقی لنک کے لیے اپنی ای میل چیک کریں، پھر لاگ اِن کریں۔",
+loginSuccessful: "لاگ اِن کامیاب ہو گیا",
+logoutSuccessful: "آپ کامیابی سے لاگ آؤٹ ہو گئے",
+invalidEmail: "براہِ کرم درست ای میل درج کریں",
+passwordRequired: "پاس ورڈ درج کرنا ضروری ہے",
+requiredField: "یہ خانہ پُر کرنا ضروری ہے",
+
+    // General
+    appName: "میڈی کیئر",
+    loading: "لوڈ ہو رہا ہے...",
+    save: "محفوظ کریں",
+    cancel: "منسوخ کریں",
+    edit: "ترمیم کریں",
+    update: "اپ ڈیٹ کریں",
+    delete: "حذف کریں",
+    back: "واپس",
+    next: "اگلا",
+    submit: "جمع کریں",
+    search: "تلاش کریں",
+    filter: "فلٹر",
+    refresh: "دوبارہ لوڈ کریں",
+    close: "بند کریں",
+    yes: "ہاں",
+    no: "نہیں",
+    none: "کوئی نہیں",
+    notAdded: "شامل نہیں کیا گیا",
+    notProvided: "فراہم نہیں کیا گیا",
+    noData: "کوئی معلومات دستیاب نہیں",
+    error: "کوئی مسئلہ پیش آ گیا",
+    success: "کامیاب",
+    welcome: "خوش آمدید",
+    hello: "السلام علیکم",
+    patient: "مریض",
+    patientPortal: "مریضوں کا پورٹل",
+    personalHealthSpace: "آپ کی ذاتی صحت کی سہولت",
+    findDoctor: "ڈاکٹر تلاش کریں",
+    doctorDescription: "اپنے قریب ڈاکٹرز اور کلینکس تلاش کریں۔",
+    lahoreArea: "لاہور میں علاقہ",
+    recently: "حال ہی میں",
+    footer: "میڈی کیئر۔ جملہ حقوق محفوظ ہیں۔",
+    noAllergies: "کوئی معلوم الرجی نہیں",
+    noneKnown: "کوئی معلوم نہیں",
+    noneProvided: "کوئی معلومات فراہم نہیں کی گئیں",
+    remove: "ہٹائیں",
+    toggleTheme: "تھیم تبدیل کریں",
+    switchToLight: "لائٹ موڈ پر جائیں",
+    switchToDark: "ڈارک موڈ پر جائیں",
+    enterFullName: "اپنا پورا نام درج کریں",
+    pleaseEnterFullName: "براہِ کرم اپنا پورا نام درج کریں۔",
+    pleaseEnterAge: "براہِ کرم اپنی عمر درج کریں۔",
+    pleaseSelectGender: "براہِ کرم اپنی جنس منتخب کریں۔",
+    noKnownMedicineAllergies: "کسی دوا سے الرجی معلوم نہیں",
+    noKnownFoodAllergies: "کسی غذا سے الرجی معلوم نہیں",
+    searchMedicine: "ادویات تلاش کریں...",
+    searchFood: "غذائیں تلاش کریں...",
+    noMedicineFound: "کوئی دوا نہیں ملی۔",
+    noFoodFound: "کوئی غذا نہیں ملی۔",
+    conditionsPlaceholder:
+      "اپنی موجودہ بیماریوں کی تفصیل درج کریں...",
+    profileSubtitle:
+      "اپنی ذاتی معلومات اور صحت کی تفصیلات کا انتظام کریں۔",
+    healthInfo: "صحت کی معلومات",
+    healthInfoSubtitle:
+      "اپنی موجودہ بیماریوں اور الرجیز کی معلومات درج کریں۔",
+    existingHealthConditions: "موجودہ بیماریاں",
+    medicineAllergies: "ادویات سے الرجی",
+    foodAllergies: "غذاؤں سے الرجی",
+    optionalLocation:
+      "قریبی ڈاکٹرز تلاش کرنے کے لیے اپنا علاقہ منتخب کریں۔",
+    selectArea: "علاقہ منتخب کریں",
+    signOut: "لاگ آؤٹ",
+    myHealthRecords: "میرے طبی ریکارڈز",
+    medicalRecordsDescription:
+      "اپنی لیب رپورٹس، نسخے، ایکس رے اور دیگر طبی دستاویزات ایک جگہ منظم کریں۔",
 
     // Navigation
     dashboard: "ڈیش بورڈ",
+    home: "ہوم",
+    profile: "پروفائل",
+    patientProfile: "مریض کا پروفائل",
     myHealth: "میری صحت",
-    symptoms: "علامات",
-    doctors: "ڈاکٹرز",
+    healthProfile: "صحت کا پروفائل",
+    symptomChecker: "علامات کی جانچ",
+    doctorFinder: "ڈاکٹر تلاش کریں",
+    medicalHistory: "طبی تاریخ",
+    settings: "ترتیبات",
     logout: "لاگ آؤٹ",
-
-    // Login
-    welcomeBack: "واپس خوش آمدید",
-    loginSubtitle:
-      "اپنے میڈی کیئر مریض پورٹل تک رسائی کے لیے لاگ اِن کریں۔",
-    emailAddress: "ای میل ایڈریس",
-    password: "پاس ورڈ",
-    enterPassword: "اپنا پاس ورڈ درج کریں",
     login: "لاگ اِن",
-    noAccount: "کیا آپ کا اکاؤنٹ نہیں ہے؟",
-    createAccount: "اکاؤنٹ بنائیں",
-    noAccountFound: "اس ای میل کے ساتھ کوئی اکاؤنٹ نہیں ملا۔",
-    incorrectPassword: "پاس ورڈ غلط ہے۔",
-
-    // Signup
-    createYourAccount: "اپنا اکاؤنٹ بنائیں",
-    signupSubtitle: "شروع کرنے کے لیے اپنا میڈی کیئر اکاؤنٹ بنائیں۔",
-    fullName: "پورا نام",
-    enterFullName: "اپنا پورا نام درج کریں",
-    confirmPassword: "پاس ورڈ کی تصدیق کریں",
-    atLeast6Characters: "کم از کم 6 حروف",
-    reEnterPassword: "اپنا پاس ورڈ دوبارہ درج کریں",
-    alreadyHaveAccount: "کیا آپ کا پہلے سے اکاؤنٹ ہے؟",
-    pleaseEnterName: "براہ کرم اپنا نام درج کریں۔",
-    pleaseEnterEmail: "براہ کرم اپنی ای میل درج کریں۔",
-    passwordMinLength: "پاس ورڈ کم از کم 6 حروف پر مشتمل ہونا چاہیے۔",
-    passwordsDoNotMatch: "دونوں پاس ورڈ ایک جیسے نہیں ہیں۔",
-    emailAlreadyExists: "اس ای میل کے ساتھ اکاؤنٹ پہلے سے موجود ہے۔",
+    signup: "اکاؤنٹ بنائیں",
 
     // Dashboard
     patientDashboard: "مریض کا ڈیش بورڈ",
     goodMorning: "صبح بخیر",
-    goodAfternoon: "دوپہر بخیر",
+    goodAfternoon: "خوش آمدید",
     goodEvening: "شام بخیر",
-    hello: "السلام علیکم",
+    goodNight: "شب بخیر",
+    dashboardWelcome: "آپ کے صحت کے ڈیش بورڈ میں خوش آمدید",
+    viewHealthProfile: "صحت کا پروفائل دیکھیں",
     quickActions: "فوری سہولیات",
-    checkSymptoms: "اپنی علامات چیک کریں",
-    findDoctor: "ڈاکٹر تلاش کریں",
-    healthInformation: "میری صحت کی معلومات",
+    healthcareTools: "صحت کی سہولیات",
+    checkSymptoms: "علامات چیک کریں",
+    symptomDescription: "اپنی علامات چیک کریں اور رہنمائی حاصل کریں۔",
+    startSymptomCheck: "علامات کی جانچ شروع کریں",
+    findDoctors: "ڈاکٹر تلاش کریں",
+    doctorFinderDescription:
+      "اپنے قریب ڈاکٹرز اور کلینکس تلاش کریں۔",
+    findDoctorsButton: "ڈاکٹرز تلاش کریں",
+    viewMedicalHistory: "طبی تاریخ دیکھیں",
+    medicalHistoryDescription:
+      "اپنی سابقہ علامات کی جانچ اور سفارشات دیکھیں۔",
+    openRecords: "ریکارڈز کھولیں",
+    openMedicalRecords: "طبی ریکارڈز کھولیں",
+    myMedicalRecords: "میرے طبی ریکارڈز",
+    healthInformation: "صحت کی معلومات",
+    savedHealthDetails: "آپ کی محفوظ شدہ صحت کی تفصیلات",
     recentActivity: "حالیہ سرگرمیاں",
-    edit: "پروفائل میں ترمیم کریں",
-    settings: "ترتیبات",
-    customizeExperience: "اپنی سہولت کے مطابق تبدیلی کریں",
+    latestUpdates: "آپ کی تازہ ترین اپ ڈیٹس",
+    healthNotice: "صحت سے متعلق اہم اطلاع",
+    healthDisclaimer:
+      "یہ معلومات صرف رہنمائی کے لیے ہیں اور ڈاکٹر کے مشورے کا متبادل نہیں ہیں۔",
+    patientProfileCompleted: "مریض کا پروفائل مکمل ہو گیا",
+    profileCompleted: "پروفائل مکمل ہو گیا",
+    noRecentActivity: "ابھی تک کوئی حالیہ سرگرمی نہیں۔",
+    healthcareDashboard: "صحت کا ڈیش بورڈ",
+
+    // Greetings and dates
+    today: "آج",
+    yesterday: "گزشتہ روز",
+    date: "تاریخ",
+    time: "وقت",
+    completed: "مکمل",
+    pending: "زیرِ انتظار",
+
+    // Patient profile
+    personalInformation: "ذاتی معلومات",
+    personalDetails: "ذاتی تفصیلات",
+    fullName: "پورا نام",
+    name: "نام",
+    age: "عمر",
+    gender: "جنس",
+    male: "مرد",
+    female: "عورت",
+    other: "دیگر",
+    location: "مقام",
+    area: "علاقہ",
+    city: "شہر",
+    email: "ای میل",
+    phone: "فون نمبر",
+    dateOfBirth: "تاریخ پیدائش",
+    patientInformation: "مریض کی معلومات",
+    healthProfileDetails: "آپ کے صحت کے پروفائل کی تفصیلات",
+    updateProfile: "پروفائل اپ ڈیٹ کریں",
+    saveProfile: "پروفائل محفوظ کریں",
+    profileUpdated: "پروفائل کامیابی سے اپ ڈیٹ ہو گیا",
+    profileSaved: "پروفائل کامیابی سے محفوظ ہو گیا",
+    enterName: "اپنا نام درج کریں",
+    enterAge: "اپنی عمر درج کریں",
+    selectGender: "جنس منتخب کریں",
+    enterLocation: "اپنا مقام درج کریں",
+    enterCity: "اپنا شہر درج کریں",
+    profileRequired: "براہِ کرم اپنا پروفائل مکمل کریں",
+    profileNotCompleted: "آپ کا پروفائل نامکمل ہے",
+
+    // Health information
+    health: "صحت",
+    healthDetails: "صحت کی تفصیلات",
+    healthInformationTitle: "صحت کی معلومات",
+    existingConditions: "موجودہ بیماریاں",
+    medicalConditions: "طبی مسائل",
+    allergies: "الرجیز",
+    medications: "ادویات",
+    currentMedications: "موجودہ ادویات",
+    addCondition: "بیماری شامل کریں",
+    addAllergy: "الرجی شامل کریں",
+    addMedication: "دوا شامل کریں",
+    enterCondition: "موجودہ بیماریوں کی تفصیل درج کریں",
+    enterAllergy: "الرجیز کی تفصیل درج کریں",
+    enterMedication: "ادویات کی تفصیل درج کریں",
+    healthHistory: "صحت کی تاریخ",
+    healthInformationSaved: "آپ کی صحت کی معلومات محفوظ ہو گئی ہیں۔",
+    editHealthInformation: "صحت کی معلومات میں ترمیم کریں",
+    saveHealthInformation: "صحت کی معلومات محفوظ کریں",
+
+    // My Health page
+    myMedicalHistory: "میری طبی تاریخ",
+    healthRecords: "طبی ریکارڈز",
+    previousSymptomChecks: "علامات کی سابقہ جانچ",
+    previousRecommendations: "سابقہ سفارشات",
+    savedHealthRecords: "آپ کے محفوظ شدہ طبی ریکارڈز",
+    noHealthRecords: "کوئی طبی ریکارڈ نہیں ملا۔",
+    noMedicalHistory: "طبی تاریخ دستیاب نہیں۔",
+    symptomCheckHistory: "علامات کی جانچ کی تاریخ",
+    recommendations: "سفارشات",
+    details: "تفصیلات",
+    viewDetails: "تفصیلات دیکھیں",
+    recordDate: "ریکارڈ کی تاریخ",
+    healthSummary: "صحت کا خلاصہ",
+
+    // Symptom checker
+    symptoms: "علامات",
+    symptomCheckerTitle: "علامات کی جانچ",
+    describeSymptoms: "اپنی علامات بیان کریں",
+    symptomDescriptionLabel: "علامات کی تفصیل",
+    enterSymptoms: "اپنی موجودہ علامات درج کریں",
+    selectSymptoms: "اپنی علامات منتخب کریں",
+    duration: "دورانیہ",
+    symptomDuration: "یہ علامات کتنے عرصے سے ہیں؟",
+    severity: "شدت",
+    mild: "ہلکی",
+    moderate: "درمیانی",
+    severe: "شدید",
+    additionalInformation: "اضافی معلومات",
+    additionalNotes: "اضافی نوٹس",
+    enterAdditionalNotes: "مزید معلومات درج کریں",
+    analyzeSymptoms: "علامات کا تجزیہ کریں",
+    checkMySymptoms: "میری علامات چیک کریں",
+    startAnalysis: "تجزیہ شروع کریں",
+    analyzingSymptoms: "علامات کا تجزیہ ہو رہا ہے...",
+    symptomResults: "علامات کی جانچ کے نتائج",
+    possibleCauses: "ممکنہ وجوہات",
+    suggestedActions: "تجویز کردہ اقدامات",
+    selfCareGuidance: "اپنی دیکھ بھال کے لیے رہنمائی",
+    recommendedCare: "تجویز کردہ دیکھ بھال",
+    medicineInformation: "ادویات کی معلومات",
+    precautions: "احتیاطی تدابیر",
+    whenToSeeDoctor: "ڈاکٹر سے کب رجوع کریں",
+    emergencyWarning: "ہنگامی صورتحال سے متعلق تنبیہ",
+    symptomCheckerDescription:
+  "عمومی صحت کی معلومات، اپنی دیکھ بھال کے مشورے اور ادویات سے متعلق احتیاطی تدابیر جاننے کے لیے اپنی علامات منتخب کریں۔",
+    symptomCheckerDisclaimer:
+      "یہ سہولت صرف عمومی رہنمائی فراہم کرتی ہے، طبی تشخیص نہیں۔",
+    symptomCheckSaved: "آپ کی علامات کی جانچ محفوظ ہو گئی ہے۔",
+    noSymptomsEntered: "براہِ کرم اپنی علامات درج کریں۔",
+    selectDuration: "علامات کا دورانیہ منتخب کریں",
+    selectSeverity: "شدت منتخب کریں",
+    symptomCheckFailed:
+      "علامات کی جانچ مکمل نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
+
+    // Doctor Finder
+    doctorFinderTitle: "ڈاکٹر تلاش کریں",
+    findDoctorsNearYou: "اپنے قریب ڈاکٹرز اور کلینکس تلاش کریں۔",
+    searchDoctors: "ڈاکٹرز تلاش کریں",
+    searchByName: "ڈاکٹر کا نام لکھیں",
+    searchByLocation: "مقام کے مطابق تلاش کریں",
+    searchBySpecialty: "شعبے کے مطابق تلاش کریں",
+    allSpecialties: "تمام شعبے",
+    allLocations: "تمام مقامات",
+    specialty: "شعبہ",
+    specialization: "تخصص",
+    doctor: "ڈاکٹر",
+    doctors: "ڈاکٹرز",
+    clinic: "کلینک",
+    hospital: "ہسپتال",
+    address: "پتہ",
+    rating: "درجہ بندی",
+    experience: "تجربہ",
+    yearsExperience: "سال کا تجربہ",
+    contact: "رابطہ",
+    viewDoctor: "ڈاکٹر کی تفصیلات دیکھیں",
+    viewMore: "مزید دیکھیں",
+    noDoctorsFound: "کوئی ڈاکٹر نہیں ملا۔",
+    noDoctorsAvailable: "فی الحال کوئی ڈاکٹر دستیاب نہیں۔",
+    tryDifferentSearch: "دوسری تلاش یا فلٹر استعمال کریں۔",
+    doctorDetails: "ڈاکٹر کی تفصیلات",
+    generalPhysician: "جنرل فزیشن",
+    cardiologist: "ماہرِ امراضِ قلب",
+    dermatologist: "ماہرِ امراضِ جلد",
+    dentist: "دانتوں کا ڈاکٹر",
+    pediatrician: "بچوں کا ڈاکٹر",
+    gynecologist: "ماہرِ امراضِ نسواں",
+    neurologist: "ماہرِ اعصاب",
+    psychiatrist: "ماہرِ نفسیات",
+    orthopedic: "ماہرِ ہڈی و جوڑ",
+    ophthalmologist: "ماہرِ امراضِ چشم",
+    entSpecialist: "کان، ناک اور گلے کا ماہر",
+    unavailable: "دستیاب نہیں",
+    unableToLoadDoctors:
+      "ڈاکٹرز کی معلومات لوڈ نہیں ہو سکیں۔ دوبارہ کوشش کریں۔",
+    externalLink: "مزید معلومات",
+
+    // Settings
+    customizeExperience: "اپنی پسند کے مطابق ترتیب دیں",
     appearance: "ظاہری انداز",
     lightMode: "لائٹ موڈ",
     darkMode: "ڈارک موڈ",
     language: "زبان",
-    patientPortal: "مریضوں کا پورٹل",
-    patient: "مریض",
-    personalHealthSpace: "آپ کی ذاتی صحت کی جگہ",
-    dashboardWelcome:
-      "میڈی کیئر پورٹل میں خوش آمدید۔ اپنی صحت کی معلومات کا انتظام کریں اور تمام طبی سہولیات ایک ہی جگہ سے حاصل کریں۔",
-    viewHealthProfile: "میری صحت کا پروفائل دیکھیں",
-    profile: "پروفائل",
-    health: "صحت",
-    area: "علاقہ",
-    notAdded: "شامل نہیں کیا گیا",
-    notProvided: "فراہم نہیں کیا گیا",
-    availableNow: "اب دستیاب ہے",
+    selectLanguage: "زبان منتخب کریں",
+    English: "انگریزی",
+    Urdu: "اردو",
+    english: "انگریزی",
+    urdu: "اردو",
+    preferences: "ترجیحات",
+    accountSettings: "اکاؤنٹ کی ترتیبات",
+    settingsSaved: "ترتیبات کامیابی سے محفوظ ہو گئیں",
+
+    // Authentication
+    welcomeBack: "واپس خوش آمدید",
+    createAccount: "اکاؤنٹ بنائیں",
+    password: "پاس ورڈ",
+    confirmPassword: "پاس ورڈ کی تصدیق کریں",
+    forgotPassword: "پاس ورڈ بھول گئے؟",
+    enterPassword: "اپنا پاس ورڈ درج کریں",
+    dontHaveAccount: "کیا آپ کا اکاؤنٹ نہیں ہے؟",
+    alreadyHaveAccount: "کیا آپ کا پہلے سے اکاؤنٹ ہے؟",
+    loginSuccessful: "لاگ اِن کامیاب ہو گیا",
+    logoutSuccessful: "آپ کامیابی سے لاگ آؤٹ ہو گئے",
+    invalidEmail: "براہِ کرم درست ای میل درج کریں",
+    passwordRequired: "پاس ورڈ درج کرنا ضروری ہے",
+    requiredField: "یہ خانہ پُر کرنا ضروری ہے",
+
+    // Errors and status
+    somethingWentWrong: "کوئی مسئلہ پیش آ گیا۔ دوبارہ کوشش کریں۔",
+    networkError: "نیٹ ورک کا مسئلہ ہے۔ اپنا انٹرنیٹ چیک کریں۔",
+    dataLoadError: "معلومات لوڈ نہیں ہو سکیں۔",
+    dataSaveError: "معلومات محفوظ نہیں ہو سکیں۔",
+    tryAgain: "دوبارہ کوشش کریں",
+    noResults: "کوئی نتیجہ نہیں ملا۔",
     comingSoon: "جلد دستیاب ہوگا",
-    symptomDescription:
-      "عمومی صحت سے متعلق رہنمائی اور خود نگہداشت کی معلومات حاصل کرنے کے لیے اپنی علامات، دورانیہ اور شدت منتخب کریں۔",
-    startSymptomCheck: "علامات چیک کرنا شروع کریں",
-    doctorDescription:
-      "ڈاکٹرز کو ان کی تخصص، مقام، ریٹنگ، تجربے اور پروفائل کی معلومات کے مطابق تلاش کریں۔",
-    findDoctors: "ڈاکٹرز تلاش کریں",
-    healthcareTools: "آپ کی صحت سے متعلق تمام سہولیات ایک ہی جگہ۔",
-    savedHealthDetails: "آپ کی محفوظ کردہ ذاتی صحت کی معلومات۔",
-    existingConditions: "موجودہ طبی مسائل",
-    lahoreArea: "لاہور کا علاقہ",
-    latestUpdates: "آپ کی تازہ ترین تبدیلیاں",
-    profileUpdated: "پروفائل اپ ڈیٹ کیا گیا",
-    recently: "حال ہی میں",
-    noRecentActivity: "ابھی کوئی حالیہ سرگرمی موجود نہیں۔",
-    healthNotice: "صحت سے متعلق اہم اطلاع",
-    healthDisclaimer:
-      "میڈی کیئر عمومی صحت کی معلومات فراہم کرتا ہے اور پیشہ ورانہ طبی مشورے، تشخیص یا علاج کا متبادل نہیں ہے۔ طبی مسائل کے لیے ہمیشہ کسی مستند طبی ماہر سے مشورہ کریں۔",
-    footer: "میڈی کیئر مریض پورٹل",
-
-    // Patient Information
-    age: "عمر",
-    gender: "جنس",
-    location: "مقام",
-    allergies: "الرجی",
-    noAllergies: "کوئی معلوم الرجی نہیں",
-    noneProvided: "کوئی معلومات فراہم نہیں کی گئیں",
-
-    // Patient Profile
-    patientProfile: "مریض کا پروفائل",
-    profileSubtitle:
-      "اپنی ذاتی اور صحت سے متعلق معلومات کو اپ ڈیٹ رکھیں تاکہ میڈی کیئر آپ کو بہتر سہولیات فراہم کر سکے۔",
-    personalInformation: "ذاتی معلومات",
-    personalDetails: "آپ کی بنیادی ذاتی معلومات۔",
-    email: "ای میل",
-    enterEmail: "اپنی ای میل درج کریں",
-    enterAge: "اپنی عمر درج کریں",
-    selectGender: "جنس منتخب کریں",
-    female: "خاتون",
-    male: "مرد",
-    other: "دیگر",
-    healthInfo: "صحت سے متعلق معلومات",
-    healthInfoSubtitle: "موجودہ طبی مسائل اور معلوم الرجی شامل کریں۔",
-    medicineAllergies: "ادویات سے الرجی",
-    foodAllergies: "غذاؤں سے الرجی",
-    searchMedicine: "ادویات سے الرجی تلاش کریں...",
-    searchFood: "غذاؤں سے الرجی تلاش کریں...",
-    noMedicineFound: "کوئی دوا نہیں ملی۔",
-    noFoodFound: "کوئی غذا نہیں ملی۔",
-    noKnownMedicineAllergies: "ادویات سے کوئی معلوم الرجی نہیں",
-    noKnownFoodAllergies: "غذاؤں سے کوئی معلوم الرجی نہیں",
-    existingHealthConditions: "موجودہ طبی مسائل",
-    conditionsPlaceholder:
-      "مثال: دمہ، ذیابیطس، ہائی بلڈ پریشر...",
-    optionalLocation: "اختیاری — لاہور میں اپنا علاقہ منتخب کریں۔",
-    selectArea: "لاہور کا علاقہ منتخب کریں (اختیاری)",
-    saveProfile: "پروفائل محفوظ کریں",
-    signOut: "لاگ آؤٹ",
-    toggleTheme: "تھیم تبدیل کریں",
-    switchToLight: "لائٹ موڈ پر جائیں",
-    switchToDark: "ڈارک موڈ پر جائیں",
-    pleaseEnterFullName: "براہ کرم اپنا پورا نام درج کریں۔",
-    pleaseEnterAge: "براہ کرم اپنی عمر درج کریں۔",
-    pleaseSelectGender: "براہ کرم اپنی جنس منتخب کریں۔",
-    profileSaved: "پروفائل کامیابی سے محفوظ ہو گیا!",
-    profileUpdated: "پروفائل کامیابی سے اپ ڈیٹ ہو گیا!",
-    remove: "ہٹائیں",
   },
 };
 
@@ -307,37 +704,34 @@ const LanguageContext = createContext(null);
 
 export function LanguageProvider({ children }) {
   const [language, setLanguageState] = useState(() => {
+    if (typeof window === "undefined") {
+      return DEFAULT_LANGUAGE;
+    }
+
     try {
-      const savedLanguage = localStorage.getItem(
+      const savedLanguage = window.localStorage.getItem(
         LANGUAGE_STORAGE_KEY
       );
 
-      return Object.values(SUPPORTED_LANGUAGES).includes(
-        savedLanguage
-      )
+      return SUPPORTED_LANGUAGES.includes(savedLanguage)
         ? savedLanguage
-        : null;
-    } catch (error) {
-      console.error("Unable to read saved language:", error);
-      return null;
+        : DEFAULT_LANGUAGE;
+    } catch {
+      return DEFAULT_LANGUAGE;
     }
   });
 
   const setLanguage = useCallback((newLanguage) => {
-    if (
-      !Object.values(SUPPORTED_LANGUAGES).includes(newLanguage)
-    ) {
-      console.warn("Unsupported language:", newLanguage);
+    if (!SUPPORTED_LANGUAGES.includes(newLanguage)) {
       return;
     }
 
     try {
-      localStorage.setItem(
+      window.localStorage.setItem(
         LANGUAGE_STORAGE_KEY,
         newLanguage
       );
-    } catch (error) {
-      console.error("Unable to save language:", error);
+    } catch {
     }
 
     setLanguageState(newLanguage);
@@ -345,39 +739,46 @@ export function LanguageProvider({ children }) {
 
   const t = useCallback(
     (key) => {
-      const activeLanguage = language || DEFAULT_LANGUAGE;
+      const activeTranslations =
+        translations[language] || translations.en;
 
       return (
-        translations[activeLanguage]?.[key] ??
-        translations[DEFAULT_LANGUAGE]?.[key] ??
+        activeTranslations[key] ??
+        translations.en[key] ??
         key
       );
     },
     [language]
   );
 
+  const isUrdu = language === "ur";
+  const isEnglish = language === "en";
+
   useEffect(() => {
-    const activeLanguage = language || DEFAULT_LANGUAGE;
+    if (typeof document === "undefined") {
+      return;
+    }
 
-    const direction =
-      activeLanguage === SUPPORTED_LANGUAGES.URDU
-        ? "rtl"
-        : "ltr";
+    const direction = isUrdu ? "rtl" : "ltr";
 
-    document.documentElement.lang = activeLanguage;
+    document.documentElement.lang = language;
     document.documentElement.dir = direction;
-    document.body.dir = direction;
-  }, [language]);
+
+    if (document.body) {
+      document.body.dir = direction;
+    }
+  }, [language, isUrdu]);
 
   const contextValue = useMemo(
     () => ({
       language,
       setLanguage,
       t,
-      isUrdu: language === SUPPORTED_LANGUAGES.URDU,
-      isEnglish: language === SUPPORTED_LANGUAGES.ENGLISH,
+      isUrdu,
+      isEnglish,
+      supportedLanguages: SUPPORTED_LANGUAGES,
     }),
-    [language, setLanguage, t]
+    [language, setLanguage, t, isUrdu, isEnglish]
   );
 
   return (
@@ -399,3 +800,5 @@ export function useLanguage() {
 
   return context;
 }
+
+export default LanguageContext;
