@@ -63,6 +63,26 @@ export default function ResetPassword() {
       return;
     }
 
+    if (!/[A-Z]/.test(password)) {
+      setError("Password must contain at least one uppercase letter (A-Z).");
+      return;
+    }
+
+    if (!/[a-z]/.test(password)) {
+      setError("Password must contain at least one lowercase letter (a-z).");
+      return;
+    }
+
+    if (!/[0-9]/.test(password)) {
+      setError("Password must contain at least one number (0-9).");
+      return;
+    }
+
+    if (!/[^A-Za-z0-9\s]/.test(password)) {
+      setError("Password must contain at least one special character (e.g. @, #, !).");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -142,7 +162,7 @@ export default function ResetPassword() {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter new password"
+              placeholder="Minimum 8 characters"
               minLength={8}
               required
               className="w-full px-4 py-3 pr-12 rounded-xl border border-slate-200 bg-white text-slate-900 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
@@ -159,7 +179,9 @@ export default function ResetPassword() {
           </div>
 
           <p className="text-xs text-slate-500 mt-2">
-            Use at least 8 characters.
+            Password must contain at least 8 characters, one uppercase
+            letter, one lowercase letter, one number, and one special
+            character.
           </p>
         </div>
 

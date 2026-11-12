@@ -37,6 +37,7 @@ export default function Signup() {
 
     const name = form.name.trim();
     const email = form.email.trim().toLowerCase();
+    const password = form.password;
 
     if (!name) {
       setError(t("pleaseEnterName"));
@@ -48,12 +49,32 @@ export default function Signup() {
       return;
     }
 
-    if (form.password.length < 6) {
-      setError(t("passwordMinLength"));
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
       return;
     }
 
-    if (form.password !== form.confirmPassword) {
+    if (!/[A-Z]/.test(password)) {
+      setError("Password must contain at least one uppercase letter (A-Z).");
+      return;
+    }
+
+    if (!/[a-z]/.test(password)) {
+      setError("Password must contain at least one lowercase letter (a-z).");
+      return;
+    }
+
+    if (!/[0-9]/.test(password)) {
+      setError("Password must contain at least one number (0-9).");
+      return;
+    }
+
+    if (!/[^A-Za-z0-9\s]/.test(password)) {
+      setError("Password must contain at least one special character (@, #, $, !).");
+      return;
+    }
+
+    if (password !== form.confirmPassword) {
       setError(t("passwordsDoNotMatch"));
       return;
     }
@@ -62,7 +83,7 @@ export default function Signup() {
       const { data, error: signupError } =
         await supabase.auth.signUp({
           email,
-          password: form.password,
+          password,
           options: {
             data: { name },
           },
@@ -148,9 +169,9 @@ export default function Signup() {
               type={showPassword ? "text" : "password"}
               value={form.password}
               onChange={handleChange}
-              placeholder={t("atLeast6Characters")}
+              placeholder="Minimum 8 characters"
               required
-              minLength={6}
+              minLength={8}
               className={`w-full px-4 py-3 ${
                 isUrdu ? "pl-12" : "pr-12"
               } rounded-xl border border-slate-200 bg-white text-slate-900 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100`}
@@ -167,6 +188,11 @@ export default function Signup() {
               {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
             </button>
           </div>
+
+          <p className="text-xs text-slate-500 mt-2">
+            Password must contain at least 8 characters, uppercase,
+            lowercase, a number, and a special character.
+          </p>
         </div>
 
         <div>
