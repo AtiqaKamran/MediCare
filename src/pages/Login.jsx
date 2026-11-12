@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, LogIn } from "lucide-react";
@@ -174,6 +175,16 @@ export default function Login() {
               {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
             </button>
           </div>
+        </div>
+
+        {/* Forgot Password Link */}
+        <div className="flex justify-end">
+          <Link
+            to="/forgot-password"
+            className="text-sm font-medium text-teal-600 hover:text-teal-700"
+          >
+            Forgot Password?
+          </Link>
         </div>
 
         {error && (

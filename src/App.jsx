@@ -4,6 +4,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Welcome from "./pages/Welcome";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import PatientProfile from "./pages/PatientProfile";
 import Dashboard from "./pages/Dashboard";
 import SymptomChecker from "./pages/SymptomChecker";
@@ -74,7 +76,7 @@ function LanguageSelection() {
   );
 }
 
-/*  MediCare Routes*/
+/* MediCare Routes */
 
 function AppRoutes() {
   const { language } = useLanguage();
@@ -122,6 +124,18 @@ function AppRoutes() {
             <Signup />
           )
         }
+      />
+
+      {/* Forgot Password */}
+      <Route
+        path="/forgot-password"
+        element={<ForgotPassword />}
+      />
+
+      {/* Reset Password */}
+      <Route
+        path="/reset-password"
+        element={<ResetPassword />}
       />
 
       {/* Patient Profile */}
