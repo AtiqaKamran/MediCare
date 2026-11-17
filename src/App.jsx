@@ -16,6 +16,7 @@ import MedicalReminder from "./pages/MedicalReminder";
 import BloodDonorFinder from "./pages/BloodDonorFinder";
 import AmbulanceFinder from "./pages/AmbulanceFinder";
 import LabFinder from "./pages/LabFinder";
+import ReportScanner from "./pages/ReportScanner";
 
 import SupabaseTest from "./SupabaseTest";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -85,6 +86,7 @@ function AppRoutes() {
       <Route path="/blood-donors" element={<ProtectedRoute><BloodDonorFinder /></ProtectedRoute>} />
       <Route path="/ambulance" element={<ProtectedRoute><AmbulanceFinder /></ProtectedRoute>} />
       <Route path="/lab-finder" element={<ProtectedRoute><LabFinder /></ProtectedRoute>} />
+      <Route path="/report-scanner" element={<ProtectedRoute><ReportScanner /></ProtectedRoute>} />
       <Route path="/supabase-test" element={<SupabaseTest />} />
       <Route path="*" element={<Navigate to={isLoggedIn ? "/dashboard" : "/"} replace />} />
     </Routes>
