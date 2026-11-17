@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Activity,
+  Bell,
   CalendarDays,
   ChevronRight,
   ClipboardCheck,
@@ -21,6 +22,7 @@ import {
   X,
   History,
   FolderHeart,
+  FileSearch,
 } from "lucide-react";
 
 import {
@@ -30,6 +32,7 @@ import {
 
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
+import { supabase } from "../lib/supabase";
 
 function formatValue(value, fallback = "Not provided") {
   if (Array.isArray(value)) {
@@ -48,9 +51,35 @@ export default function Dashboard() {
   const [user, setUser] = useState(getCurrentUser());
   const [showSettings, setShowSettings] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const { darkMode, toggleTheme } = useTheme();
   const { language, setLanguage, t, isUrdu } = useLanguage();
+
+ useEffect(() => {
+  let active = true;
+  async function loadNotifications() {
+    if (!user?.id) return;
+    const { data, error } = await supabase.from("notifications")
+      .select("id,title,message,created_at,read_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(15);
+    if (!error && active) setNotifications(data || []);
+  }
+  loadNotifications();
+  const refreshTimer = window.setInterval(loadNotifications, 30000);
+  return () => { active = false; window.clearInterval(refreshTimer); };
+}, [user?.id]);
+
+ async function markNotificationRead(item) {
+  if (item.read_at) return;
+  const readAt = new Date().toISOString();
+  const { error } = await supabase.from("notifications")
+    .update({ read_at: readAt }).eq("id", item.id);
+  if (!error) setNotifications((items) => items.map((n) => n.id === item.id ? { ...n, read_at: readAt } : n));
+}
 
  useEffect(() => {
   const currentUser = getCurrentUser();
@@ -182,6 +211,36 @@ export default function Dashboard() {
 
             {/* User Controls */}
             <div className="flex items-center gap-2">
+              <div className="relative">
+                <button
+                  onClick={() => setShowNotifications((value) => !value)}
+                  className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-teal-300 hover:text-teal-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                  aria-label="Notifications"
+                  aria-expanded={showNotifications}
+                >
+                  <Bell size={19} />
+                  {notifications.some((item) => !item.read_at) && (
+                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-800" />
+                  )}
+                </button>
+                {showNotifications && (
+                  <div className="absolute right-0 z-50 mt-3 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
+                    <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+                      <h3 className="font-bold">Notifications</h3>
+                      <button onClick={() => setShowNotifications(false)} aria-label="Close notifications" className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"><X size={16} /></button>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {notifications.length ? notifications.map((item) => (
+                        <button key={item.id} onClick={() => markNotificationRead(item)} className={`block w-full border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/60 ${item.read_at ? "opacity-65" : "bg-teal-50/50 dark:bg-teal-950/20"}`}>
+                          <span className="block text-sm font-semibold">{item.title}</span>
+                          <span className="mt-1 block text-xs leading-5 text-slate-500 dark:text-slate-400">{item.message}</span>
+                          <span className="mt-1 block text-[10px] text-slate-400">{new Date(item.created_at).toLocaleString()}</span>
+                        </button>
+                      )) : <p className="px-4 py-8 text-center text-sm text-slate-500">No notifications yet.</p>}
+                    </div>
+                  </div>
+                )}
+              </div>
               {/* Settings */}
               <div className="relative">
                 <button
@@ -608,6 +667,34 @@ export default function Dashboard() {
     </button>
   </div>
 </div>
+            {/* AI Report Scanner */}
+            <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="w-14 h-14 rounded-2xl bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-300 flex items-center justify-center"><FileSearch size={26}/></div>
+              <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "AI رپورٹ اسکینر" : "AI Health Report Scanner"}</h4>
+              <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "اپنی لیب رپورٹ اپ لوڈ کریں اور آسان الفاظ میں وضاحت حاصل کریں۔" : "Upload a lab report and get an easy-to-understand explanation."}</p>
+              <button onClick={()=>navigate("/report-scanner")} className="mt-5 text-sm font-bold text-violet-600 dark:text-violet-300">{isUrdu ? "رپورٹ اسکین کریں" : "Scan a Report"} <ChevronRight size={17} className="inline"/></button>
+            </div>
+            {/* Blood Donor Finder */}
+            <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300 flex items-center justify-center"><HeartPulse size={26}/></div>
+              <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "بلڈ ڈونر تلاش کریں" : "Blood Donor Finder"}</h4>
+              <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "شہر، علاقے اور بلڈ گروپ کے مطابق اجازت یافتہ ڈونرز تلاش کریں۔" : "Find consenting blood donors by city, area and blood group."}</p>
+              <button onClick={()=>navigate("/blood-donors")} className="mt-5 text-sm font-bold text-rose-600 dark:text-rose-300">{isUrdu ? "ڈونرز تلاش کریں" : "Find Donors"} <ChevronRight size={17} className="inline"/></button>
+            </div>
+            {/* Ambulance Finder */}
+            <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-300 flex items-center justify-center"><Activity size={26}/></div>
+              <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "ایمبولینس اور ایمرجنسی" : "Ambulance & Emergency"}</h4>
+              <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "علاقے کے مطابق سروس کی معلومات تلاش کریں۔" : "Search ambulance service information by area."}</p>
+              <button onClick={()=>navigate("/ambulance")} className="mt-5 text-sm font-bold text-orange-600 dark:text-orange-300">{isUrdu ? "ایمبولینس تلاش کریں" : "Find Ambulance"} <ChevronRight size={17} className="inline"/></button>
+            </div>
+            {/* Laboratory Finder */}
+            <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 flex items-center justify-center"><FolderHeart size={26}/></div>
+              <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "لیبارٹری اور ٹیسٹ تلاش کریں" : "Lab & Test Finder"}</h4>
+              <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "ٹیسٹ درج کریں اور لیبارٹری کی معلومات دیکھیں۔" : "Enter tests to find matching laboratory listings."}</p>
+              <button onClick={()=>navigate("/lab-finder")} className="mt-5 text-sm font-bold text-indigo-600 dark:text-indigo-300">{isUrdu ? "لیب تلاش کریں" : "Find a Lab"} <ChevronRight size={17} className="inline"/></button>
+            </div>
           </div>
         </section>
 

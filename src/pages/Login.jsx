@@ -45,6 +45,13 @@ export default function Login() {
 
       if (loginError) throw loginError;
 
+      // Send a best-effort security alert; login remains successful if email is unavailable.
+      try {
+        await supabase.functions.invoke("login-alert");
+      } catch (notificationError) {
+        console.warn("Login alert could not be sent:", notificationError);
+      }
+
       const authUser = data.user;
 
       // Fetch the patient's saved profile from Supabase.
