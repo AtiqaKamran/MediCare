@@ -373,7 +373,9 @@ export default function MedicalReminder() {
             <span className="rounded-full bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">{todayReminders.length}</span>
           </div>
 
-          {loading ? (\n            <div className={`${cardClass} p-8 text-center text-sm ${muted}`}>Loading reminders...</div>\n          ) : todayReminders.length === 0 ? (
+          {loading ? (
+            <div className={`${cardClass} p-8 text-center text-sm ${muted}`}>Loading reminders...</div>
+          ) : todayReminders.length === 0 ? (
             <div className={`${cardClass} flex flex-col items-center px-6 py-12 text-center`}>
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"><Pill size={27} /></div>
               <h3 className="font-bold">{t.noItems}</h3>
