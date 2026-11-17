@@ -65,7 +65,8 @@ export default function LabFinder() {
   const results=useMemo(()=>{
     const cityLabs=labs.filter(lab=>(!city||lab.city?.toLowerCase()===city.trim().toLowerCase())
       &&(!area||lab.area?.toLowerCase().includes(area.trim().toLowerCase())
-        ||(lab.home_collection_areas||[]).some(a=>a.toLowerCase().includes(area.trim().toLowerCase())))
+        ||(lab.home_collection_areas||[]).some(a=>a.toLowerCase().includes(area.trim().toLowerCase()))
+        ||(lab.home_sample_collection && (lab.home_collection_areas||[]).length===0))
       &&(!homeOnly||lab.home_sample_collection));
     if(!test.trim()) return cityLabs.map(lab=>({lab,status:null,verifiedAt:lab.last_verified_at}));
     const matching=tests.filter(x=>x.test_name.toLowerCase().includes(test.trim().toLowerCase()));
