@@ -3,6 +3,7 @@ import { X, Send, Stethoscope, LoaderCircle, HeartPulse } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
+import { Link } from "react-router-dom";
 
 export default function DoctorChatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,13 +65,11 @@ export default function DoctorChatbot() {
     } finally { setLoading(false); }
   }
 
-  if (!user) return null;
-
-  return <div className="fixed bottom-4 right-3 z-[9999] sm:bottom-6 sm:right-6">
-    {!isOpen ? <button onClick={() => setIsOpen(true)} aria-label="Open MediCare AI Doctor"
+  return <div className="group fixed bottom-4 right-3 z-[9999] sm:bottom-6 sm:right-6">
+    {!isOpen ? <div className="relative flex flex-col items-end"><div className="pointer-events-none mb-2 rounded-xl bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow-xl transition group-hover:opacity-100"><strong>MediCare AI Doctor</strong><p>Hover to preview · Click to chat</p></div><button onClick={() => setIsOpen(true)} aria-label="Open MediCare AI Doctor"
       className="relative flex h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-teal-500 to-teal-800 text-white shadow-xl transition hover:scale-105">
       <Stethoscope size={27}/><span className="absolute -top-2 right-0 rounded-full bg-emerald-500 px-2 py-0.5 text-[9px] font-bold text-white">AI</span>
-    </button> : <section className="flex h-[min(620px,calc(100dvh-28px))] w-[min(390px,calc(100vw-24px))] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900" dir={isUrdu ? "rtl" : "ltr"}>
+    </button></div> : <section className="flex h-[min(620px,calc(100dvh-28px))] w-[min(390px,calc(100vw-24px))] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900" dir={isUrdu ? "rtl" : "ltr"}>
       <header className="flex items-center justify-between bg-gradient-to-r from-teal-800 to-teal-600 p-4 text-white">
         <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15"><HeartPulse size={23}/></div>
           <div><h3 className="font-bold">MediCare AI Doctor</h3><p className="text-xs text-teal-100">{isUrdu ? "آپ کا صحت معلومات معاون" : "Your personal health information assistant"}</p></div>
@@ -78,15 +77,16 @@ export default function DoctorChatbot() {
       </header>
       <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto p-4 text-sm">
         <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-teal-50 p-3 leading-6 text-slate-800 dark:bg-slate-800 dark:text-slate-100">{welcome}</div>
+        {!user && <div className="rounded-xl bg-teal-50 p-4 text-sm text-slate-800 dark:bg-slate-800 dark:text-white">Sign in or create an account to chat with MediCare AI.<div className="mt-3 flex gap-2"><Link to="/login" className="rounded-lg bg-teal-700 px-4 py-2 text-white">Log in</Link><Link to="/signup" className="rounded-lg border border-teal-700 px-4 py-2">Sign up</Link></div></div>}
         {messages.map((m,i)=><div key={m.id || i} className={`max-w-[90%] whitespace-pre-wrap rounded-2xl p-3 leading-6 ${m.role === "user" ? "ml-auto rounded-tr-sm bg-teal-700 text-white" : "rounded-tl-sm bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100"}`}>{m.content}</div>)}
         {loading && <div className="flex items-center gap-2 text-xs text-slate-500"><LoaderCircle size={15} className="animate-spin"/>{isUrdu ? "جواب تیار ہو رہا ہے..." : "MediCare AI is preparing your answer..."}</div>}
         {error && <p role="alert" className="rounded-xl bg-amber-50 p-3 text-xs text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">{error}</p>}
       </div>
       <p className="px-3 pb-2 text-[10px] text-slate-500">{isUrdu ? "MediCare AI کا جواب Gemini AI سروس سے تیار ہوتا ہے۔ یہ عمومی معلومات ہیں، طبی تشخیص نہیں۔" : "MediCare AI uses Google Gemini as its backend AI engine. General information only — not a medical diagnosis. Avoid sharing identifying patient details."}</p>
-      <form onSubmit={send} className="flex gap-2 border-t p-3 dark:border-slate-700">
+      {user ? <form onSubmit={send} className="flex gap-2 border-t p-3 dark:border-slate-700">
         <input value={message} onChange={e=>setMessage(e.target.value)} placeholder={isUrdu ? "اپنا سوال لکھیں..." : "Ask MediCare AI a health question..."} className="min-w-0 flex-1 rounded-xl border bg-transparent px-3 py-3 text-sm outline-none focus:border-teal-600 dark:border-slate-700"/>
         <button disabled={loading || !message.trim()} aria-label="Send message" className="rounded-xl bg-teal-700 px-4 text-white disabled:opacity-40"><Send size={18}/></button>
-      </form>
+      </form> : <p className="border-t p-3 text-center text-xs text-slate-500">Sign in to start a private chat.</p>}
     </section>}
   </div>;
 }
