@@ -682,18 +682,24 @@ export default function Dashboard() {
 </div>
             {/* AI Report Scanner */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-violet-50 dark:bg-violet-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+              <div className="relative z-10">
               <div className="w-14 h-14 rounded-2xl bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-300 flex items-center justify-center"><FileSearch size={26}/></div>
               <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "AI رپورٹ اسکینر" : "AI Health Report Scanner"}</h4>
               <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "اپنی لیب رپورٹ اپ لوڈ کریں اور آسان الفاظ میں وضاحت حاصل کریں۔" : "Upload a lab report and get an easy-to-understand explanation."}</p>
               <button onClick={()=>navigate("/report-scanner")} className="mt-5 text-sm font-bold text-violet-600 dark:text-violet-300">{isUrdu ? "رپورٹ اسکین کریں" : "Scan a Report"} <ChevronRight size={17} className="inline"/></button>
             </div>
+              </div>
             {/* Blood Donor Finder */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-rose-50 dark:bg-rose-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+              <div className="relative z-10">
               <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300 flex items-center justify-center"><HeartPulse size={26}/></div>
               <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "بلڈ ڈونر تلاش کریں" : "Blood Donor Finder"}</h4>
               <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "شہر، علاقے اور بلڈ گروپ کے مطابق اجازت یافتہ ڈونرز تلاش کریں۔" : "Find consenting blood donors by city, area and blood group."}</p>
               <button onClick={()=>navigate("/blood-donors")} className="mt-5 text-sm font-bold text-rose-600 dark:text-rose-300">{isUrdu ? "ڈونرز تلاش کریں" : "Find Donors"} <ChevronRight size={17} className="inline"/></button>
             </div>
+              </div>
             {/* Ambulance Finder */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
               <div className="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-300 flex items-center justify-center"><Activity size={26}/></div>
