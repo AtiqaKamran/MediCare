@@ -81,8 +81,8 @@ export default function LabFinder() {
   function search(){setSearched(true);}
 
   return <main dir={language==="ur"?"rtl":"ltr"} className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 dark:bg-slate-950 dark:text-white sm:px-6">
+    <FeatureNavbar title={t.title} accent="blue" isUrdu={language==="ur"} />
     <div className="mx-auto max-w-5xl">
-      <FeatureNavbar title={t.title} accent="blue" isUrdu={language==="ur"} />
       <header className="rounded-3xl border border-sky-200 bg-gradient-to-r from-sky-100 via-cyan-100 to-blue-100 p-6 text-slate-800 shadow-sm dark:border-sky-900/40 dark:from-sky-950/40 dark:via-cyan-950/30 dark:to-blue-950/40 dark:text-slate-100 sm:p-8"><FlaskConical size={32}/><h1 className="mt-3 text-3xl font-black">{t.title}</h1><p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{t.sub}</p></header>
       <section className="my-5 grid gap-3 rounded-2xl border bg-white p-4 dark:border-slate-800 dark:bg-slate-900 sm:grid-cols-3">
         <label className="text-sm font-semibold">{t.test}<input value={test} onChange={e=>setTest(e.target.value)} placeholder="CBC, Vitamin D, HbA1c..." className="mt-1 w-full rounded-xl border bg-transparent p-3 dark:border-slate-700"/></label>
