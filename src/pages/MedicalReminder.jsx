@@ -1,13 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft, Bell, BellRing, Clock3, Pill, Plus, Trash2,
   Pencil, X, Utensils, CalendarDays, Info
 } from "lucide-react";
-import { getCurrentUser } from "../utils/storage";
 import { useLanguage } from "../context/LanguageContext";
-
-const STORAGE_PREFIX = "medicare_medicine_reminders_v1";
+import { supabase } from "../lib/supabase";
 
 const TEXT = {
   en: {
@@ -60,20 +58,6 @@ const TEXT = {
   },
 };
 
-function getStorageKey(user) {
-  const id = user?.id || user?.email || "guest";
-  return `${STORAGE_PREFIX}_${String(id).replace(/[^a-zA-Z0-9_-]/g, "_")}`;
-}
-
-function readReminders(key) {
-  try {
-    const value = JSON.parse(localStorage.getItem(key) || "[]");
-    return Array.isArray(value) ? value : [];
-  } catch {
-    return [];
-  }
-}
-
 function getTodayKey() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -81,12 +65,10 @@ function getTodayKey() {
 
 export default function MedicalReminder() {
   const navigate = useNavigate();
-  const user = getCurrentUser();
   const { language, isUrdu } = useLanguage();
   const t = TEXT[language === "ur" ? "ur" : "en"];
-  const storageKey = useMemo(() => getStorageKey(user), [user?.id, user?.email]);
-
-  const [reminders, setReminders] = useState(() => readReminders(storageKey));
+  const [reminders, setReminders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [message, setMessage] = useState("");
@@ -101,12 +83,33 @@ export default function MedicalReminder() {
   });
 
   useEffect(() => {
-    setReminders(readReminders(storageKey));
-  }, [storageKey]);
-
-  useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(reminders));
-  }, [reminders, storageKey]);
+    let active = true;
+    async function loadReminders() {
+      try {
+        const { data, error } = await supabase.from("reminders").select("*")
+          .eq("status", "active").order("scheduled_at", { ascending: true });
+        if (error) throw error;
+        const mapped = (data || []).map((row) => {
+          const recurrence = row.recurrence || { type: "daily" };
+          const date = new Date(row.scheduled_at);
+          return {
+            id: row.id, name: row.medicine_name || row.title,
+            dose: row.dosage || "", note: row.description || "", meal: "after",
+            time: date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: row.timezone || "Asia/Karachi" }),
+            repeat: recurrence.type === "weekly" ? "selected" : "daily",
+            days: recurrence.days || [0,1,2,3,4,5,6], lastNotifiedDate: "",
+          };
+        });
+        if (active) setReminders(mapped);
+      } catch (err) {
+        if (active) setMessage(err.message || "Unable to load reminders.");
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    loadReminders();
+    return () => { active = false; };
+  }, []);
 
   const notifyDueReminders = useCallback(() => {
     const now = new Date();
@@ -177,33 +180,66 @@ export default function MedicalReminder() {
     setShowForm(true);
   }
 
-  function saveReminder(event) {
+  async function saveReminder(event) {
     event.preventDefault();
     if (!form.name.trim()) return setMessage(t.emptyName);
     if (!form.time) return setMessage(t.emptyTime);
-    const item = {
-      ...form,
-      id: editingId || `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      name: form.name.trim(),
-      dose: form.dose.trim(),
-      note: form.note.trim(),
-      lastNotifiedDate: editingId
-        ? reminders.find((r) => r.id === editingId)?.lastNotifiedDate || ""
-        : "",
-    };
-    setReminders((current) =>
-      editingId ? current.map((r) => r.id === editingId ? item : r) : [...current, item]
-    );
-    setShowForm(false);
-    setEditingId(null);
-    setMessage(t.saved);
-    window.setTimeout(() => setMessage(""), 3000);
+    setMessage("");
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError) throw authError;
+      if (!user) throw new Error("Please sign in to save reminders.");
+      const [hours, minutes] = form.time.split(":").map(Number);
+      const scheduled = new Date();
+      scheduled.setHours(hours, minutes, 0, 0);
+      if (scheduled <= new Date()) scheduled.setDate(scheduled.getDate() + 1);
+      const payload = {
+        user_id: user.id, title: form.name.trim(), medicine_name: form.name.trim(),
+        dosage: form.dose.trim() || null, description: form.note.trim() || null,
+        scheduled_at: scheduled.toISOString(), timezone: "Asia/Karachi",
+        recurrence: form.repeat === "daily" ? { type: "daily" } : { type: "weekly", days: form.days },
+        status: "active", email_enabled: true,
+      };
+      let saved;
+      if (editingId) {
+        const { data, error } = await supabase.from("reminders").update(payload)
+          .eq("id", editingId).select().single();
+        if (error) throw error;
+        saved = data;
+      } else {
+        const { data, error } = await supabase.from("reminders").insert(payload).select().single();
+        if (error) throw error;
+        saved = data;
+      }
+      const recurrence = saved.recurrence || payload.recurrence;
+      const savedDate = new Date(saved.scheduled_at);
+      const item = {
+        id: saved.id, name: saved.medicine_name || saved.title,
+        dose: saved.dosage || "", note: saved.description || "", meal: form.meal,
+        time: savedDate.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Karachi" }),
+        repeat: recurrence.type === "weekly" ? "selected" : "daily",
+        days: recurrence.days || [0,1,2,3,4,5,6], lastNotifiedDate: "",
+      };
+      setReminders((current) => editingId ? current.map((r) => r.id === editingId ? item : r) : [...current, item]);
+      setShowForm(false);
+      setEditingId(null);
+      setMessage(t.saved);
+      window.setTimeout(() => setMessage(""), 3000);
+    } catch (err) {
+      setMessage(err.message || "Unable to save reminder.");
+    }
   }
 
-  function deleteReminder(id) {
-    setReminders((current) => current.filter((item) => item.id !== id));
-    setMessage(t.removed);
-    window.setTimeout(() => setMessage(""), 3000);
+  async function deleteReminder(id) {
+    try {
+      const { error } = await supabase.from("reminders").update({ status: "cancelled" }).eq("id", id);
+      if (error) throw error;
+      setReminders((current) => current.filter((item) => item.id !== id));
+      setMessage(t.removed);
+      window.setTimeout(() => setMessage(""), 3000);
+    } catch (err) {
+      setMessage(err.message || "Unable to delete reminder.");
+    }
   }
 
   function toggleDay(day) {
@@ -337,7 +373,7 @@ export default function MedicalReminder() {
             <span className="rounded-full bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">{todayReminders.length}</span>
           </div>
 
-          {todayReminders.length === 0 ? (
+          {loading ? (\n            <div className={`${cardClass} p-8 text-center text-sm ${muted}`}>Loading reminders...</div>\n          ) : todayReminders.length === 0 ? (
             <div className={`${cardClass} flex flex-col items-center px-6 py-12 text-center`}>
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"><Pill size={27} /></div>
               <h3 className="font-bold">{t.noItems}</h3>
