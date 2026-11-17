@@ -270,7 +270,9 @@ export default function MedicalReminder() {
     <div dir={isUrdu ? "rtl" : "ltr"} className="min-h-screen bg-[#f5f8fa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
       <FeatureNavbar title={t.title} accent="rose" isUrdu={isUrdu} />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div className="relative mb-7 overflow-hidden rounded-3xl border border-teal-100 bg-gradient-to-r from-teal-50 via-emerald-50 to-cyan-50 p-5 shadow-sm dark:border-teal-900/40 dark:from-teal-950/40 dark:via-emerald-950/30 dark:to-cyan-950/30 sm:p-6">
+          <div className="pointer-events-none absolute -bottom-10 -right-10 h-36 w-36 rounded-full bg-teal-100/70 dark:bg-teal-800/20" />
+          <div className="relative z-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
               <BellRing size={14} /> MediCare
@@ -281,6 +283,7 @@ export default function MedicalReminder() {
           <button onClick={openNewForm} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-600 to-teal-700 px-5 py-3 text-sm font-bold text-white shadow-md shadow-teal-700/20 transition hover:-translate-y-0.5 hover:shadow-lg">
             <Plus size={18} /> {t.add}
           </button>
+          </div>
         </div>
 
         <section className={`${cardClass} mb-6 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between`}>
