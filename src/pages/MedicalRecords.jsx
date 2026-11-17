@@ -28,7 +28,7 @@ import {
 import { useLanguage } from "../context/LanguageContext";
 import { supabase } from "../lib/supabase";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_FILE_SIZE = 6 * 1024 * 1024;
 
 const categories = [
   {
@@ -178,6 +178,7 @@ export default function MedicalRecords() {
   const { isUrdu } = useLanguage();
 
   const [documents, setDocuments] = useState([]);
+  const [reports, setReports] = useState([]);
   const [selectedCategory, setSelectedCategory] =
     useState("All Documents");
   const [uploadCategory, setUploadCategory] =
@@ -205,7 +206,7 @@ export default function MedicalRecords() {
     choose: isUrdu ? "فائل منتخب کریں" : "Choose Files",
     uploadHint: isUrdu
       ? "PDF یا تصاویر، ہر فائل زیادہ سے زیادہ 10 MB"
-      : "PDF or image files. Maximum 10 MB per file.",
+      : "PDF or image files. Maximum 6 MB per file.",
     searchPlaceholder: isUrdu
       ? "دستاویز تلاش کریں..."
       : "Search documents...",
@@ -235,7 +236,7 @@ export default function MedicalRecords() {
       : "Only PDF files and images are supported.",
     tooLarge: isUrdu
       ? "ہر فائل کا سائز 10 MB یا اس سے کم ہونا چاہیے۔"
-      : "Each file must be 10 MB or smaller.",
+      : "Each file must be 6 MB or smaller.",
     deleteConfirm: isUrdu
       ? "کیا آپ واقعی یہ دستاویز حذف کرنا چاہتے ہیں؟"
       : "Are you sure you want to delete this document?",
@@ -277,7 +278,16 @@ export default function MedicalRecords() {
             bucketId: row.bucket_id || "medical-records",
           };
         }));
-        if (active) setDocuments(rows);
+        const { data: reportRows, error: reportError } = await supabase
+          .from("health_reports")
+          .select("id,title,simple_summary,created_at")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+        if (reportError) throw reportError;
+        if (active) {
+          setDocuments(rows);
+          setReports(reportRows || []);
+        }
       } catch (err) {
         if (active) setError(err.message || "Unable to load medical records.");
       }
@@ -515,9 +525,25 @@ export default function MedicalRecords() {
               PDF, JPG, PNG
             </p>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              {isUrdu ? "10 MB فی فائل تک" : "Up to 10 MB per file"}
+              {isUrdu ? "6 MB فی فائل تک" : "Up to 10 MB per file"}
             </p>
           </div>
+        </section>
+
+        {/* Saved AI reports */}
+        <section className="mb-9 rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-7">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <h3 className="text-xl font-extrabold">{isUrdu ? "محفوظ شدہ ہیلتھ رپورٹس" : "Saved Health Reports"}</h3>
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{isUrdu ? "AI سے اسکین اور سمجھائی گئی رپورٹس" : "Reports scanned and explained by MediCare AI"}</p>
+            </div>
+            <span className="rounded-full bg-teal-50 px-3 py-1 text-sm font-bold text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">{reports.length}</span>
+          </div>
+          {reports.length === 0 ? <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500 dark:bg-slate-800">{isUrdu ? "ابھی کوئی AI رپورٹ محفوظ نہیں۔" : "No AI-scanned reports saved yet."}</p> :
+            <div className="space-y-3">{reports.map(report => <article key={report.id} className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+              <div className="flex flex-wrap items-center justify-between gap-2"><h4 className="font-bold">{report.title}</h4><time className="text-xs text-slate-500">{new Date(report.created_at).toLocaleString()}</time></div>
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-600 dark:text-slate-300">{(report.simple_summary || "").slice(0, 900)}{(report.simple_summary || "").length > 900 ? "…" : ""}</p>
+            </article>)}</div>}
         </section>
 
         {/* Category cards */}
