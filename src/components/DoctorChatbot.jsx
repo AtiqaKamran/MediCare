@@ -153,7 +153,7 @@ export default function DoctorChatbot() {
           <div className="mt-1 flex gap-3"><span className="h-1.5 w-1.5 rounded-full bg-gray-800"/><span className="h-1.5 w-1.5 rounded-full bg-gray-800"/></div>
           <div className="absolute top-7 h-1.5 w-3 rounded-full border-b-2 border-gray-700 sm:top-9"/>
           <div className="absolute -bottom-4 flex h-5 w-10 items-center justify-center rounded-t-xl border border-gray-200 bg-white sm:-bottom-5 sm:h-6 sm:w-12">
-            <span className="text-[9px] font-black tracking-wide text-teal-700">M+</span>
+            <Stethoscope size={17} strokeWidth={2.4} className="text-teal-700"/>
           </div>
         </div>
         <span className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500 sm:h-4 sm:w-4"/>
