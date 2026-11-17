@@ -69,6 +69,22 @@ export default function Dashboard() {
     if (!error && active) setNotifications(data || []);
   }
   loadNotifications();
+  async function loadActivity() {
+    if (!user?.id) return;
+    const [loginResult, reportResult] = await Promise.all([
+      supabase.from("login_notification_events").select("id,logged_in_at")
+        .eq("user_id", user.id).order("logged_in_at", { ascending: false }).limit(5),
+      supabase.from("health_reports").select("id,title,created_at")
+        .eq("user_id", user.id).order("created_at", { ascending: false }).limit(5)
+    ]);
+    if (!active) return;
+    const items = [
+      ...(loginResult.data || []).map(x => ({ id: "login-" + x.id, title: isUrdu ? "اکاؤنٹ میں سائن اِن کیا" : "Signed in to MediCare", date: x.logged_in_at })),
+      ...(reportResult.data || []).map(x => ({ id: "report-" + x.id, title: (isUrdu ? "رپورٹ اسکین کی: " : "Scanned report: ") + x.title, date: x.created_at }))
+    ];
+    setActivities(items.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5));
+  }
+  loadActivity();
   const refreshTimer = window.setInterval(() => { loadNotifications(); loadActivity(); }, 30000);
   return () => { active = false; window.clearInterval(refreshTimer); };
 }, [user?.id]);
