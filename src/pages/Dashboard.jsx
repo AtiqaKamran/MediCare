@@ -702,17 +702,23 @@ export default function Dashboard() {
               </div>
             {/* Ambulance Finder */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-orange-50 dark:bg-orange-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+              <div className="relative z-10">
               <div className="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-300 flex items-center justify-center"><Activity size={26}/></div>
               <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "ایمبولینس اور ایمرجنسی" : "Ambulance & Emergency"}</h4>
               <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "علاقے کے مطابق سروس کی معلومات تلاش کریں۔" : "Search ambulance service information by area."}</p>
               <button onClick={()=>navigate("/ambulance")} className="mt-5 text-sm font-bold text-orange-600 dark:text-orange-300">{isUrdu ? "ایمبولینس تلاش کریں" : "Find Ambulance"} <ChevronRight size={17} className="inline"/></button>
+              </div>
             </div>
             {/* Laboratory Finder */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 flex items-center justify-center"><FolderHeart size={26}/></div>
+              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-sky-50 dark:bg-sky-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+              <div className="relative z-10">
+              <div className="w-14 h-14 rounded-2xl bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-300 flex items-center justify-center"><FolderHeart size={26}/></div>
               <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "لیبارٹری اور ٹیسٹ تلاش کریں" : "Lab & Test Finder"}</h4>
               <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "ٹیسٹ درج کریں اور لیبارٹری کی معلومات دیکھیں۔" : "Enter tests to find matching laboratory listings."}</p>
               <button onClick={()=>navigate("/lab-finder")} className="mt-5 text-sm font-bold text-indigo-600 dark:text-indigo-300">{isUrdu ? "لیب تلاش کریں" : "Find a Lab"} <ChevronRight size={17} className="inline"/></button>
+              </div>
             </div>
           </div>
         </section>
