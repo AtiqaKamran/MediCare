@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
 
 const TEXT = {
   en: {
@@ -66,6 +67,7 @@ function getTodayKey() {
 export default function MedicalReminder() {
   const navigate = useNavigate();
   const { language, isUrdu } = useLanguage();
+  const { user } = useAuth();
   const t = TEXT[language === "ur" ? "ur" : "en"];
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,15 +88,17 @@ export default function MedicalReminder() {
     let active = true;
     async function loadReminders() {
       try {
+        if (!user?.id) { if (active) setReminders([]); return; }
         const { data, error } = await supabase.from("reminders").select("*")
-          .eq("status", "active").order("scheduled_at", { ascending: true });
+          .eq("user_id", user.id).eq("status", "active")
+          .order("scheduled_at", { ascending: true });
         if (error) throw error;
         const mapped = (data || []).map((row) => {
           const recurrence = row.recurrence || { type: "daily" };
           const date = new Date(row.scheduled_at);
           return {
             id: row.id, name: row.medicine_name || row.title,
-            dose: row.dosage || "", note: row.description || "", meal: "after",
+            dose: row.dosage || "", note: row.description || "", meal: row.meal_timing || "after",
             time: date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: row.timezone || "Asia/Karachi" }),
             repeat: recurrence.type === "weekly" ? "selected" : "daily",
             days: recurrence.days || [0,1,2,3,4,5,6], lastNotifiedDate: "",
@@ -109,7 +113,7 @@ export default function MedicalReminder() {
     }
     loadReminders();
     return () => { active = false; };
-  }, []);
+  }, [user?.id]);
 
   const notifyDueReminders = useCallback(() => {
     const now = new Date();
@@ -196,6 +200,7 @@ export default function MedicalReminder() {
       const payload = {
         user_id: user.id, title: form.name.trim(), medicine_name: form.name.trim(),
         dosage: form.dose.trim() || null, description: form.note.trim() || null,
+        meal_timing: form.meal,
         scheduled_at: scheduled.toISOString(), timezone: "Asia/Karachi",
         recurrence: form.repeat === "daily" ? { type: "daily" } : { type: "weekly", days: form.days },
         status: "active", email_enabled: false,
@@ -203,7 +208,7 @@ export default function MedicalReminder() {
       let saved;
       if (editingId) {
         const { data, error } = await supabase.from("reminders").update(payload)
-          .eq("id", editingId).select().single();
+          .eq("id", editingId).eq("user_id", user.id).select().single();
         if (error) throw error;
         saved = data;
       } else {
@@ -215,7 +220,7 @@ export default function MedicalReminder() {
       const savedDate = new Date(saved.scheduled_at);
       const item = {
         id: saved.id, name: saved.medicine_name || saved.title,
-        dose: saved.dosage || "", note: saved.description || "", meal: form.meal,
+        dose: saved.dosage || "", note: saved.description || "", meal: saved.meal_timing || form.meal,
         time: savedDate.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Karachi" }),
         repeat: recurrence.type === "weekly" ? "selected" : "daily",
         days: recurrence.days || [0,1,2,3,4,5,6], lastNotifiedDate: "",
@@ -232,7 +237,7 @@ export default function MedicalReminder() {
 
   async function deleteReminder(id) {
     try {
-      const { error } = await supabase.from("reminders").update({ status: "cancelled" }).eq("id", id);
+      const { error } = await supabase.from("reminders").update({ status: "cancelled" }).eq("id", id).eq("user_id", user?.id);
       if (error) throw error;
       setReminders((current) => current.filter((item) => item.id !== id));
       setMessage(t.removed);
