@@ -82,6 +82,11 @@ export default function DoctorChatbot() {
     }
   }
 
+  async function openChat() {
+    setIsOpen(true);
+    if (user?.id) await startNewChat();
+  }
+
   async function send(event) {
     event.preventDefault();
     const text = message.trim();
@@ -137,7 +142,7 @@ export default function DoctorChatbot() {
   }
 
   return <div className="fixed bottom-4 right-3 z-[9999] sm:bottom-6 sm:right-6">
-    {!isOpen ? <button onClick={() => setIsOpen(true)} aria-label="Open MediCare Mini Doctor"
+    {!isOpen ? <button onClick={openChat} aria-label="Open MediCare Mini Doctor"
       className="group relative flex flex-col items-center touch-manipulation animate-[medicare-float_3s_ease-in-out_infinite]">
       <span className="mb-2 rounded-full bg-teal-700 px-3 py-1 text-xs font-semibold text-white opacity-100 shadow-lg transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
         {isUrdu ? "اپنے ڈاکٹر سے پوچھیں!" : "Ask your doctor!"}
