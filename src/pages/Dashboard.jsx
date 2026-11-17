@@ -22,6 +22,7 @@ import {
   X,
   History,
   FolderHeart,
+  FileSearch,
 } from "lucide-react";
 
 import {
