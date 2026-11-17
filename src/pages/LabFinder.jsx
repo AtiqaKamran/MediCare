@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, FlaskConical, MapPin, Phone, Search, Home, ExternalLink, BadgeCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import FeatureNavbar from "../components/FeatureNavbar";
 import { supabase } from "../lib/supabase";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -81,7 +82,7 @@ export default function LabFinder() {
 
   return <main dir={language==="ur"?"rtl":"ltr"} className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 dark:bg-slate-950 dark:text-white sm:px-6">
     <div className="mx-auto max-w-5xl">
-      <button onClick={()=>nav("/dashboard")} className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-teal-700 dark:text-teal-300"><ArrowLeft size={18}/>{t.back}</button>
+      <FeatureNavbar title={t.title} accent="blue" isUrdu={language==="ur"} />
       <header className="rounded-3xl bg-gradient-to-r from-indigo-900 to-blue-700 p-6 text-white sm:p-8"><FlaskConical size={32}/><h1 className="mt-3 text-3xl font-black">{t.title}</h1><p className="mt-2 text-sm text-blue-50">{t.sub}</p></header>
       <section className="my-5 grid gap-3 rounded-2xl border bg-white p-4 dark:border-slate-800 dark:bg-slate-900 sm:grid-cols-3">
         <label className="text-sm font-semibold">{t.test}<input value={test} onChange={e=>setTest(e.target.value)} placeholder="CBC, Vitamin D, HbA1c..." className="mt-1 w-full rounded-xl border bg-transparent p-3 dark:border-slate-700"/></label>
