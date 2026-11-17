@@ -50,6 +50,7 @@ export default function ReportScanner() {
   const [notice,setNotice]=useState("");
   const [reportId,setReportId]=useState(null);
   const [consent,setConsent]=useState(false);
+  const [explainLanguage,setExplainLanguage]=useState("simple English");
 
   async function analyze() {
     if(!user?.id){setNotice(t.login);return}
@@ -70,7 +71,7 @@ export default function ReportScanner() {
       const base64=String(dataUrl).split(",")[1];
       const {data,error}=await supabase.functions.invoke("medicare-ai",{
         body:{
-          mode:"analyze",language,
+          mode:"analyze",language:explainLanguage,
           message:"Read every page of this medical report. Transcribe each visible test name, numeric result, unit and printed reference range exactly. Do not invent unreadable values. Explain each reading simply and distinguish reported values from interpretation.",
           file:{mimeType:file.type,data:base64}
         }
@@ -120,6 +121,13 @@ export default function ReportScanner() {
       <section className="my-6 rounded-2xl border bg-white p-5 dark:border-slate-800 dark:bg-slate-900 sm:p-7">
         <label className="flex min-h-44 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 p-6 text-center dark:border-slate-700"><Upload size={30} className="text-teal-600"/><span className="mt-3 font-bold">{t.choose}</span><span className="mt-1 text-xs text-slate-500">{t.empty}</span><input type="file" accept=".pdf,image/jpeg,image/png" onChange={e=>{setFile(e.target.files?.[0]||null);setAnswer("");setNotice("");setReportId(null)}} className="sr-only"/></label>
         {file&&<p className="mt-3 break-all text-sm font-semibold">{file.name} · {(file.size/1024/1024).toFixed(2)} MB</p>}
+        <label className="mt-4 block text-sm font-semibold">Explain report in
+          <select value={explainLanguage} onChange={e=>setExplainLanguage(e.target.value)} className="mt-2 w-full rounded-xl border bg-white p-3 font-normal dark:border-slate-700 dark:bg-slate-950">
+            <option value="simple English">Simple English</option>
+            <option value="Urdu">اردو</option>
+            <option value="Roman Urdu">Roman Urdu</option>
+          </select>
+        </label>
         <label className="mt-4 flex items-start gap-2 text-sm leading-6 text-slate-600 dark:text-slate-300"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)} className="mt-1"/><span>{t.consent}</span></label>
         <button disabled={!file||busy} onClick={analyze} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-teal-700 px-5 py-3 font-bold text-white disabled:opacity-50"><FileSearch size={18}/>{busy?t.working:t.analyze}{busy&&<LoaderCircle size={17} className="animate-spin"/>}</button>
       </section>
