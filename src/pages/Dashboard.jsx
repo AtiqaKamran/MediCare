@@ -130,10 +130,6 @@ export default function Dashboard() {
     ? `${profile.lahoreArea}, Lahore`
     : t("notAdded");
 
-  const activities = Array.isArray(user.recentActivity)
-    ? user.recentActivity.slice(0, 3)
-    : [];
-
   async function handleLogout() {
   if (isLoggingOut) return;
 
