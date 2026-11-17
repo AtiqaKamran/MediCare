@@ -52,6 +52,7 @@ export default function ReportScanner() {
     if (!consent) { setNotice(t.consentRequired); return; }
     setBusy(true); setNotice(""); setAnswer(""); setReportId(null);
     let uploadedPath = null;
+    let analysisCompleted = false;
     try {
       const allowed = ["application/pdf", "image/jpeg", "image/png"];
       if (!allowed.includes(file.type)) throw new Error(t.empty);
@@ -77,6 +78,7 @@ export default function ReportScanner() {
 
       // Show the analysis on this page immediately; saving is a separate step.
       setAnswer(data.answer);
+      analysisCompleted = true;
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       uploadedPath = user.id + "/" + crypto.randomUUID() + "/" + safeName;
       const { error: uploadError } = await supabase.storage.from("medical-records")
@@ -100,7 +102,7 @@ export default function ReportScanner() {
       setNotice(t.saved);
     } catch (e) {
       console.error("Report scanner:", e);
-      setNotice((e?.message || t.failed) + (answer ? " " + t.analyzedNotSaved : ""));
+      setNotice((e?.message || t.failed) + (analysisCompleted ? " " + t.analyzedNotSaved : ""));
       if (uploadedPath) {
         await supabase.storage.from("medical-records").remove([uploadedPath]).catch(() => {});
       }
