@@ -242,8 +242,8 @@ export default function MedicalRecords() {
       : "Are you sure you want to delete this document?",
     privacyTitle: isUrdu ? "آپ کی صحت، آپ کی رازداری" : "Your health, your privacy",
     privacyText: isUrdu
-      ? "یہ فی الحال صرف ایک عارضی ڈیمو ہے۔ فائلیں Supabase پر محفوظ نہیں ہوتیں اور صفحہ ریفریش کرنے پر ختم ہو جائیں گی۔"
-      : "This is currently a local preview. Files are not saved to Supabase and will disappear when the page is refreshed.",
+      ? "آپ کی فائلیں نجی Supabase اسٹوریج میں محفوظ ہوتی ہیں اور صرف آپ کے اکاؤنٹ سے دیکھی جا سکتی ہیں۔"
+      : "Your files are stored in private Supabase storage and can only be accessed from your account.",
     close: isUrdu ? "بند کریں" : "Close",
     noFile: isUrdu ? "فائل منتخب نہیں ہوئی" : "No file selected",
   };
