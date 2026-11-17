@@ -178,7 +178,6 @@ export default function MedicalRecords() {
   const { isUrdu } = useLanguage();
 
   const [documents, setDocuments] = useState([]);
-  const [reports, setReports] = useState([]);
   const [selectedCategory, setSelectedCategory] =
     useState("All Documents");
   const [uploadCategory, setUploadCategory] =
@@ -194,7 +193,6 @@ export default function MedicalRecords() {
     subtitle: isUrdu
       ? "اپنی تمام طبی دستاویزات ایک ہی جگہ محفوظ انداز میں منظم کریں۔"
       : "All your medical documents in one place.",
-    back: isUrdu ? "ڈیش بورڈ پر واپس جائیں" : "Back to Dashboard",
     total: isUrdu ? "کل دستاویزات" : "Total Documents",
     categories: isUrdu ? "دستاویزات کی اقسام" : "Document Categories",
     formats: isUrdu ? "قابل قبول فائلیں" : "Supported Formats",
@@ -278,16 +276,7 @@ export default function MedicalRecords() {
             bucketId: row.bucket_id || "medical-records",
           };
         }));
-        const { data: reportRows, error: reportError } = await supabase
-          .from("health_reports")
-          .select("id,title,simple_summary,created_at")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false });
-        if (reportError) throw reportError;
-        if (active) {
-          setDocuments(rows);
-          setReports(reportRows || []);
-        }
+        if (active) setDocuments(rows);
       } catch (err) {
         if (active) setError(err.message || "Unable to load medical records.");
       }
@@ -424,12 +413,7 @@ export default function MedicalRecords() {
             className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-teal-300 hover:bg-teal-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-teal-950/40"
           >
             <ArrowLeft size={18} />
-            <span className="hidden sm:inline">
-              {copy.back}
-            </span>
-            <span className="sm:hidden">
-              {isUrdu ? "واپس" : "Back"}
-            </span>
+            <span>Dashboard</span>
           </button>
 
           <button
@@ -525,25 +509,9 @@ export default function MedicalRecords() {
               PDF, JPG, PNG
             </p>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              {isUrdu ? "6 MB فی فائل تک" : "Up to 10 MB per file"}
+              {isUrdu ? "6 MB فی فائل تک" : "Up to 6 MB per file"}
             </p>
           </div>
-        </section>
-
-        {/* Saved AI reports */}
-        <section className="mb-9 rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-7">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <div>
-              <h3 className="text-xl font-extrabold">{isUrdu ? "محفوظ شدہ ہیلتھ رپورٹس" : "Saved Health Reports"}</h3>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{isUrdu ? "AI سے اسکین اور سمجھائی گئی رپورٹس" : "Reports scanned and explained by MediCare AI"}</p>
-            </div>
-            <span className="rounded-full bg-teal-50 px-3 py-1 text-sm font-bold text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">{reports.length}</span>
-          </div>
-          {reports.length === 0 ? <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500 dark:bg-slate-800">{isUrdu ? "ابھی کوئی AI رپورٹ محفوظ نہیں۔" : "No AI-scanned reports saved yet."}</p> :
-            <div className="space-y-3">{reports.map(report => <article key={report.id} className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
-              <div className="flex flex-wrap items-center justify-between gap-2"><h4 className="font-bold">{report.title}</h4><time className="text-xs text-slate-500">{new Date(report.created_at).toLocaleString()}</time></div>
-              <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-600 dark:text-slate-300">{(report.simple_summary || "").slice(0, 900)}{(report.simple_summary || "").length > 900 ? "…" : ""}</p>
-            </article>)}</div>}
         </section>
 
         {/* Category cards */}
