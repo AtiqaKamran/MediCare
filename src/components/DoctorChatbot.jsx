@@ -89,7 +89,6 @@ export default function DoctorChatbot() {
     setMessage("");
     setError("");
     setLoading(true);
-    const started = performance.now();
     let activeConversation = conversationId;
     try {
       if (!activeConversation) {
@@ -108,6 +107,7 @@ export default function DoctorChatbot() {
       await supabase.from("ai_chat_conversations").update({
         title: text.slice(0, 48), updated_at: new Date().toISOString()
       }).eq("id", activeConversation).eq("user_id", user.id);
+      const started = performance.now();
       const { data, error: fnError } = await supabase.functions.invoke("medicare-ai", {
         body: { mode: "chat", message: text, language }
       });
