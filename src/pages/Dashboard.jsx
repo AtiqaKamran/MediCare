@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Activity,
+  Bell,
   CalendarDays,
   ChevronRight,
   ClipboardCheck,
@@ -30,6 +31,7 @@ import {
 
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
+import { supabase } from "../lib/supabase";
 
 function formatValue(value, fallback = "Not provided") {
   if (Array.isArray(value)) {
@@ -48,9 +50,34 @@ export default function Dashboard() {
   const [user, setUser] = useState(getCurrentUser());
   const [showSettings, setShowSettings] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const { darkMode, toggleTheme } = useTheme();
   const { language, setLanguage, t, isUrdu } = useLanguage();
+
+ useEffect(() => {
+  let active = true;
+  async function loadNotifications() {
+    if (!user?.id) return;
+    const { data, error } = await supabase.from("notifications")
+      .select("id,title,message,created_at,read_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(15);
+    if (!error && active) setNotifications(data || []);
+  }
+  loadNotifications();
+  return () => { active = false; };
+}, [user?.id]);
+
+ async function markNotificationRead(item) {
+  if (item.read_at) return;
+  const readAt = new Date().toISOString();
+  const { error } = await supabase.from("notifications")
+    .update({ read_at: readAt }).eq("id", item.id);
+  if (!error) setNotifications((items) => items.map((n) => n.id === item.id ? { ...n, read_at: readAt } : n));
+}
 
  useEffect(() => {
   const currentUser = getCurrentUser();
@@ -182,6 +209,36 @@ export default function Dashboard() {
 
             {/* User Controls */}
             <div className="flex items-center gap-2">
+              <div className="relative">
+                <button
+                  onClick={() => setShowNotifications((value) => !value)}
+                  className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-teal-300 hover:text-teal-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                  aria-label="Notifications"
+                  aria-expanded={showNotifications}
+                >
+                  <Bell size={19} />
+                  {notifications.some((item) => !item.read_at) && (
+                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-800" />
+                  )}
+                </button>
+                {showNotifications && (
+                  <div className="absolute right-0 z-50 mt-3 w-[min( min( calc(100vw - 2rem), 22rem), 22rem)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
+                    <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+                      <h3 className="font-bold">Notifications</h3>
+                      <button onClick={() => setShowNotifications(false)} aria-label="Close notifications" className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"><X size={16} /></button>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {notifications.length ? notifications.map((item) => (
+                        <button key={item.id} onClick={() => markNotificationRead(item)} className={`block w-full border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/60 ${item.read_at ? "opacity-65" : "bg-teal-50/50 dark:bg-teal-950/20"}`}>
+                          <span className="block text-sm font-semibold">{item.title}</span>
+                          <span className="mt-1 block text-xs leading-5 text-slate-500 dark:text-slate-400">{item.message}</span>
+                          <span className="mt-1 block text-[10px] text-slate-400">{new Date(item.created_at).toLocaleString()}</span>
+                        </button>
+                      )) : <p className="px-4 py-8 text-center text-sm text-slate-500">No notifications yet.</p>}
+                    </div>
+                  </div>
+                )}
+              </div>
               {/* Settings */}
               <div className="relative">
                 <button
