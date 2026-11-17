@@ -87,7 +87,7 @@ export default function Dashboard() {
   loadActivity();
   const refreshTimer = window.setInterval(() => { loadNotifications(); loadActivity(); }, 30000);
   return () => { active = false; window.clearInterval(refreshTimer); };
-}, [user?.id]);
+}, [user?.id, isUrdu]);
 
  async function markNotificationRead(item) {
   if (item.read_at) return;
@@ -806,7 +806,7 @@ export default function Dashboard() {
                       <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
                         {activity.date &&
                         !Number.isNaN(new Date(activity.date).getTime())
-                          ? new Date(activity.date).toLocaleDateString(
+                          ? new Date(activity.date).toLocaleString(
                               isUrdu ? "ur-PK" : "en-US"
                             )
                           : t("recently")}
