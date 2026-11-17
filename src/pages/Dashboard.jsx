@@ -665,6 +665,13 @@ export default function Dashboard() {
     </button>
   </div>
 </div>
+            {/* AI Report Scanner */}
+            <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="w-14 h-14 rounded-2xl bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-300 flex items-center justify-center"><FileSearch size={26}/></div>
+              <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "AI رپورٹ اسکینر" : "AI Health Report Scanner"}</h4>
+              <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "اپنی لیب رپورٹ اپ لوڈ کریں اور آسان الفاظ میں وضاحت حاصل کریں۔" : "Upload a lab report and get an easy-to-understand explanation."}</p>
+              <button onClick={()=>navigate("/report-scanner")} className="mt-5 text-sm font-bold text-violet-600 dark:text-violet-300">{isUrdu ? "رپورٹ اسکین کریں" : "Scan a Report"} <ChevronRight size={17} className="inline"/></button>
+            </div>
             {/* Blood Donor Finder */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
               <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300 flex items-center justify-center"><HeartPulse size={26}/></div>
