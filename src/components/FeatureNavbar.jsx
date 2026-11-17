@@ -5,7 +5,7 @@ export default function FeatureNavbar({ title, accent = "teal", isUrdu = false }
   const navigate = useNavigate();
   return (
     <header dir="ltr" className="sticky top-0 z-40 -mx-4 mb-4 border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/95 sm:mx-0 sm:rounded-b-xl">
-      <div className="mx-auto flex min-h-[62px] max-w-7xl items-center justify-between gap-2 px-3 py-2 sm:min-h-[74px] sm:gap-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-[62px] max-w-5xl items-center justify-between gap-2 px-3 py-2 sm:min-h-[74px] sm:gap-4 sm:px-6 lg:px-8">
         <button type="button" onClick={() => navigate("/dashboard")} className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-2 text-sm font-medium text-slate-800 transition hover:border-teal-300 hover:bg-teal-50/60 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-800 sm:gap-2 sm:px-4">
           <ArrowLeft size={17} /><span>Dashboard</span>
         </button>
