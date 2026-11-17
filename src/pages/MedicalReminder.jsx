@@ -8,6 +8,7 @@ import {
 import { useLanguage } from "../context/LanguageContext";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
+import FeatureNavbar from "../components/FeatureNavbar";
 
 const TEXT = {
   en: {
@@ -267,19 +268,7 @@ export default function MedicalReminder() {
 
   return (
     <div dir={isUrdu ? "rtl" : "ltr"} className="min-h-screen bg-[#f5f8fa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
-      <header className="sticky top-0 z-20 border-b border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6">
-          <button onClick={() => navigate("/dashboard")} className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-teal-700 dark:text-slate-300 dark:hover:text-teal-300">
-            <ArrowLeft size={18} /> MediCare
-          </button>
-          <div className="flex items-center gap-2 text-teal-700 dark:text-teal-300">
-            <Pill size={21} />
-            <span className="font-bold">{t.title}</span>
-          </div>
-          <span className="w-16" />
-        </div>
-      </header>
-
+      <FeatureNavbar title={t.title} accent="rose" isUrdu={isUrdu} />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
