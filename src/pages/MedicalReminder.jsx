@@ -270,8 +270,8 @@ export default function MedicalReminder() {
     <div dir={isUrdu ? "rtl" : "ltr"} className="min-h-screen bg-[#f5f8fa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
       <FeatureNavbar title={t.title} accent="rose" isUrdu={isUrdu} />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <div className="relative mb-7 overflow-hidden rounded-3xl border border-teal-200 bg-gradient-to-r from-teal-100 via-emerald-100 to-cyan-100 p-5 shadow-sm dark:border-teal-900/40 dark:from-teal-950/40 dark:via-emerald-950/30 dark:to-cyan-950/30 sm:p-6">
-          <div className="pointer-events-none absolute -bottom-10 -right-10 h-36 w-36 rounded-full bg-teal-200/80 dark:bg-teal-800/20" />
+        <div className="relative mb-7 overflow-hidden rounded-3xl border border-teal-300 bg-gradient-to-r from-teal-200 via-emerald-200 to-cyan-200 p-5 shadow-sm dark:border-teal-900/40 dark:from-teal-950/40 dark:via-emerald-950/30 dark:to-cyan-950/30 sm:p-6">
+          <div className="pointer-events-none absolute -bottom-10 -right-10 h-36 w-36 rounded-full bg-teal-300/70 dark:bg-teal-800/20" />
           <div className="relative z-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
