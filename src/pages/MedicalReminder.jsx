@@ -270,7 +270,7 @@ export default function MedicalReminder() {
     <div dir={isUrdu ? "rtl" : "ltr"} className="min-h-screen bg-[#f5f8fa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
       <FeatureNavbar title={t.title} accent="rose" isUrdu={isUrdu} />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <div className="relative mb-7 overflow-hidden rounded-3xl border border-teal-300 bg-gradient-to-r from-teal-200 via-emerald-200 to-cyan-200 p-5 shadow-sm dark:border-teal-900/40 dark:from-teal-950/40 dark:via-emerald-950/30 dark:to-cyan-950/30 sm:p-6">
+        <div className="relative mb-7 overflow-hidden rounded-3xl border border-teal-400 bg-gradient-to-r from-teal-300 via-emerald-300 to-cyan-300 p-5 shadow-sm dark:border-teal-900/40 dark:from-teal-950/40 dark:via-emerald-950/30 dark:to-cyan-950/30 sm:p-6">
           <div className="pointer-events-none absolute -bottom-10 -right-10 h-36 w-36 rounded-full bg-teal-300/70 dark:bg-teal-800/20" />
           <div className="relative z-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
