@@ -222,7 +222,7 @@ export default function Dashboard() {
                   )}
                 </button>
                 {showNotifications && (
-                  <div className="absolute right-0 z-50 mt-3 w-[min( min( calc(100vw - 2rem), 22rem), 22rem)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
+                  <div className="absolute right-0 z-50 mt-3 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
                     <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800">
                       <h3 className="font-bold">Notifications</h3>
                       <button onClick={() => setShowNotifications(false)} aria-label="Close notifications" className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"><X size={16} /></button>
