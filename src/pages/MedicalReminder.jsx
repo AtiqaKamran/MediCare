@@ -8,7 +8,7 @@ import {
 import { useLanguage } from "../context/LanguageContext";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
-import FeatureNavbar from "../components/FeatureNavbar";
+
 
 const TEXT = {
   en: {
