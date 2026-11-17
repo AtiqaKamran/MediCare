@@ -51,7 +51,8 @@ export default function Dashboard() {
   const [user, setUser] = useState(getCurrentUser());
   const [showSettings, setShowSettings] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [notifications, setNotifications] = useState([]);\n  const [activities, setActivities] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [activities, setActivities] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
 
   const { darkMode, toggleTheme } = useTheme();
