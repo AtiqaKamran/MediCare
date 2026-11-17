@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { X, Send, HeartPulse, LoaderCircle, Plus, Clock3 } from "lucide-react";
+import { X, Send, HeartPulse, LoaderCircle, Plus, Clock3, Stethoscope } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
