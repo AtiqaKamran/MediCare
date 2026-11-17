@@ -198,7 +198,7 @@ export default function MedicalReminder() {
         dosage: form.dose.trim() || null, description: form.note.trim() || null,
         scheduled_at: scheduled.toISOString(), timezone: "Asia/Karachi",
         recurrence: form.repeat === "daily" ? { type: "daily" } : { type: "weekly", days: form.days },
-        status: "active", email_enabled: true,
+        status: "active", email_enabled: false,
       };
       let saved;
       if (editingId) {
