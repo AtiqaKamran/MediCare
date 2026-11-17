@@ -13,6 +13,9 @@ import History from "./pages/History";
 import MedicalRecords from "./pages/MedicalRecords";
 import DoctorFinder from "./pages/DoctorFinder";
 import MedicalReminder from "./pages/MedicalReminder";
+import BloodDonorFinder from "./pages/BloodDonorFinder";
+import AmbulanceFinder from "./pages/AmbulanceFinder";
+import LabFinder from "./pages/LabFinder";
 
 import SupabaseTest from "./SupabaseTest";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -79,6 +82,9 @@ function AppRoutes() {
       <Route path="/medical-records" element={<ProtectedRoute><MedicalRecords /></ProtectedRoute>} />
       <Route path="/doctors" element={<ProtectedRoute><DoctorFinder /></ProtectedRoute>} />
       <Route path="/medical-reminder" element={<ProtectedRoute><MedicalReminder /></ProtectedRoute>} />
+      <Route path="/blood-donors" element={<ProtectedRoute><BloodDonorFinder /></ProtectedRoute>} />
+      <Route path="/ambulance" element={<ProtectedRoute><AmbulanceFinder /></ProtectedRoute>} />
+      <Route path="/lab-finder" element={<ProtectedRoute><LabFinder /></ProtectedRoute>} />
       <Route path="/supabase-test" element={<SupabaseTest />} />
       <Route path="*" element={<Navigate to={isLoggedIn ? "/dashboard" : "/"} replace />} />
     </Routes>
