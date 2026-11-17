@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 
 import { useLanguage } from "../context/LanguageContext";
+import { supabase } from "../lib/supabase";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -247,76 +248,125 @@ export default function MedicalRecords() {
   };
 
   useEffect(() => {
-    return () => {
-      documents.forEach((document) => {
-        URL.revokeObjectURL(document.url);
-      });
-    };
-  }, [documents]);
+    let active = true;
+    async function loadDocuments() {
+      try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        if (!user) throw new Error("Please sign in to view your medical records.");
+        const { data, error: listError } = await supabase
+          .from("medical_documents")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+        if (listError) throw listError;
+        const rows = await Promise.all((data || []).map(async (row) => {
+          const { data: signed, error: signedError } = await supabase.storage
+            .from(row.bucket_id || "medical-records")
+            .createSignedUrl(row.storage_path, 60 * 10);
+          if (signedError) throw signedError;
+          return {
+            id: row.id,
+            name: row.file_name,
+            category: row.document_type,
+            date: row.created_at,
+            size: row.file_size_bytes,
+            type: row.mime_type,
+            url: signed.signedUrl,
+            storagePath: row.storage_path,
+            bucketId: row.bucket_id || "medical-records",
+          };
+        }));
+        if (active) setDocuments(rows);
+      } catch (err) {
+        if (active) setError(err.message || "Unable to load medical records.");
+      }
+    }
+    loadDocuments();
+    return () => { active = false; };
+  }, []);
 
-  function handleFiles(event) {
+  async function handleFiles(event) {
     const files = Array.from(event.target.files || []);
     setError("");
     setNotice("");
-
-    const acceptedFiles = [];
-
-    for (const file of files) {
-      const isSupported =
-        file.type === "application/pdf" ||
-        file.type.startsWith("image/");
-
-      if (!isSupported) {
-        setError(copy.invalid);
-        continue;
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError) throw authError;
+      if (!user) throw new Error("Please sign in before uploading documents.");
+      const acceptedFiles = files.filter((file) => {
+        const supported = ["application/pdf", "image/jpeg", "image/png"].includes(file.type);
+        if (!supported) setError(copy.invalid);
+        else if (file.size > MAX_FILE_SIZE) setError(copy.tooLarge);
+        return supported && file.size <= MAX_FILE_SIZE;
+      });
+      const uploaded = [];
+      for (const file of acceptedFiles) {
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const storagePath = `${user.id}/${crypto.randomUUID()}/${safeName}`;
+        const { error: uploadError } = await supabase.storage
+          .from("medical-records")
+          .upload(storagePath, file, { contentType: file.type, upsert: false });
+        if (uploadError) throw uploadError;
+        const { data: row, error: insertError } = await supabase
+          .from("medical_documents")
+          .insert({
+            user_id: user.id,
+            bucket_id: "medical-records",
+            storage_path: storagePath,
+            file_name: file.name,
+            mime_type: file.type,
+            file_size_bytes: file.size,
+            document_type: uploadCategory,
+          })
+          .select()
+          .single();
+        if (insertError) {
+          await supabase.storage.from("medical-records").remove([storagePath]);
+          throw insertError;
+        }
+        const { data: signed, error: signedError } = await supabase.storage
+          .from("medical-records")
+          .createSignedUrl(storagePath, 60 * 10);
+        if (signedError) throw signedError;
+        uploaded.push({
+          id: row.id, name: row.file_name, category: row.document_type,
+          date: row.created_at, size: row.file_size_bytes, type: row.mime_type,
+          url: signed.signedUrl, storagePath, bucketId: "medical-records",
+        });
       }
-
-      if (file.size > MAX_FILE_SIZE) {
-        setError(copy.tooLarge);
-        continue;
+      if (uploaded.length) {
+        setDocuments((previous) => [...uploaded, ...previous]);
+        setNotice(isUrdu ? "دستاویزات محفوظ ہو گئی ہیں۔" : "Documents uploaded and saved securely.");
+        setSelectedCategory("All Documents");
       }
-
-      acceptedFiles.push(file);
+    } catch (err) {
+      setError(err.message || "Upload failed. Please try again.");
+    } finally {
+      event.target.value = "";
     }
-
-    const newDocuments = acceptedFiles.map((file) => ({
-      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      name: file.name,
-      category: uploadCategory,
-      date: new Date().toISOString(),
-      file,
-      url: URL.createObjectURL(file),
-      size: file.size,
-      type: file.type,
-    }));
-
-    if (newDocuments.length > 0) {
-      setDocuments((previous) => [...newDocuments, ...previous]);
-      setNotice(copy.uploadSuccess);
-      setSelectedCategory("All Documents");
-    }
-
-    event.target.value = "";
   }
 
-  function deleteDocument(id) {
+  async function deleteDocument(id) {
     if (!window.confirm(copy.deleteConfirm)) return;
-
-    const documentToDelete = documents.find(
-      (document) => document.id === id
-    );
-
-    if (documentToDelete) {
-      URL.revokeObjectURL(documentToDelete.url);
+    const target = documents.find((document) => document.id === id);
+    if (!target) return;
+    setError("");
+    try {
+      const { error: storageError } = await supabase.storage
+        .from(target.bucketId || "medical-records")
+        .remove([target.storagePath]);
+      if (storageError) throw storageError;
+      const { error: rowError } = await supabase
+        .from("medical_documents")
+        .delete()
+        .eq("id", id);
+      if (rowError) throw rowError;
+      if (previewDocument?.id === id) setPreviewDocument(null);
+      setDocuments((previous) => previous.filter((document) => document.id !== id));
+    } catch (err) {
+      setError(err.message || "Unable to delete this document.");
     }
-
-    if (previewDocument?.id === id) {
-      setPreviewDocument(null);
-    }
-
-    setDocuments((previous) =>
-      previous.filter((document) => document.id !== id)
-    );
   }
 
   const filteredDocuments = documents.filter((document) => {
