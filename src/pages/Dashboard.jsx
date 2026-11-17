@@ -69,7 +69,8 @@ export default function Dashboard() {
     if (!error && active) setNotifications(data || []);
   }
   loadNotifications();
-  return () => { active = false; };
+  const refreshTimer = window.setInterval(loadNotifications, 30000);
+  return () => { active = false; window.clearInterval(refreshTimer); };
 }, [user?.id]);
 
  async function markNotificationRead(item) {
