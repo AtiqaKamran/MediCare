@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FeatureNavbar from "../components/FeatureNavbar";
 import {
   ArrowLeft, Bell, BellRing, Clock3, Pill, Plus, Trash2,
   Pencil, X, Utensils, CalendarDays, Info
