@@ -665,6 +665,27 @@ export default function Dashboard() {
     </button>
   </div>
 </div>
+            {/* Blood Donor Finder */}
+            <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300 flex items-center justify-center"><HeartPulse size={26}/></div>
+              <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "بلڈ ڈونر تلاش کریں" : "Blood Donor Finder"}</h4>
+              <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "شہر، علاقے اور بلڈ گروپ کے مطابق اجازت یافتہ ڈونرز تلاش کریں۔" : "Find consenting blood donors by city, area and blood group."}</p>
+              <button onClick={()=>navigate("/blood-donors")} className="mt-5 text-sm font-bold text-rose-600 dark:text-rose-300">{isUrdu ? "ڈونرز تلاش کریں" : "Find Donors"} <ChevronRight size={17} className="inline"/></button>
+            </div>
+            {/* Ambulance Finder */}
+            <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-300 flex items-center justify-center"><Activity size={26}/></div>
+              <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "ایمبولینس اور ایمرجنسی" : "Ambulance & Emergency"}</h4>
+              <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "علاقے کے مطابق سروس کی معلومات تلاش کریں۔" : "Search ambulance service information by area."}</p>
+              <button onClick={()=>navigate("/ambulance")} className="mt-5 text-sm font-bold text-orange-600 dark:text-orange-300">{isUrdu ? "ایمبولینس تلاش کریں" : "Find Ambulance"} <ChevronRight size={17} className="inline"/></button>
+            </div>
+            {/* Laboratory Finder */}
+            <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
+              <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 flex items-center justify-center"><FolderHeart size={26}/></div>
+              <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "لیبارٹری اور ٹیسٹ تلاش کریں" : "Lab & Test Finder"}</h4>
+              <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "ٹیسٹ درج کریں اور لیبارٹری کی معلومات دیکھیں۔" : "Enter tests to find matching laboratory listings."}</p>
+              <button onClick={()=>navigate("/lab-finder")} className="mt-5 text-sm font-bold text-indigo-600 dark:text-indigo-300">{isUrdu ? "لیب تلاش کریں" : "Find a Lab"} <ChevronRight size={17} className="inline"/></button>
+            </div>
           </div>
         </section>
 
