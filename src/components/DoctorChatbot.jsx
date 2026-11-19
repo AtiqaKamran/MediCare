@@ -7,6 +7,8 @@ import { useLanguage } from "../context/LanguageContext";
 
 export default function DoctorChatbot() {
   const [isOpen, setIsOpen] = useState(false);
+  const [dockPosition, setDockPosition] = useState(null);
+  const dragRef = useRef(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState(null);
@@ -82,6 +84,24 @@ export default function DoctorChatbot() {
     }
   }
 
+  function handleDragStart(event) {
+    if (event.target.closest("button, input, form, a")) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    dragRef.current = { offsetX: event.clientX - rect.left, offsetY: event.clientY - rect.top, pointerId: event.pointerId };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  }
+  function handleDragMove(event) {
+    if (!dragRef.current || dragRef.current.pointerId !== event.pointerId) return;
+    const width = isOpen ? Math.min(390, window.innerWidth - 24) : 88;
+    const height = isOpen ? Math.min(620, window.innerHeight - 28) : 112;
+    const left = Math.max(8, Math.min(window.innerWidth - width - 8, event.clientX - dragRef.current.offsetX));
+    const top = Math.max(8, Math.min(window.innerHeight - height - 8, event.clientY - dragRef.current.offsetY));
+    setDockPosition({ left, top });
+  }
+  function handleDragEnd(event) {
+    if (dragRef.current?.pointerId === event.pointerId) dragRef.current = null;
+  }
+
   async function openChat() {
     setIsOpen(true);
     if (user?.id) await startNewChat();
@@ -141,13 +161,13 @@ export default function DoctorChatbot() {
     }
   }
 
-  return <div className="fixed bottom-4 right-3 z-[9999] sm:bottom-6 sm:right-6">
+  return <div onPointerMove={handleDragMove} onPointerUp={handleDragEnd} onPointerCancel={handleDragEnd} style={dockPosition ? { position: "fixed", left: dockPosition.left, top: dockPosition.top, right: "auto", bottom: "auto", zIndex: 9999 } : undefined} className={dockPosition ? "" : "fixed bottom-4 right-3 z-[9999] sm:bottom-6 sm:right-6"}>
     {!isOpen ? <button onClick={openChat} aria-label="Open MediCare Mini Doctor"
       className="group relative flex flex-col items-center touch-manipulation animate-[medicare-float_3s_ease-in-out_infinite]">
       <span className="mb-2 rounded-full bg-teal-700 px-3 py-1 text-xs font-semibold text-white opacity-100 shadow-lg transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
         {isUrdu ? "اپنے ڈاکٹر سے پوچھیں!" : "Ask your doctor!"}
       </span>
-      <div className="relative flex h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-cyan-100 to-blue-200 shadow-xl transition-transform duration-300 group-hover:scale-110 sm:h-20 sm:w-20">
+      <div onPointerDown={handleDragStart} className="relative flex h-16 w-16 touch-none items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-cyan-100 to-blue-200 shadow-xl transition-transform duration-300 group-hover:scale-110 sm:h-20 sm:w-20">
         <div className="relative flex h-11 w-11 items-center justify-center rounded-full bg-[#F5CBA7] shadow-inner sm:h-14 sm:w-14">
           <div className="absolute -top-1 h-4 w-9 rounded-t-full bg-gray-800 sm:h-5 sm:w-12"/>
           <div className="mt-1 flex gap-3"><span className="h-1.5 w-1.5 rounded-full bg-gray-800"/><span className="h-1.5 w-1.5 rounded-full bg-gray-800"/></div>
@@ -160,7 +180,7 @@ export default function DoctorChatbot() {
       </div>
       <span className="mt-2 text-[10px] font-bold text-teal-700 dark:text-teal-300 sm:text-xs">AI Doctor</span>
     </button> : <section className="flex h-[min(620px,calc(100dvh-28px))] w-[min(390px,calc(100vw-24px))] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900" dir={isUrdu ? "rtl" : "ltr"}>
-      <header className="flex items-center justify-between bg-gradient-to-r from-teal-800 to-teal-600 p-3 text-white sm:p-4">
+      <header onPointerDown={handleDragStart} className="flex cursor-grab touch-none items-center justify-between bg-gradient-to-r from-teal-800 to-teal-600 p-3 text-white active:cursor-grabbing sm:p-4">
         <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15"><HeartPulse size={23}/></div>
           <div><h3 className="font-bold">MediCare AI Doctor</h3><p className="text-xs text-teal-100">{isUrdu ? "آپ کا صحت معلومات معاون" : "Your personal health assistant"}</p></div>
         </div>
