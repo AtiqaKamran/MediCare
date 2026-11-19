@@ -6,6 +6,7 @@ import { Eye, EyeOff, LogIn } from "lucide-react";
 import AuthLayout from "../components/AuthLayout";
 import FormField from "../components/FormField";
 import { useLanguage } from "../context/LanguageContext";
+import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
 import {
   findUserById,
@@ -16,6 +17,7 @@ import {
 export default function Login() {
   const navigate = useNavigate();
   const { t, isUrdu } = useLanguage();
+  const { refreshSession } = useAuth();
 
   const [form, setForm] = useState({
     email: "",
@@ -120,8 +122,9 @@ export default function Login() {
 
       createUser(user);
       setCurrentUser(user);
+      await refreshSession();
 
-      navigate(savedProfile ? "/dashboard" : "/profile");
+      navigate(savedProfile ? "/dashboard" : "/profile", { replace: true });
     } catch (err) {
       setError(
         err.message ||
