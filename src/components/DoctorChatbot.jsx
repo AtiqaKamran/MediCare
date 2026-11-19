@@ -134,7 +134,7 @@ export default function DoctorChatbot() {
       }).eq("id", activeConversation).eq("user_id", user.id);
       const started = performance.now();
       const { data, error: fnError } = await supabase.functions.invoke("medicare-ai", {
-        body: { mode: "chat", message: text, language }
+        body: { mode: "chat", message: text, language, history: messages.slice(-8).map(item => ({ role: item.role, content: item.content })) }
       });
       if (fnError) {
         let detail = fnError.message;
