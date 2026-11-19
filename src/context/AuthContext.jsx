@@ -41,8 +41,16 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
+  async function refreshSession() {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw error;
+    setSession(data?.session ?? null);
+    setLoading(false);
+    return data?.session ?? null;
+  }
+
   return (
-    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading }}>
+    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, refreshSession }}>
       {children}
     </AuthContext.Provider>
   );
