@@ -9,6 +9,8 @@ export default function DoctorChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [dockPosition, setDockPosition] = useState(null);
   const dragRef = useRef(null);
+  const dockRef = useRef(null);
+  const draggedRef = useRef(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState(null);
@@ -85,21 +87,42 @@ export default function DoctorChatbot() {
   }
 
   function handleDragStart(event) {
-    if (event.target.closest("button, input, form, a")) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    dragRef.current = { offsetX: event.clientX - rect.left, offsetY: event.clientY - rect.top, pointerId: event.pointerId };
-    event.currentTarget.setPointerCapture?.(event.pointerId);
+    if (event.target.closest("[data-no-drag]")) return;
+    const rect = dockRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    draggedRef.current = false;
+    dragRef.current = {
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top,
+      startX: event.clientX,
+      startY: event.clientY,
+      pointerId: event.pointerId,
+    };
+    try { dockRef.current?.setPointerCapture(event.pointerId); } catch {}
   }
+
   function handleDragMove(event) {
-    if (!dragRef.current || dragRef.current.pointerId !== event.pointerId) return;
-    const width = isOpen ? Math.min(390, window.innerWidth - 24) : 88;
-    const height = isOpen ? Math.min(620, window.innerHeight - 28) : 112;
-    const left = Math.max(8, Math.min(window.innerWidth - width - 8, event.clientX - dragRef.current.offsetX));
-    const top = Math.max(8, Math.min(window.innerHeight - height - 8, event.clientY - dragRef.current.offsetY));
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (Math.abs(event.clientX - drag.startX) + Math.abs(event.clientY - drag.startY) > 5) {
+      draggedRef.current = true;
+    }
+    if (!draggedRef.current) return;
+    const rect = dockRef.current?.getBoundingClientRect();
+    const width = rect?.width || (isOpen ? Math.min(390, window.innerWidth - 24) : 88);
+    const height = rect?.height || (isOpen ? Math.min(620, window.innerHeight - 28) : 112);
+    const left = Math.max(8, Math.min(window.innerWidth - width - 8, event.clientX - drag.offsetX));
+    const top = Math.max(8, Math.min(window.innerHeight - height - 8, event.clientY - drag.offsetY));
     setDockPosition({ left, top });
   }
+
   function handleDragEnd(event) {
-    if (dragRef.current?.pointerId === event.pointerId) dragRef.current = null;
+    if (dragRef.current?.pointerId !== event.pointerId) return;
+    dragRef.current = null;
+    try { dockRef.current?.releasePointerCapture(event.pointerId); } catch {}
+    if (draggedRef.current) {
+      window.setTimeout(() => { draggedRef.current = false; }, 0);
+    }
   }
 
   async function openChat() {
@@ -161,13 +184,13 @@ export default function DoctorChatbot() {
     }
   }
 
-  return <div onPointerMove={handleDragMove} onPointerUp={handleDragEnd} onPointerCancel={handleDragEnd} style={dockPosition ? { position: "fixed", left: dockPosition.left, top: dockPosition.top, right: "auto", bottom: "auto", zIndex: 9999 } : undefined} className={dockPosition ? "" : "fixed bottom-4 right-3 z-[9999] sm:bottom-6 sm:right-6"}>
-    {!isOpen ? <button onClick={openChat} aria-label="Open MediCare Mini Doctor"
+  return <div ref={dockRef} onPointerDown={handleDragStart} onPointerMove={handleDragMove} onPointerUp={handleDragEnd} onPointerCancel={handleDragEnd} style={dockPosition ? { position: "fixed", left: dockPosition.left, top: dockPosition.top, right: "auto", bottom: "auto", zIndex: 9999 } : undefined} className={dockPosition ? "touch-none" : "fixed bottom-4 right-3 z-[9999] touch-none sm:bottom-6 sm:right-6"}>
+    {!isOpen ? <button onClick={() => { if (!draggedRef.current) openChat(); }} aria-label="Open MediCare Mini Doctor"
       className="group relative flex flex-col items-center touch-manipulation animate-[medicare-float_3s_ease-in-out_infinite]">
       <span className="mb-2 rounded-full bg-teal-700 px-3 py-1 text-xs font-semibold text-white opacity-100 shadow-lg transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
         {isUrdu ? "اپنے ڈاکٹر سے پوچھیں!" : "Ask your doctor!"}
       </span>
-      <div onPointerDown={handleDragStart} className="relative flex h-16 w-16 touch-none items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-cyan-100 to-blue-200 shadow-xl transition-transform duration-300 group-hover:scale-110 sm:h-20 sm:w-20">
+      <div className="relative flex h-16 w-16 touch-none items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-cyan-100 to-blue-200 shadow-xl transition-transform duration-300 group-hover:scale-110 sm:h-20 sm:w-20">
         <div className="relative flex h-11 w-11 items-center justify-center rounded-full bg-[#F5CBA7] shadow-inner sm:h-14 sm:w-14">
           <div className="absolute -top-1 h-4 w-9 rounded-t-full bg-gray-800 sm:h-5 sm:w-12"/>
           <div className="mt-1 flex gap-3"><span className="h-1.5 w-1.5 rounded-full bg-gray-800"/><span className="h-1.5 w-1.5 rounded-full bg-gray-800"/></div>
@@ -180,13 +203,13 @@ export default function DoctorChatbot() {
       </div>
       <span className="mt-2 text-[10px] font-bold text-teal-700 dark:text-teal-300 sm:text-xs">AI Doctor</span>
     </button> : <section className="flex h-[min(620px,calc(100dvh-28px))] w-[min(390px,calc(100vw-24px))] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900" dir={isUrdu ? "rtl" : "ltr"}>
-      <header onPointerDown={handleDragStart} className="flex cursor-grab touch-none items-center justify-between bg-gradient-to-r from-teal-800 to-teal-600 p-3 text-white active:cursor-grabbing sm:p-4">
+      <header className="flex cursor-grab touch-none items-center justify-between bg-gradient-to-r from-teal-800 to-teal-600 p-3 text-white active:cursor-grabbing sm:p-4">
         <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15"><HeartPulse size={23}/></div>
           <div><h3 className="font-bold">MediCare AI Doctor</h3><p className="text-xs text-teal-100">{isUrdu ? "آپ کا صحت معلومات معاون" : "Your personal health assistant"}</p></div>
         </div>
         <div className="flex items-center gap-1">
-          {user && <button type="button" onClick={startNewChat} disabled={loading || historyLoading} title={isUrdu ? "نئی چیٹ" : "New chat"} className="rounded-lg p-2 hover:bg-white/15 disabled:opacity-40"><Plus size={19}/></button>}
-          <button type="button" onClick={() => setIsOpen(false)} aria-label="Close chatbot" className="rounded-lg p-2 hover:bg-white/15"><X size={20}/></button>
+          {user && <button data-no-drag type="button" onClick={startNewChat} disabled={loading || historyLoading} title={isUrdu ? "نئی چیٹ" : "New chat"} className="rounded-lg p-2 hover:bg-white/15 disabled:opacity-40"><Plus size={19}/></button>}
+          <button data-no-drag type="button" onClick={() => setIsOpen(false)} aria-label="Close chatbot" className="rounded-lg p-2 hover:bg-white/15"><X size={20}/></button>
         </div>
       </header>
       <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto p-4 text-sm">
@@ -201,8 +224,8 @@ export default function DoctorChatbot() {
         {error && <p role="alert" className="rounded-xl bg-amber-50 p-3 text-xs text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">{error}</p>}
       </div>
       <p className="px-3 pb-2 text-[10px] text-slate-500">{isUrdu ? "MediCare AI کا جواب Gemini AI سروس سے تیار ہوتا ہے۔ یہ عمومی معلومات ہیں، طبی تشخیص نہیں۔" : "MediCare AI uses Google Gemini as its backend AI engine. General information only — not a medical diagnosis. Avoid sharing identifying patient details."}</p>
-      {user ? <form onSubmit={send} className="flex shrink-0 gap-2 border-t p-3 dark:border-slate-700">
-        <input value={message} onChange={e=>setMessage(e.target.value)} placeholder={isUrdu ? "اپنا سوال لکھیں..." : "Ask MediCare AI a health question..."} className="min-w-0 flex-1 rounded-xl border bg-transparent px-3 py-3 text-sm outline-none focus:border-teal-600 dark:border-slate-700"/>
+      {user ? <form data-no-drag onSubmit={send} className="flex shrink-0 gap-2 border-t p-3 dark:border-slate-700">
+        <input data-no-drag value={message} onChange={e=>setMessage(e.target.value)} placeholder={isUrdu ? "اپنا سوال لکھیں..." : "Ask MediCare AI a health question..."} className="min-w-0 flex-1 rounded-xl border bg-transparent px-3 py-3 text-sm outline-none focus:border-teal-600 dark:border-slate-700"/>
         <button disabled={loading || !message.trim()} aria-label="Send message" className="rounded-xl bg-teal-700 px-4 text-white disabled:opacity-40"><Send size={18}/></button>
       </form> : <p className="border-t p-3 text-center text-xs text-slate-500 dark:border-slate-700">Sign in to start a private chat.</p>}
     </section>}
