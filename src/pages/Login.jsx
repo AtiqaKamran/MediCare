@@ -17,7 +17,7 @@ import {
 export default function Login() {
   const navigate = useNavigate();
   const { t, isUrdu } = useLanguage();
-  const { refreshSession } = useAuth();
+  const { applyAuthSession } = useAuth();
 
   const [form, setForm] = useState({
     email: "",
@@ -54,7 +54,7 @@ export default function Login() {
 
       // Establish the app session and navigate immediately. Profile reads and email
       // alerts are secondary and must never block the signed-in screen.
-      await refreshSession();
+      applyAuthSession(data.session);
 
       const localUser = findUserById(authUser.id);
       const user = {
