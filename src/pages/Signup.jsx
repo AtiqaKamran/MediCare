@@ -12,7 +12,7 @@ import { createUser, setCurrentUser } from "../utils/storage";
 export default function Signup() {
   const navigate = useNavigate();
   const { t, isUrdu } = useLanguage();
-  const { refreshSession } = useAuth();
+  const { applyAuthSession } = useAuth();
 
   const [form, setForm] = useState({
     name: "",
@@ -118,7 +118,7 @@ export default function Signup() {
 
       if (data.session) {
         setCurrentUser(newUser);
-        await refreshSession();
+        applyAuthSession(data.session);
         navigate("/profile", { replace: true });
       } else {
         setSuccess(t("accountCreatedCheckEmail"));
