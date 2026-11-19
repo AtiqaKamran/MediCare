@@ -5,12 +5,14 @@ import { Eye, EyeOff, UserPlus } from "lucide-react";
 import AuthLayout from "../components/AuthLayout";
 import FormField from "../components/FormField";
 import { useLanguage } from "../context/LanguageContext";
+import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
 import { createUser, setCurrentUser } from "../utils/storage";
 
 export default function Signup() {
   const navigate = useNavigate();
   const { t, isUrdu } = useLanguage();
+  const { refreshSession } = useAuth();
 
   const [form, setForm] = useState({
     name: "",
@@ -116,7 +118,8 @@ export default function Signup() {
 
       if (data.session) {
         setCurrentUser(newUser);
-        navigate("/profile");
+        await refreshSession();
+        navigate("/profile", { replace: true });
       } else {
         setSuccess(t("accountCreatedCheckEmail"));
       }
