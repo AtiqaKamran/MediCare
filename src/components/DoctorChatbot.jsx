@@ -98,7 +98,7 @@ export default function DoctorChatbot() {
       startY: event.clientY,
       pointerId: event.pointerId,
     };
-    try { dockRef.current?.setPointerCapture(event.pointerId); } catch {}
+    // Do not capture the pointer on the outer dock: doing so retargets taps away from the mini-doctor button.
   }
 
   function handleDragMove(event) {
@@ -119,7 +119,7 @@ export default function DoctorChatbot() {
   function handleDragEnd(event) {
     if (dragRef.current?.pointerId !== event.pointerId) return;
     dragRef.current = null;
-    try { dockRef.current?.releasePointerCapture(event.pointerId); } catch {}
+
     if (draggedRef.current) {
       window.setTimeout(() => { draggedRef.current = false; }, 0);
     }
@@ -186,7 +186,7 @@ export default function DoctorChatbot() {
 
   return <div ref={dockRef} onPointerDown={handleDragStart} onPointerMove={handleDragMove} onPointerUp={handleDragEnd} onPointerCancel={handleDragEnd} style={dockPosition ? { position: "fixed", left: dockPosition.left, top: dockPosition.top, right: "auto", bottom: "auto", zIndex: 9999 } : undefined} className={dockPosition ? "touch-none" : "fixed bottom-4 right-3 z-[9999] touch-none sm:bottom-6 sm:right-6"}>
     {!isOpen ? <button onClick={() => { if (!draggedRef.current) openChat(); }} aria-label="Open MediCare Mini Doctor"
-      className="group relative flex flex-col items-center touch-manipulation animate-[medicare-float_3s_ease-in-out_infinite]">
+      className="group relative flex flex-col items-center touch-manipulation select-none animate-[medicare-float_3s_ease-in-out_infinite]">
       <span className="mb-2 rounded-full bg-teal-700 px-3 py-1 text-xs font-semibold text-white opacity-100 shadow-lg transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
         {isUrdu ? "اپنے ڈاکٹر سے پوچھیں!" : "Ask your doctor!"}
       </span>
@@ -202,7 +202,7 @@ export default function DoctorChatbot() {
         <span className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500 sm:h-4 sm:w-4"/>
       </div>
       <span className="mt-2 text-[10px] font-bold text-teal-700 dark:text-teal-300 sm:text-xs">AI Doctor</span>
-    </button> : <section className="flex h-[min(620px,calc(100dvh-28px))] w-[min(390px,calc(100vw-24px))] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900" dir={isUrdu ? "rtl" : "ltr"}>
+    </button> : <section className="flex h-[min(620px,calc(100dvh-28px))] w-[min(390px,calc(100vw-24px))] max-w-[calc(100vw-16px)] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900" dir={isUrdu ? "rtl" : "ltr"}>
       <header className="flex cursor-grab touch-none items-center justify-between bg-gradient-to-r from-teal-800 to-teal-600 p-3 text-white active:cursor-grabbing sm:p-4">
         <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15"><HeartPulse size={23}/></div>
           <div><h3 className="font-bold">MediCare AI Doctor</h3><p className="text-xs text-teal-100">{isUrdu ? "آپ کا صحت معلومات معاون" : "Your personal health assistant"}</p></div>
