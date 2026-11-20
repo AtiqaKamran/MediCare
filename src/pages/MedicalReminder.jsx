@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FeatureNavbar from "../components/FeatureNavbar";
 import {
   ArrowLeft, Bell, BellRing, Clock3, Pill, Plus, Trash2,
   Pencil, X, Utensils, CalendarDays, Info
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
+
 
 const TEXT = {
   en: {
@@ -15,7 +18,7 @@ const TEXT = {
     after: "After meal", with: "With meal", anytime: "Any time",
     custom: "Custom timing", time: "Reminder time", repeat: "Repeat",
     every: "Every day", selected: "Selected days", save: "Save reminder",
-    cancel: "Cancel", noItems: "No reminders yet",
+    cancel: "منسوخ کریں", noItems: "No reminders yet",
     noItemsText: "Add a medicine and choose the time that suits your routine.",
     notification: "Enable notifications", enabled: "Notifications enabled",
     blocked: "Notifications are blocked in your browser settings.",
@@ -33,28 +36,28 @@ const TEXT = {
     daily: "Daily", repeatDays: "Repeat on",
   },
   ur: {
-    title: "Dawai ke Reminders", subtitle: "Apni dawa waqt par lena yaad rakhein",
-    add: "Reminder add karein", edit: "Reminder edit karein", medicine: "Dawai ka naam",
-    dose: "Dose / Hidayaat", meal: "Khanay ke mutabiq waqt", before: "Khanay se pehle",
-    after: "Khanay ke baad", with: "Khanay ke sath", anytime: "Kisi bhi waqt",
-    custom: "Apna waqt", time: "Reminder ka waqt", repeat: "Repeat",
-    every: "Rozana", selected: "Chunay huay din", save: "Reminder save karein",
-    cancel: "Cancel", noItems: "Abhi koi reminder nahi",
-    noItemsText: "Dawai add karein aur apni routine ke mutabiq waqt set karein.",
-    notification: "Notifications on karein", enabled: "Notifications on hain",
-    blocked: "Browser settings mein notifications block hain.",
-    permission: "Website khuli honay par alert hasil karne ke liye browser notifications allow karein.",
-    today: "Aaj ke reminders", upcoming: "Aapka schedule",
-    delete: "Delete", taken: "Aaj le li", markTaken: "Taken mark karein",
-    days: ["Itwar", "Peer", "Mangal", "Budh", "Jumeraat", "Jumma", "Hafta"],
-    mealOptions: ["Khanay se pehle", "Khanay ke baad", "Khanay ke sath", "Kisi bhi waqt", "Apna waqt"],
-    reminder: "Reminder", due: "Dawai lenay ka waqt hai",
-    note: "Extra note (optional)", emptyName: "Dawai ka naam likhein.",
-    emptyTime: "Reminder ka waqt select karein.",
-    browserOnly: "Browser notifications HTTPS ya localhost par kaam karti hain. Alerts ke liye MediCare khula rakhein.",
-    permissionDenied: "Notifications allow nahi. Browser site settings mein enable karein.",
-    saved: "Reminder save ho gaya.", removed: "Reminder delete ho gaya.",
-    daily: "Rozana", repeatDays: "In dinon mein",
+    title: "ادویات کی یاددہانیاں", subtitle: "اپنی ادویات وقت پر لینا یاد رکھیں",
+    add: "یاددہانی شامل کریں", edit: "یاددہانی میں ترمیم کریں", medicine: "دوا کا نام",
+    dose: "خوراک / ہدایات", meal: "کھانے کے مطابق وقت", before: "کھانے سے پہلے",
+    after: "کھانے کے بعد", with: "کھانے کے ساتھ", anytime: "کسی بھی وقت",
+    custom: "اپنی مرضی کا وقت", time: "یاددہانی کا وقت", repeat: "دہرائیں",
+    every: "روزانہ", selected: "منتخب دن", save: "یاددہانی محفوظ کریں",
+    cancel: "منسوخ کریں", noItems: "ابھی کوئی یاددہانی نہیں",
+    noItemsText: "دوا شامل کریں اور اپنے معمول کے مطابق وقت مقرر کریں۔",
+    notification: "اطلاعات فعال کریں", enabled: "اطلاعات فعال ہیں",
+    blocked: "آپ کے براؤزر کی ترتیبات میں اطلاعات بند ہیں۔",
+    permission: "ویب سائٹ کھلی ہونے پر اطلاع حاصل کرنے کے لیے براؤزر کی اطلاعات کی اجازت دیں۔",
+    today: "آج کی یاددہانیاں", upcoming: "آپ کا شیڈول",
+    delete: "حذف کریں", taken: "آج دوا لے لی", markTaken: "دوا لینے کی تصدیق کریں",
+    days: ["اتوار", "پیر", "منگل", "بدھ", "جمعرات", "جمعہ", "ہفتہ"],
+    mealOptions: ["کھانے سے پہلے", "کھانے کے بعد", "کھانے کے ساتھ", "کسی بھی وقت", "اپنی مرضی کا وقت"],
+    reminder: "یاددہانی", due: "دوا لینے کا وقت ہو گیا ہے",
+    note: "اضافی نوٹ (اختیاری)", emptyName: "براہِ کرم دوا کا نام درج کریں۔",
+    emptyTime: "براہِ کرم یاددہانی کا وقت منتخب کریں۔",
+    browserOnly: "براؤزر کی اطلاعات HTTPS یا localhost پر کام کرتی ہیں۔ مقررہ وقت پر اطلاع کے لیے MediCare کھلا رکھیں۔",
+    permissionDenied: "اطلاعات کی اجازت نہیں ہے۔ براہِ کرم براؤزر کی سائٹ سیٹنگز میں انہیں فعال کریں۔",
+    saved: "یاددہانی محفوظ ہو گئی۔", removed: "یاددہانی حذف ہو گئی۔",
+    daily: "روزانہ", repeatDays: "ان دنوں میں دہرائیں",
   },
 };
 
@@ -66,6 +69,7 @@ function getTodayKey() {
 export default function MedicalReminder() {
   const navigate = useNavigate();
   const { language, isUrdu } = useLanguage();
+  const { user } = useAuth();
   const t = TEXT[language === "ur" ? "ur" : "en"];
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,15 +90,17 @@ export default function MedicalReminder() {
     let active = true;
     async function loadReminders() {
       try {
+        if (!user?.id) { if (active) setReminders([]); return; }
         const { data, error } = await supabase.from("reminders").select("*")
-          .eq("status", "active").order("scheduled_at", { ascending: true });
+          .eq("user_id", user.id).eq("status", "active")
+          .order("scheduled_at", { ascending: true });
         if (error) throw error;
         const mapped = (data || []).map((row) => {
           const recurrence = row.recurrence || { type: "daily" };
           const date = new Date(row.scheduled_at);
           return {
             id: row.id, name: row.medicine_name || row.title,
-            dose: row.dosage || "", note: row.description || "", meal: "after",
+            dose: row.dosage || "", note: row.description || "", meal: row.meal_timing || "after",
             time: date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: row.timezone || "Asia/Karachi" }),
             repeat: recurrence.type === "weekly" ? "selected" : "daily",
             days: recurrence.days || [0,1,2,3,4,5,6], lastNotifiedDate: "",
@@ -109,7 +115,7 @@ export default function MedicalReminder() {
     }
     loadReminders();
     return () => { active = false; };
-  }, []);
+  }, [user?.id]);
 
   const notifyDueReminders = useCallback(() => {
     const now = new Date();
@@ -196,6 +202,7 @@ export default function MedicalReminder() {
       const payload = {
         user_id: user.id, title: form.name.trim(), medicine_name: form.name.trim(),
         dosage: form.dose.trim() || null, description: form.note.trim() || null,
+        meal_timing: form.meal,
         scheduled_at: scheduled.toISOString(), timezone: "Asia/Karachi",
         recurrence: form.repeat === "daily" ? { type: "daily" } : { type: "weekly", days: form.days },
         status: "active", email_enabled: false,
@@ -203,7 +210,7 @@ export default function MedicalReminder() {
       let saved;
       if (editingId) {
         const { data, error } = await supabase.from("reminders").update(payload)
-          .eq("id", editingId).select().single();
+          .eq("id", editingId).eq("user_id", user.id).select().single();
         if (error) throw error;
         saved = data;
       } else {
@@ -215,7 +222,7 @@ export default function MedicalReminder() {
       const savedDate = new Date(saved.scheduled_at);
       const item = {
         id: saved.id, name: saved.medicine_name || saved.title,
-        dose: saved.dosage || "", note: saved.description || "", meal: form.meal,
+        dose: saved.dosage || "", note: saved.description || "", meal: saved.meal_timing || form.meal,
         time: savedDate.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Karachi" }),
         repeat: recurrence.type === "weekly" ? "selected" : "daily",
         days: recurrence.days || [0,1,2,3,4,5,6], lastNotifiedDate: "",
@@ -232,7 +239,7 @@ export default function MedicalReminder() {
 
   async function deleteReminder(id) {
     try {
-      const { error } = await supabase.from("reminders").update({ status: "cancelled" }).eq("id", id);
+      const { error } = await supabase.from("reminders").update({ status: "cancelled" }).eq("id", id).eq("user_id", user?.id);
       if (error) throw error;
       setReminders((current) => current.filter((item) => item.id !== id));
       setMessage(t.removed);
@@ -261,32 +268,23 @@ export default function MedicalReminder() {
 
   return (
     <div dir={isUrdu ? "rtl" : "ltr"} className="min-h-screen bg-[#f5f8fa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
-      <header className="sticky top-0 z-20 border-b border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6">
-          <button onClick={() => navigate("/dashboard")} className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-teal-700 dark:text-slate-300 dark:hover:text-teal-300">
-            <ArrowLeft size={18} /> MediCare
-          </button>
-          <div className="flex items-center gap-2 text-teal-700 dark:text-teal-300">
-            <Pill size={21} />
-            <span className="font-bold">{t.title}</span>
-          </div>
-          <span className="w-16" />
-        </div>
-      </header>
-
+      <FeatureNavbar title={t.title} accent="amber" isUrdu={isUrdu} />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
-              <BellRing size={14} /> MediCare
-            </p>
-            <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{t.title}</h1>
-            <p className={`mt-2 text-sm ${muted}`}>{t.subtitle}</p>
+        <section className="relative mb-8 overflow-hidden rounded-[28px] bg-gradient-to-br from-teal-800 via-teal-700 to-emerald-600 p-6 text-white shadow-xl shadow-teal-900/10 sm:p-9">
+          <div className="pointer-events-none absolute -right-12 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 right-24 h-56 w-56 rounded-full border-[35px] border-white/10" />
+          <div className="relative z-10 max-w-3xl">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-teal-50">
+              <BellRing size={15} />
+              MediCare
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{t.title}</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-teal-50 sm:text-base">{t.subtitle}</p>
+            <button onClick={openNewForm} className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-teal-800 shadow-lg transition hover:-translate-y-0.5 hover:bg-teal-50">
+              <Plus size={18} /> {t.add}
+            </button>
           </div>
-          <button onClick={openNewForm} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-600 to-teal-700 px-5 py-3 text-sm font-bold text-white shadow-md shadow-teal-700/20 transition hover:-translate-y-0.5 hover:shadow-lg">
-            <Plus size={18} /> {t.add}
-          </button>
-        </div>
+        </section>
 
         <section className={`${cardClass} mb-6 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between`}>
           <div className="flex items-start gap-3">
@@ -318,14 +316,14 @@ export default function MedicalReminder() {
           <section className={`${cardClass} mb-7 p-5 sm:p-7`}>
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-lg font-bold">{editingId ? t.edit : t.add}</h2>
-              <button onClick={() => setShowForm(false)} aria-label="Close" className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><X size={19} /></button>
+              <button onClick={() => setShowForm(false)} aria-label={isUrdu ? "بند کریں" : "Close"} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><X size={19} /></button>
             </div>
             <form onSubmit={saveReminder} className="grid gap-4 sm:grid-cols-2">
               <label className="text-sm font-semibold">{t.medicine} *
-                <input className={`${inputClass} mt-2`} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Medicine name" required />
+                <input className={`${inputClass} mt-2`} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={isUrdu ? "مثلاً دوا کا نام" : "e.g. Medicine name"} required />
               </label>
               <label className="text-sm font-semibold">{t.dose}
-                <input className={`${inputClass} mt-2`} value={form.dose} onChange={(e) => setForm({ ...form, dose: e.target.value })} placeholder="e.g. As prescribed" />
+                <input className={`${inputClass} mt-2`} value={form.dose} onChange={(e) => setForm({ ...form, dose: e.target.value })} placeholder={isUrdu ? "مثلاً ڈاکٹر کی ہدایت کے مطابق" : "e.g. As prescribed"} />
               </label>
               <label className="text-sm font-semibold">{t.meal}
                 <select className={`${inputClass} mt-2`} value={form.meal} onChange={(e) => setForm({ ...form, meal: e.target.value })}>
@@ -374,7 +372,7 @@ export default function MedicalReminder() {
           </div>
 
           {loading ? (
-            <div className={`${cardClass} p-8 text-center text-sm ${muted}`}>Loading reminders...</div>
+            <div className={`${cardClass} p-8 text-center text-sm ${muted}`}>{isUrdu ? "یاددہانیاں لوڈ ہو رہی ہیں..." : "Loading reminders..."}</div>
           ) : todayReminders.length === 0 ? (
             <div className={`${cardClass} flex flex-col items-center px-6 py-12 text-center`}>
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"><Pill size={27} /></div>

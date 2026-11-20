@@ -26,9 +26,10 @@ import {
 } from "lucide-react";
 
 import { useLanguage } from "../context/LanguageContext";
+import FeatureNavbar from "../components/FeatureNavbar";
 import { supabase } from "../lib/supabase";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_FILE_SIZE = 6 * 1024 * 1024;
 
 const categories = [
   {
@@ -193,7 +194,6 @@ export default function MedicalRecords() {
     subtitle: isUrdu
       ? "اپنی تمام طبی دستاویزات ایک ہی جگہ محفوظ انداز میں منظم کریں۔"
       : "All your medical documents in one place.",
-    back: isUrdu ? "ڈیش بورڈ پر واپس جائیں" : "Back to Dashboard",
     total: isUrdu ? "کل دستاویزات" : "Total Documents",
     categories: isUrdu ? "دستاویزات کی اقسام" : "Document Categories",
     formats: isUrdu ? "قابل قبول فائلیں" : "Supported Formats",
@@ -205,7 +205,7 @@ export default function MedicalRecords() {
     choose: isUrdu ? "فائل منتخب کریں" : "Choose Files",
     uploadHint: isUrdu
       ? "PDF یا تصاویر، ہر فائل زیادہ سے زیادہ 10 MB"
-      : "PDF or image files. Maximum 10 MB per file.",
+      : "PDF or image files. Maximum 6 MB per file.",
     searchPlaceholder: isUrdu
       ? "دستاویز تلاش کریں..."
       : "Search documents...",
@@ -235,14 +235,14 @@ export default function MedicalRecords() {
       : "Only PDF files and images are supported.",
     tooLarge: isUrdu
       ? "ہر فائل کا سائز 10 MB یا اس سے کم ہونا چاہیے۔"
-      : "Each file must be 10 MB or smaller.",
+      : "Each file must be 6 MB or smaller.",
     deleteConfirm: isUrdu
       ? "کیا آپ واقعی یہ دستاویز حذف کرنا چاہتے ہیں؟"
       : "Are you sure you want to delete this document?",
     privacyTitle: isUrdu ? "آپ کی صحت، آپ کی رازداری" : "Your health, your privacy",
     privacyText: isUrdu
-      ? "یہ فی الحال صرف ایک عارضی ڈیمو ہے۔ فائلیں Supabase پر محفوظ نہیں ہوتیں اور صفحہ ریفریش کرنے پر ختم ہو جائیں گی۔"
-      : "This is currently a local preview. Files are not saved to Supabase and will disappear when the page is refreshed.",
+      ? "آپ کی فائلیں نجی Supabase اسٹوریج میں محفوظ ہوتی ہیں اور صرف آپ کے اکاؤنٹ سے دیکھی جا سکتی ہیں۔"
+      : "Your files are stored in private Supabase storage and can only be accessed from your account.",
     close: isUrdu ? "بند کریں" : "Close",
     noFile: isUrdu ? "فائل منتخب نہیں ہوئی" : "No file selected",
   };
@@ -403,44 +403,7 @@ export default function MedicalRecords() {
       dir={isUrdu ? "rtl" : "ltr"}
       className="min-h-screen bg-[#f5f8fa] text-slate-900 dark:bg-slate-950 dark:text-white"
     >
-      {/* Navbar: Back button left, brand right */}
-      <header
-        dir="ltr"
-        className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/95"
-      >
-        <div className="mx-auto flex min-h-[76px] max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-teal-300 hover:bg-teal-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-teal-950/40"
-          >
-            <ArrowLeft size={18} />
-            <span className="hidden sm:inline">
-              {copy.back}
-            </span>
-            <span className="sm:hidden">
-              {isUrdu ? "واپس" : "Back"}
-            </span>
-          </button>
-
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="flex items-center gap-3 text-right"
-          >
-            <div className="text-right">
-              <h1 className="text-lg font-extrabold tracking-tight">
-                MediCare
-              </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {copy.title}
-              </p>
-            </div>
-
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-teal-700 text-white shadow-md shadow-teal-700/20">
-              <HeartPulse size={24} />
-            </div>
-          </button>
-        </div>
-      </header>
+      <FeatureNavbar title={copy.title} isUrdu={isUrdu} />
 
       <main className="mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-10 lg:px-8">
         {/* Page introduction */}
@@ -515,7 +478,7 @@ export default function MedicalRecords() {
               PDF, JPG, PNG
             </p>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              {isUrdu ? "10 MB فی فائل تک" : "Up to 10 MB per file"}
+              {isUrdu ? "6 MB فی فائل تک" : "Up to 6 MB per file"}
             </p>
           </div>
         </section>
@@ -576,6 +539,24 @@ export default function MedicalRecords() {
           </div>
         </section>
 
+        {/* Selected category documents */}
+        <section id="document-list" className="mb-9 scroll-mt-24 rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-7">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div><h3 className="text-xl font-extrabold">{selectedCategory === "All Documents" ? copy.yourDocuments : (categories.find(x => x.id === selectedCategory)?.[isUrdu ? "ur" : "en"] || selectedCategory)}</h3><p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{copy.browse}</p></div>
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold dark:bg-slate-800">{filteredDocuments.length}</span>
+          </div>
+          <div className="mb-4 flex items-center gap-2 rounded-xl border border-slate-200 px-3 dark:border-slate-700"><Search size={17} className="text-slate-400"/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder={copy.searchPlaceholder} className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none"/></div>
+          {filteredDocuments.length===0 ? <p className="rounded-2xl border border-dashed border-slate-300 p-7 text-center text-sm text-slate-500 dark:border-slate-700">{documents.length===0?copy.emptyDescription:copy.noResults}</p> :
+            <div className="grid gap-3 sm:grid-cols-2">{filteredDocuments.map(doc=><article key={doc.id} className="flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 p-4 dark:border-slate-700">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"><FileText size={21}/></div>
+              <div className="min-w-0 flex-1"><h4 className="truncate text-sm font-bold">{doc.name}</h4><p className="mt-1 text-xs text-slate-500">{doc.category} · {formatDate(doc.date,isUrdu)} · {formatFileSize(doc.size||0)}</p></div>
+              <div className="flex shrink-0 items-center gap-1">
+                <button title={copy.view} onClick={()=>setPreviewDocument(doc)} className="rounded-lg p-2 text-teal-700 hover:bg-teal-50 dark:text-teal-300 dark:hover:bg-slate-800"><Eye size={17}/></button>
+                <a title={copy.download} href={doc.url} target="_blank" rel="noreferrer" className="rounded-lg p-2 text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-slate-800"><ArrowUpRight size={17}/></a>
+                <button title={copy.delete} onClick={()=>deleteDocument(doc.id)} className="rounded-lg p-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800"><Trash2 size={17}/></button>
+              </div>
+            </article>)}</div>}
+        </section>
         {/* Upload section */}
         <section
           id="add-document"
