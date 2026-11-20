@@ -270,21 +270,21 @@ export default function MedicalReminder() {
     <div dir={isUrdu ? "rtl" : "ltr"} className="min-h-screen bg-[#f5f8fa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
       <FeatureNavbar title={t.title} accent="amber" isUrdu={isUrdu} />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <div className="relative mb-7 overflow-hidden rounded-3xl border border-emerald-400 bg-gradient-to-r from-teal-700 via-emerald-600 to-teal-500 p-5 shadow-sm dark:border-emerald-900/40 dark:from-teal-950 dark:via-emerald-950/90 dark:to-teal-900 sm:p-6">
-          <div className="pointer-events-none absolute -bottom-10 -right-10 h-36 w-36 rounded-full bg-white/15" />
-          <div className="relative z-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white">
-              <BellRing size={14} /> MediCare
-            </p>
-            <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{t.title}</h1>
-            <p className={`mt-2 text-sm ${muted}`}>{t.subtitle}</p>
+        <section className="relative mb-8 overflow-hidden rounded-[28px] bg-gradient-to-br from-teal-800 via-teal-700 to-emerald-600 p-6 text-white shadow-xl shadow-teal-900/10 sm:p-9">
+          <div className="pointer-events-none absolute -right-12 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 right-24 h-56 w-56 rounded-full border-[35px] border-white/10" />
+          <div className="relative z-10 max-w-3xl">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-teal-50">
+              <BellRing size={15} />
+              MediCare
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{t.title}</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-teal-50 sm:text-base">{t.subtitle}</p>
+            <button onClick={openNewForm} className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-teal-800 shadow-lg transition hover:-translate-y-0.5 hover:bg-teal-50">
+              <Plus size={18} /> {t.add}
+            </button>
           </div>
-          <button onClick={openNewForm} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-800 to-teal-900 px-5 py-3 text-sm font-bold text-white shadow-md shadow-emerald-900/20 transition hover:-translate-y-0.5 hover:shadow-lg">
-            <Plus size={18} /> {t.add}
-          </button>
-          </div>
-        </div>
+        </section>
 
         <section className={`${cardClass} mb-6 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between`}>
           <div className="flex items-start gap-3">
