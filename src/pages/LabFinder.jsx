@@ -83,7 +83,18 @@ export default function LabFinder() {
   return <main dir={language==="ur"?"rtl":"ltr"} className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 dark:bg-slate-950 dark:text-white sm:px-6">
     <FeatureNavbar title={t.title} accent="blue" isUrdu={language==="ur"} />
     <div className="mx-auto max-w-5xl">
-      <header className="relative overflow-hidden isolate rounded-3xl border border-emerald-400 bg-gradient-to-r from-teal-700 via-emerald-600 to-teal-500 p-6 text-white shadow-sm sm:p-8 dark:border-emerald-900/40 dark:from-teal-950 dark:via-emerald-950/90 dark:to-teal-900"><span aria-hidden="true" className="pointer-events-none absolute -bottom-12 -right-8 h-48 w-48 rounded-full bg-white/15 blur-[1px]" /><FlaskConical size={32}/><h1 className="mt-3 text-3xl font-black">{t.title}</h1><p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{t.sub}</p></header>
+      <section className="relative mb-8 overflow-hidden rounded-[28px] bg-gradient-to-br from-teal-800 via-teal-700 to-emerald-600 p-6 text-white shadow-xl shadow-teal-900/10 sm:p-9">
+          <div className="pointer-events-none absolute -right-12 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 right-24 h-56 w-56 rounded-full border-[35px] border-white/10" />
+          <div className="relative z-10 max-w-3xl">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-teal-50">
+              <FlaskConical size={32}/>
+              <span>MediCare</span>
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{t.title}</h1>
+            <p className="mt-2 text-sm text-teal-50">{t.sub}</p>
+          </div>
+        </section>
       <section className="my-5 grid gap-3 rounded-2xl border bg-white p-4 dark:border-slate-800 dark:bg-slate-900 sm:grid-cols-3">
         <label className="text-sm font-semibold">{t.test}<input value={test} onChange={e=>setTest(e.target.value)} placeholder="CBC, Vitamin D, HbA1c..." className="mt-1 w-full rounded-xl border bg-transparent p-3 dark:border-slate-700"/></label>
         <label className="text-sm font-semibold">{t.city}<input value={city} onChange={e=>setCity(e.target.value)} placeholder="Lahore" className="mt-1 w-full rounded-xl border bg-transparent p-3 dark:border-slate-700"/></label>
