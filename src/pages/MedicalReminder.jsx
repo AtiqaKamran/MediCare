@@ -18,7 +18,7 @@ const TEXT = {
     after: "After meal", with: "With meal", anytime: "Any time",
     custom: "Custom timing", time: "Reminder time", repeat: "Repeat",
     every: "Every day", selected: "Selected days", save: "Save reminder",
-    cancel: "Cancel", noItems: "No reminders yet",
+    cancel: "منسوخ کریں", noItems: "No reminders yet",
     noItemsText: "Add a medicine and choose the time that suits your routine.",
     notification: "Enable notifications", enabled: "Notifications enabled",
     blocked: "Notifications are blocked in your browser settings.",
@@ -36,7 +36,7 @@ const TEXT = {
     daily: "Daily", repeatDays: "Repeat on",
   },
   ur: {
-    title: "Dawai ke Reminders", subtitle: "Apni dawa waqt par lena yaad rakhein",
+    title: "ادویات کی یاددہانیاں", subtitle: "Apni dawa waqt par lena yaad rakhein",
     add: "Reminder add karein", edit: "Reminder edit karein", medicine: "Dawai ka naam",
     dose: "Dose / Hidayaat", meal: "Khanay ke mutabiq waqt", before: "Khanay se pehle",
     after: "Khanay ke baad", with: "Khanay ke sath", anytime: "Kisi bhi waqt",
@@ -48,16 +48,16 @@ const TEXT = {
     blocked: "Browser settings mein notifications block hain.",
     permission: "Website khuli honay par alert hasil karne ke liye browser notifications allow karein.",
     today: "Aaj ke reminders", upcoming: "Aapka schedule",
-    delete: "Delete", taken: "Aaj le li", markTaken: "Taken mark karein",
+    delete: "حذف کریں", taken: "آج لے لی", markTaken: "لی گئی نشان زد کریں",
     days: ["Itwar", "Peer", "Mangal", "Budh", "Jumeraat", "Jumma", "Hafta"],
     mealOptions: ["Khanay se pehle", "Khanay ke baad", "Khanay ke sath", "Kisi bhi waqt", "Apna waqt"],
     reminder: "Reminder", due: "Dawai lenay ka waqt hai",
-    note: "Extra note (optional)", emptyName: "Dawai ka naam likhein.",
+    note: "اضافی نوٹ (اختیاری)", emptyName: "Dawai ka naam likhein.",
     emptyTime: "Reminder ka waqt select karein.",
-    browserOnly: "Browser notifications HTTPS ya localhost par kaam karti hain. Alerts ke liye MediCare khula rakhein.",
-    permissionDenied: "Notifications allow nahi. Browser site settings mein enable karein.",
-    saved: "Reminder save ho gaya.", removed: "Reminder delete ho gaya.",
-    daily: "Rozana", repeatDays: "In dinon mein",
+    browserOnly: "براؤزر نوٹیفکیشن HTTPS یا localhost پر کام کرتی ہیں۔ الرٹس کے لیے MediCare کھلا رکھیں۔",
+    permissionDenied: "نوٹیفکیشن کی اجازت نہیں۔ براؤزر کی سائٹ سیٹنگز میں انہیں فعال کریں۔",
+    saved: "یاددہانی محفوظ ہو گئی۔", removed: "یاددہانی حذف ہو گئی۔",
+    daily: "روزانہ", repeatDays: "ان دنوں میں",
   },
 };
 
@@ -316,14 +316,14 @@ export default function MedicalReminder() {
           <section className={`${cardClass} mb-7 p-5 sm:p-7`}>
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-lg font-bold">{editingId ? t.edit : t.add}</h2>
-              <button onClick={() => setShowForm(false)} aria-label="Close" className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><X size={19} /></button>
+              <button onClick={() => setShowForm(false)} aria-label={isUrdu ? "بند کریں" : "Close"} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><X size={19} /></button>
             </div>
             <form onSubmit={saveReminder} className="grid gap-4 sm:grid-cols-2">
               <label className="text-sm font-semibold">{t.medicine} *
-                <input className={`${inputClass} mt-2`} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Medicine name" required />
+                <input className={`${inputClass} mt-2`} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={isUrdu ? "مثلاً دوا کا نام" : "e.g. Medicine name"} required />
               </label>
               <label className="text-sm font-semibold">{t.dose}
-                <input className={`${inputClass} mt-2`} value={form.dose} onChange={(e) => setForm({ ...form, dose: e.target.value })} placeholder="e.g. As prescribed" />
+                <input className={`${inputClass} mt-2`} value={form.dose} onChange={(e) => setForm({ ...form, dose: e.target.value })} placeholder={isUrdu ? "مثلاً ڈاکٹر کی ہدایت کے مطابق" : "e.g. As prescribed"} />
               </label>
               <label className="text-sm font-semibold">{t.meal}
                 <select className={`${inputClass} mt-2`} value={form.meal} onChange={(e) => setForm({ ...form, meal: e.target.value })}>
@@ -372,7 +372,7 @@ export default function MedicalReminder() {
           </div>
 
           {loading ? (
-            <div className={`${cardClass} p-8 text-center text-sm ${muted}`}>Loading reminders...</div>
+            <div className={`${cardClass} p-8 text-center text-sm ${muted}`}>{isUrdu ? "یاددہانیاں لوڈ ہو رہی ہیں..." : "Loading reminders..."}</div>
           ) : todayReminders.length === 0 ? (
             <div className={`${cardClass} flex flex-col items-center px-6 py-12 text-center`}>
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"><Pill size={27} /></div>
