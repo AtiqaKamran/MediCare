@@ -117,7 +117,18 @@ export default function ReportScanner() {
   return <main dir={language==="ur"?"rtl":"ltr"} className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 dark:bg-slate-950 dark:text-white sm:px-6">
     <FeatureNavbar title={t.title} accent="violet" isUrdu={language==="ur"} />
     <div className="mx-auto max-w-4xl">
-      <header className="relative isolate overflow-hidden rounded-3xl border border-emerald-400 bg-gradient-to-r from-teal-700 via-emerald-600 to-teal-500 p-6 text-white shadow-sm sm:p-8 dark:border-emerald-900/40 dark:from-teal-950 dark:via-emerald-950/90 dark:to-teal-900"><span aria-hidden="true" className="pointer-events-none absolute -bottom-12 -right-8 h-48 w-48 rounded-full bg-white/15 blur-[1px]" /><FileSearch size={32}/><h1 className="mt-3 text-3xl font-black">{t.title}</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">{t.sub}</p></header>
+      <section className="relative mb-8 overflow-hidden rounded-[28px] bg-gradient-to-br from-teal-800 via-teal-700 to-emerald-600 p-6 text-white shadow-xl shadow-teal-900/10 sm:p-9">
+          <div className="pointer-events-none absolute -right-12 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 right-24 h-56 w-56 rounded-full border-[35px] border-white/10" />
+          <div className="relative z-10 max-w-3xl">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-teal-50">
+              <FileSearch size={32}/>
+              <span>MediCare</span>
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{t.title}</h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-teal-50">{t.sub}</p>
+          </div>
+        </section>
       <section className="my-6 rounded-2xl border bg-white p-5 dark:border-slate-800 dark:bg-slate-900 sm:p-7">
         <label className="flex min-h-44 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 p-6 text-center dark:border-slate-700"><Upload size={30} className="text-teal-600"/><span className="mt-3 font-bold">{t.choose}</span><span className="mt-1 text-xs text-slate-500">{t.empty}</span><input type="file" accept=".pdf,image/jpeg,image/png" onChange={e=>{setFile(e.target.files?.[0]||null);setAnswer("");setNotice("");setReportId(null)}} className="sr-only"/></label>
         {file&&<p className="mt-3 break-all text-sm font-semibold">{file.name} · {(file.size/1024/1024).toFixed(2)} MB</p>}
