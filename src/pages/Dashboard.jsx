@@ -549,7 +549,7 @@ export default function Dashboard() {
 
           <div className={`${cardClass} p-5 sm:p-6`}>
             <div className="flex items-center justify-between mb-5">
-              <div className="w-11 h-11 rounded-2xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-200 dark:from-emerald-900/50 dark:to-teal-900/40 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
                 <ShieldCheck size={21} />
               </div>
               <span className="text-[10px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500">
@@ -654,7 +654,7 @@ export default function Dashboard() {
 
             {/* Medicine Reminder */}
 <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
-  <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-rose-50 dark:bg-rose-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+  <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-emerald-100/90 dark:bg-emerald-900/25 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
 
   <div className="relative z-10">
     <div className="flex items-start justify-between">
@@ -664,27 +664,27 @@ export default function Dashboard() {
     </div>
 
     <h4 className={`text-lg font-bold ${headingText} mt-6`}>
-      Medicine Reminder
+      {isUrdu ? "ادویات کی یاددہانی" : "Medicine Reminder"}
     </h4>
 
     <p className={`text-sm ${mutedText} mt-2 leading-6 max-w-md`}>
-      Add your medicines and set reminders for the times you need to take them.
+      {isUrdu ? "اپنی ادویات شامل کریں اور انہیں وقت پر لینے کی یاددہانیاں مقرر کریں۔" : "Add your medicines and set reminders for the times you need to take them."}
     </p>
 
     <button
       onClick={() => navigate("/medical-reminder")}
-      className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-rose-600 dark:text-rose-400 hover:gap-3 transition-all"
+      className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-emerald-700 dark:text-emerald-300 hover:gap-3 transition-all"
     >
-      Open Medicine Reminder
+      {isUrdu ? "ادویات کی یاددہانی کھولیں" : "Open Medicine Reminder"}
       <ChevronRight size={18} />
     </button>
   </div>
 </div>
             {/* AI Report Scanner */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
-              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-violet-50 dark:bg-violet-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-violet-100/90 dark:bg-violet-900/25 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
               <div className="relative z-10">
-              <div className="w-14 h-14 rounded-2xl bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-300 flex items-center justify-center"><FileSearch size={26}/></div>
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-200 dark:from-violet-900/50 dark:to-purple-900/40 text-violet-700 dark:text-violet-300 flex items-center justify-center"><FileSearch size={26}/></div>
               <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "AI رپورٹ اسکینر" : "AI Health Report Scanner"}</h4>
               <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "اپنی لیب رپورٹ اپ لوڈ کریں اور آسان الفاظ میں وضاحت حاصل کریں۔" : "Upload a lab report and get an easy-to-understand explanation."}</p>
               <button onClick={()=>navigate("/report-scanner")} className="mt-5 text-sm font-bold text-violet-600 dark:text-violet-300">{isUrdu ? "رپورٹ اسکین کریں" : "Scan a Report"} <ChevronRight size={17} className="inline"/></button>
@@ -692,9 +692,9 @@ export default function Dashboard() {
               </div>
             {/* Blood Donor Finder */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
-              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-rose-50 dark:bg-rose-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-rose-100/90 dark:bg-rose-900/25 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
               <div className="relative z-10">
-              <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300 flex items-center justify-center"><HeartPulse size={26}/></div>
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-100 to-pink-200 dark:from-rose-900/50 dark:to-pink-900/40 text-rose-700 dark:text-rose-300 flex items-center justify-center"><HeartPulse size={26}/></div>
               <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "بلڈ ڈونر تلاش کریں" : "Blood Donor Finder"}</h4>
               <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "شہر، علاقے اور بلڈ گروپ کے مطابق اجازت یافتہ ڈونرز تلاش کریں۔" : "Find consenting blood donors by city, area and blood group."}</p>
               <button onClick={()=>navigate("/blood-donors")} className="mt-5 text-sm font-bold text-rose-600 dark:text-rose-300">{isUrdu ? "ڈونرز تلاش کریں" : "Find Donors"} <ChevronRight size={17} className="inline"/></button>
@@ -702,9 +702,9 @@ export default function Dashboard() {
               </div>
             {/* Ambulance Finder */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
-              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-orange-50 dark:bg-orange-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-orange-100/90 dark:bg-orange-900/25 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
               <div className="relative z-10">
-              <div className="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-300 flex items-center justify-center"><Activity size={26}/></div>
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-200 dark:from-orange-900/50 dark:to-amber-900/40 text-orange-700 dark:text-orange-300 flex items-center justify-center"><Activity size={26}/></div>
               <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "ایمبولینس اور ایمرجنسی" : "Ambulance & Emergency"}</h4>
               <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "علاقے کے مطابق سروس کی معلومات تلاش کریں۔" : "Search ambulance service information by area."}</p>
               <button onClick={()=>navigate("/ambulance")} className="mt-5 text-sm font-bold text-orange-600 dark:text-orange-300">{isUrdu ? "ایمبولینس تلاش کریں" : "Find Ambulance"} <ChevronRight size={17} className="inline"/></button>
@@ -712,12 +712,12 @@ export default function Dashboard() {
             </div>
             {/* Laboratory Finder */}
             <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
-              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-sky-50 dark:bg-sky-900/10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+              <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-sky-100/90 dark:bg-sky-900/25 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
               <div className="relative z-10">
-              <div className="w-14 h-14 rounded-2xl bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-300 flex items-center justify-center"><FolderHeart size={26}/></div>
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-100 to-blue-200 dark:from-sky-900/50 dark:to-blue-900/40 text-sky-700 dark:text-sky-300 flex items-center justify-center"><FolderHeart size={26}/></div>
               <h4 className={`text-lg font-bold ${headingText} mt-6`}>{isUrdu ? "لیبارٹری اور ٹیسٹ تلاش کریں" : "Lab & Test Finder"}</h4>
               <p className={`text-sm ${mutedText} mt-2 leading-6`}>{isUrdu ? "ٹیسٹ درج کریں اور لیبارٹری کی معلومات دیکھیں۔" : "Enter tests to find matching laboratory listings."}</p>
-              <button onClick={()=>navigate("/lab-finder")} className="mt-5 text-sm font-bold text-indigo-600 dark:text-indigo-300">{isUrdu ? "لیب تلاش کریں" : "Find a Lab"} <ChevronRight size={17} className="inline"/></button>
+              <button onClick={()=>navigate("/lab-finder")} className="mt-5 text-sm font-bold text-sky-700 dark:text-sky-300">{isUrdu ? "لیب تلاش کریں" : "Find a Lab"} <ChevronRight size={17} className="inline"/></button>
               </div>
             </div>
           </div>
