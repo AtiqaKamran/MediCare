@@ -654,11 +654,11 @@ export default function Dashboard() {
 
             {/* Medicine Reminder */}
 <div className={`${cardClass} p-6 sm:p-7 relative overflow-hidden group`}>
-  <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-amber-200/90 dark:bg-amber-900/30 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+  <div className="absolute -right-10 -bottom-12 w-40 h-40 rounded-full bg-[#ead8c4] dark:bg-[#755b49]/40 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
 
   <div className="relative z-10">
     <div className="flex items-start justify-between">
-      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-200 to-yellow-300 dark:from-amber-900/50 dark:to-yellow-900/40 text-amber-900 dark:text-amber-200 flex items-center justify-center">
+      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#f0e2d2] to-[#ddc3a9] dark:from-[#755b49]/50 dark:to-[#5d4638]/40 text-[#795b45] dark:text-[#ead8c4] flex items-center justify-center">
         <Pill size={26} />
       </div>
     </div>
@@ -673,7 +673,7 @@ export default function Dashboard() {
 
     <button
       onClick={() => navigate("/medical-reminder")}
-      className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-amber-900 dark:text-amber-200 hover:gap-3 transition-all"
+      className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#795b45] dark:text-[#ead8c4] hover:gap-3 transition-all"
     >
       {isUrdu ? "ادویات کی یاددہانی کھولیں" : "Open Medicine Reminder"}
       <ChevronRight size={18} />
