@@ -185,12 +185,12 @@ export default function DoctorChatbot() {
   }
 
   return <div ref={dockRef} onPointerDown={handleDragStart} onPointerMove={handleDragMove} onPointerUp={handleDragEnd} onPointerCancel={handleDragEnd} style={dockPosition ? { position: "fixed", left: dockPosition.left, top: dockPosition.top, right: "auto", bottom: "auto", zIndex: 9999 } : undefined} className={dockPosition ? "touch-none" : "fixed bottom-4 right-3 z-[9999] touch-none sm:bottom-6 sm:right-6"}>
-    {!isOpen ? <button onClick={() => { if (!draggedRef.current) openChat(); }} aria-label="Open MediCare Mini Doctor"
+    {!isOpen ? <button onClick={openChat} aria-label="Open MediCare Mini Doctor"
       className="group relative flex flex-col items-center touch-manipulation select-none animate-[medicare-float_3s_ease-in-out_infinite]">
       <span className="mb-2 rounded-full bg-teal-700 px-3 py-1 text-xs font-semibold text-white opacity-100 shadow-lg transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
         {isUrdu ? "اپنے ڈاکٹر سے پوچھیں!" : "Ask your doctor!"}
       </span>
-      <div className="relative flex h-16 w-16 touch-none items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-cyan-100 to-blue-200 shadow-xl transition-transform duration-300 group-hover:scale-110 sm:h-20 sm:w-20">
+      <div className="relative flex h-16 w-16 touch-manipulation items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-cyan-100 to-blue-200 shadow-xl transition-transform duration-300 group-hover:scale-110 sm:h-20 sm:w-20">
         <div className="relative flex h-11 w-11 items-center justify-center rounded-full bg-[#F5CBA7] shadow-inner sm:h-14 sm:w-14">
           <div className="absolute -top-1 h-4 w-9 rounded-t-full bg-gray-800 sm:h-5 sm:w-12"/>
           <div className="mt-1 flex gap-3"><span className="h-1.5 w-1.5 rounded-full bg-gray-800"/><span className="h-1.5 w-1.5 rounded-full bg-gray-800"/></div>
