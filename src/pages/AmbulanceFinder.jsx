@@ -49,8 +49,8 @@ export default function AmbulanceFinder() {
     <main dir={language === "ur" ? "rtl" : "ltr"} className="min-h-screen bg-slate-50 px-4 pb-8 pt-6 dark:bg-slate-950 dark:text-white">
       <FeatureNavbar title={t.title} accent="orange" isUrdu={language === "ur"} />
       <div className="mx-auto max-w-5xl space-y-5">
-        <header className="relative overflow-hidden isolate rounded-3xl border border-orange-400 bg-gradient-to-r from-orange-300 via-amber-300 to-rose-300 p-6 text-slate-800 shadow-sm dark:border-orange-900/40 dark:from-orange-950/40 dark:via-amber-950/30 dark:to-rose-950/40 dark:text-slate-100 sm:p-8">
-          <span aria-hidden="true" className="pointer-events-none absolute -bottom-12 -right-8 h-48 w-48 rounded-full bg-orange-400/60 blur-[1px]"/>
+        <header className="relative overflow-hidden isolate rounded-3xl border border-emerald-400 bg-gradient-to-r from-teal-700 via-emerald-600 to-teal-500 p-6 text-white shadow-sm sm:p-8 dark:border-emerald-900/40 dark:from-teal-950 dark:via-emerald-950/90 dark:to-teal-900">
+          <span aria-hidden="true" className="pointer-events-none absolute -bottom-12 -right-8 h-48 w-48 rounded-full bg-white/15 blur-[1px]"/>
           <Ambulance size={32}/>
           <h1 className="mt-3 text-3xl font-black">{t.title}</h1>
           <p className="mt-2 text-sm text-slate-700 dark:text-slate-300">{t.sub}</p>
