@@ -268,19 +268,19 @@ export default function MedicalReminder() {
 
   return (
     <div dir={isUrdu ? "rtl" : "ltr"} className="min-h-screen bg-[#f5f8fa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
-      <FeatureNavbar title={t.title} accent="rose" isUrdu={isUrdu} />
+      <FeatureNavbar title={t.title} accent="amber" isUrdu={isUrdu} />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <div className="relative mb-7 overflow-hidden rounded-3xl border border-amber-500 bg-gradient-to-r from-amber-200 via-yellow-100 to-orange-200 p-5 shadow-sm dark:border-teal-900/40 dark:from-teal-950/40 dark:via-emerald-950/30 dark:to-cyan-950/30 sm:p-6">
-          <div className="pointer-events-none absolute -bottom-10 -right-10 h-36 w-36 rounded-full bg-amber-500/35 dark:bg-amber-700/25" />
+        <div className="relative mb-7 overflow-hidden rounded-3xl border border-emerald-400 bg-gradient-to-r from-teal-700 via-emerald-600 to-teal-500 p-5 shadow-sm dark:border-emerald-900/40 dark:from-teal-950 dark:via-emerald-950/90 dark:to-teal-900 sm:p-6">
+          <div className="pointer-events-none absolute -bottom-10 -right-10 h-36 w-36 rounded-full bg-white/15" />
           <div className="relative z-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900 dark:bg-amber-900/30 dark:text-amber-200">
+            <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white">
               <BellRing size={14} /> MediCare
             </p>
             <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{t.title}</h1>
             <p className={`mt-2 text-sm ${muted}`}>{t.subtitle}</p>
           </div>
-          <button onClick={openNewForm} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-700 to-yellow-800 px-5 py-3 text-sm font-bold text-white shadow-md shadow-amber-700/20 transition hover:-translate-y-0.5 hover:shadow-lg">
+          <button onClick={openNewForm} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-800 to-teal-900 px-5 py-3 text-sm font-bold text-white shadow-md shadow-emerald-900/20 transition hover:-translate-y-0.5 hover:shadow-lg">
             <Plus size={18} /> {t.add}
           </button>
           </div>
